@@ -1,41 +1,50 @@
-{
-  "version": 2,
-  "builds": [
     {
-      "src": "backend/package.json",
-      "use": "@vercel/next",
-      "config": {
-        "distDir": ".next"
-      }
-    },
-    {
-      "src": "frontend/**",
-      "use": "@vercel/static"
+      "version": 2,
+      "builds": [
+        {
+          "src": "backend/package.json",
+          "use": "@vercel/next",
+          "config": {
+            "distDir": ".next"
+          }
+        },
+        {
+          "src": "frontend/**",
+          "use": "@vercel/static"
+        }
+      ],
+      "routes": [
+        {
+          "src": "/api/(.*)",
+          "dest": "/backend/api/$1"
+        },
+        {
+          "src": "/_next/(.*)",
+          "dest": "/backend/_next/$1"
+        },
+        {
+          "src": "/public/(.*)",
+          "dest": "/backend/public/$1"
+        },
+        {
+          "src": "/(.*\\.(?:ico|png|jpg|jpeg|gif|svg|css|js|txt|webmanifest|map|json|woff|woff2|ttf|eot|otf|mp4|webm|ogg|mp3|wav|flac|aac))",
+          "dest": "/frontend/$1"
+        },
+        {
+          "src": "/(.*).html",
+          "dest": "/frontend/$1.html"
+        },
+        {
+          "src": "^/?$",
+          "dest": "/frontend/userpage.html"
+        },
+        {
+          "handle": "filesystem" 
+        },
+        {
+          "src": "/([^./]+)/?$", 
+          "dest": "/frontend/$1.html"
+        }
+      ]
     }
-  ],
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "/backend/api/$1"
-    },
-    {
-      "src": "/_next/(.*)",
-      "dest": "/backend/_next/$1"
-    },
-    {
-      "src": "/public/(.*)",
-      "dest": "/backend/public/$1"
-    },
-    {
-      "src": "/(.*\\.(?:ico|png|jpg|jpeg|gif|svg|css|js|txt|webmanifest|map|json|woff|woff2|ttf|eot|otf|mp4|webm|ogg|mp3|wav|flac|aac))",
-      "dest": "/frontend/$1"
-    },
-    {
-      "handle": "filesystem"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/frontend/$1.html"
-    }
-  ]
-}
+    

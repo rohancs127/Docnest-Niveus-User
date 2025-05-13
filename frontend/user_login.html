@@ -1,18 +1,202 @@
-    <script type="module">
-      // Import Firebase v9 modular SDK
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
-      import {
-        getAuth,
-        signInWithPopup,
-        GoogleAuthProvider,
-        onAuthStateChanged,
-        signOut,
-        getIdToken,
-      } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login - DocNest User</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    <style>
+      :root {
+        /* Dark Theme (Default) */
+        --bg-primary-login: #0a0a0a;
+        --bg-card-login: #1a1a1a;
+        --text-primary-login: #e0e0e0;
+        --text-secondary-login: #bbb;
+        --text-tertiary-login: #999;
+        --border-card-login: #333;
+        --shadow-card-login: 0 8px 20px rgba(0, 0, 0, 0.3);
+        --button-google-bg: #ffffff;
+        --button-google-text: #1f2937;
+        --button-google-border: #d1d5db;
+        --button-google-bg-hover: #f3f4f6;
+        --error-text-login: #f87171;
+        --error-bg-login: rgba(248, 113, 113, 0.1);
+        --error-border-login: #f87171;
+        --theme-toggle-bg: var(--bg-card-login);
+        --theme-toggle-text: var(--text-secondary-login);
+        --theme-toggle-border: var(--border-card-login);
+        --theme-toggle-bg-hover: var(--bg-card-login); /* Corrected from --bg-card-hover */
+        --theme-toggle-text-hover: var(--text-primary-login);
+        --theme-toggle-ring: #007acc; /* Matches admin panel focus */
+      }
 
-      // Firebase project configuration (should be the same as admin login)
+      .light-theme {
+        --bg-primary-login: #f4f4f5; /* zinc-100 */
+        --bg-card-login: #ffffff;
+        --text-primary-login: #18181b; /* zinc-900 */
+        --text-secondary-login: #52525b; /* zinc-600 */
+        --text-tertiary-login: #71717a; /* zinc-500 */
+        --border-card-login: #d1d5db; /* gray-300 */
+        --shadow-card-login: 0 4px 15px rgba(0, 0, 0, 0.07);
+        --button-google-bg: #27272a; /* zinc-800 */
+        --button-google-text: #ffffff;
+        --button-google-border: #27272a;
+        --button-google-bg-hover: #18181b; /* zinc-900 */
+        --error-text-login: #dc2626; /* red-600 */
+        --error-bg-login: rgba(220, 38, 38, 0.1);
+        --error-border-login: #dc2626;
+        --theme-toggle-bg: var(--bg-card-login);
+        --theme-toggle-text: var(--text-secondary-login);
+        --theme-toggle-border: var(--border-card-login);
+        --theme-toggle-bg-hover: #f9fafb; /* gray-50 */
+        --theme-toggle-text-hover: var(--text-primary-login);
+        --theme-toggle-ring: #2563eb; /* Matches admin panel focus */
+      }
+
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: var(--bg-primary-login);
+        color: var(--text-primary-login);
+        transition: background-color 0.3s ease, color 0.3s ease;
+      }
+      .login-container {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+        position: relative;
+      }
+      .login-card {
+        background-color: var(--bg-card-login);
+        border: 1px solid var(--border-card-login);
+        box-shadow: var(--shadow-card-login);
+        color: var(--text-primary-login);
+      }
+      .google-btn {
+        background-color: var(--button-google-bg);
+        color: var(--button-google-text);
+        border: 1px solid var(--button-google-border);
+        transition: background-color 0.2s ease-in-out,
+          transform 0.1s ease-in-out;
+      }
+      .google-btn:hover {
+        background-color: var(--button-google-bg-hover);
+        transform: translateY(-1px);
+      }
+      .google-btn:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+      }
+      .spinner {
+        animation: spin 1s linear infinite;
+        border: 2px solid currentColor;
+        border-top-color: transparent;
+        border-radius: 50%;
+        width: 1em;
+        height: 1em;
+        margin-right: 0.5em;
+      }
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+      #error-message {
+        color: var(--error-text-login);
+        background-color: var(--error-bg-login);
+        border: 1px solid var(--error-border-login);
+      }
+      #theme-toggle-button-login {
+        position: absolute;
+        top: 1.5rem;
+        right: 1.5rem;
+        background-color: var(--theme-toggle-bg);
+        color: var(--theme-toggle-text);
+        border: 1px solid var(--theme-toggle-border);
+        padding: 0.5rem;
+        border-radius: 0.375rem;
+      }
+      #theme-toggle-button-login:hover {
+        background-color: var(--theme-toggle-bg-hover);
+        color: var(--theme-toggle-text-hover);
+      }
+      #theme-toggle-button-login:focus {
+        outline: none;
+        box-shadow: 0 0 0 2px var(--theme-toggle-ring);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="login-container">
+      <button id="theme-toggle-button-login" title="Toggle Theme"></button>
+
+      <div class="login-card w-full max-w-md p-8 rounded-xl">
+        <div class="text-center mb-8">
+          <h1 class="text-4xl font-bold text-[var(--text-primary-login)]">
+            🔑
+          </h1>
+          <h2
+            class="text-2xl font-semibold text-[var(--text-primary-login)] mt-2"
+          >
+            DocNest User Login
+          </h2>
+          <p class="text-sm text-[var(--text-secondary-login)] mt-1">
+            Sign in to access the Knowledge Base
+          </p>
+        </div>
+
+        <div
+          id="error-message"
+          class="hidden p-3 mb-6 rounded-md text-sm"
+        ></div>
+
+        <button
+          id="login-button"
+          class="google-btn w-full py-3 px-4 rounded-lg font-semibold text-lg flex items-center justify-center"
+        >
+          <svg
+            class="w-6 h-6 mr-3"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M22.56,12.25C22.56,11.47 22.49,10.72 22.36,10H12V14.26H17.95C17.72,15.62 17.03,16.79 15.97,17.57V20.09H19.63C21.57,18.31 22.56,15.56 22.56,12.25Z"
+              fill="#4285F4"
+            />
+            <path
+              d="M12,23C14.97,23 17.45,22.04 19.63,20.09L15.97,17.57C14.97,18.23 13.62,18.62 12,18.62C9.05,18.62 6.56,16.62 5.56,13.91H1.79V16.52C3.78,20.34 7.59,23 12,23Z"
+              fill="#34A853"
+            />
+            <path
+              d="M5.56,13.91C5.34,13.28 5.22,12.65 5.22,12C5.22,11.35 5.34,10.72 5.56,10.09V7.48H1.79C0.95,9.14 0.44,10.95 0.44,12C0.44,13.05 0.95,14.86 1.79,16.52L5.56,13.91Z"
+              fill="#FBBC05"
+            />
+            <path
+              d="M12,5.38C13.71,5.38 15.14,5.99 16.3,7.09L19.71,3.68C17.45,1.63 14.97,0.56 12,0.56C7.59,0.56 3.78,3.66 1.79,7.48L5.56,10.09C6.56,7.38 9.05,5.38 12,5.38Z"
+              fill="#EA4335"
+            />
+          </svg>
+          <span class="button-text">Sign in with Google</span>
+        </button>
+
+        <p class="text-xs text-[var(--text-tertiary-login)] mt-8 text-center">
+          Access restricted to authorized users.
+        </p>
+      </div>
+    </div>
+
+    <script>
+      // Removed v9 modular imports, using compat SDK loaded in <head>
+
       const firebaseConfig = {
-        apiKey: "AIzaSyCbHWUEzqGjzeanOiMG0Z5Lb4wIjWWEMUQ", // Replace with your actual Firebase project API key
+        apiKey: "AIzaSyCbHWUEzqGjzeanOiMG0Z5Lb4wIjWWEMUQ", // This IS your actual key
         authDomain: "docnest-f85e2.firebaseapp.com",
         projectId: "docnest-f85e2",
         storageBucket: "docnest-f85e2.appspot.com",
@@ -21,13 +205,12 @@
         measurementId: "G-YRMBR8BVSE",
       };
 
-      // --- MODIFIED BASE URL ---
-      const BASE = ""; // For relative API paths (e.g., /api/auth)
+      const BASE = ""; // For relative API paths
 
       let app;
       let auth;
       let googleProvider;
-      let isProcessingLogin = false; // Flag to prevent multiple concurrent login attempts
+      let isProcessingLogin = false; 
 
       const loginButton = document.getElementById("login-button");
       const errorMessageDiv = document.getElementById("error-message");
@@ -64,9 +247,10 @@
       const prefersDarkLogin = window.matchMedia(
         "(prefers-color-scheme: dark)"
       ).matches;
-      applyLoginTheme(savedLoginTheme || (prefersDarkLogin ? "dark" : "light")); // Default to light theme
+      applyLoginTheme(savedLoginTheme || (prefersDarkLogin ? "dark" : "light"));
 
       function setButtonLoadingState(isLoading) {
+        if (!loginButton) return; // Check if loginButton exists
         const buttonTextSpan = loginButton.querySelector(".button-text");
         if (isLoading) {
           loginButton.disabled = true;
@@ -100,19 +284,16 @@
         }
       }
 
-      if (
-        firebaseConfig.apiKey &&
-        firebaseConfig.apiKey !== "YOUR_FIREBASE_API_KEY" // Simple check, ensure it's not the placeholder
-      ) {
+      // Corrected Firebase Initialization Check
+      if (firebaseConfig.apiKey && firebaseConfig.apiKey.startsWith("AIza")) { // Check if API key looks valid
         try {
-          // Check if Firebase compat app is already initialized to avoid re-initialization errors
-          if (!firebase.apps.length) { // Using compat firebase global
+          if (!firebase.apps.length) { 
               app = firebase.initializeApp(firebaseConfig);
           } else {
-              app = firebase.app(); // Get default app
+              app = firebase.app(); 
           }
-          auth = firebase.auth(app); // Using compat firebase.auth()
-          googleProvider = new firebase.auth.GoogleAuthProvider(); // Using compat
+          auth = firebase.auth(app); 
+          googleProvider = new firebase.auth.GoogleAuthProvider(); 
           console.log("Firebase for User Login initialized successfully.");
         } catch (e) {
           console.error("Error initializing Firebase on User Login:", e);
@@ -123,7 +304,7 @@
         }
       } else {
         console.warn(
-          "Firebase config is not set with actual values. Please update firebaseConfig in the script."
+          "Firebase config is not set with actual values or is missing API key. Please update firebaseConfig in the script."
         );
         showLoginError(
           "Application not configured for login. Please contact support."
@@ -131,12 +312,9 @@
         if (loginButton) loginButton.disabled = true;
       }
 
-      // --- Centralized Authentication Handler for User Login ---
       async function handleUserAuthentication(user) {
         if (!user) {
-          console.log(
-            "User Login: handleUserAuthentication called with no user."
-          );
+          console.log("User Login: handleUserAuthentication called with no user.");
           setButtonLoadingState(false);
           isProcessingLogin = false;
           return;
@@ -147,14 +325,12 @@
         console.log("User Login: Processing user", user.email);
 
         try {
-          const token = await user.getIdToken(true); // Changed from getIdToken(user, true) to user.getIdToken(true) for compat SDK
-          sessionStorage.setItem("user_token", token); // Use a specific token key for user page
-          console.log(
-            "User Login: Token obtained, calling backend /api/auth..."
-          );
+          const token = await user.getIdToken(true); 
+          sessionStorage.setItem("user_token", token); 
+          console.log("User Login: Token obtained, calling backend /api/auth...");
 
           const backendResponse = await fetch(
-            `${BASE}/api/auth`, // Uses the new BASE constant
+            `${BASE}/api/auth`, 
             {
               method: "POST",
               headers: {
@@ -164,10 +340,7 @@
             }
           );
 
-          console.log(
-            "User Login: Backend response status:",
-            backendResponse.status
-          );
+          console.log("User Login: Backend response status:", backendResponse.status);
 
           if (!backendResponse.ok) {
             const errorText = await backendResponse.text();
@@ -185,25 +358,14 @@
           const userData = await backendResponse.json();
           console.log("User Login: Backend auth success. User data:", userData);
 
-          if (
-            userData &&
-            (userData.isUser === true || userData.isAdmin === true)
-          ) {
-            console.log(
-              "User Login: User verified. Redirecting to userpage.html"
-            );
+          if (userData && (userData.isUser === true || userData.isAdmin === true)) {
+            console.log("User Login: User verified. Redirecting to userpage.html");
             window.location.href = "userpage.html";
           } else {
-            console.log(
-              "User Login: User does not have sufficient privileges."
-            );
-            showLoginError(
-              "Access Denied: You do not have authorized user privileges for this portal."
-            );
+            console.log("User Login: User does not have sufficient privileges.");
+            showLoginError("Access Denied: You do not have authorized user privileges for this portal.");
             if (auth) {
-              await auth.signOut().catch((e) => // Changed from signOut(auth)
-                console.error("Sign out error:", e)
-              );
+              await auth.signOut().catch((e) => console.error("Sign out error:", e));
             }
             sessionStorage.removeItem("user_token");
             setButtonLoadingState(false);
@@ -212,9 +374,7 @@
           console.error("User Login: Error during authentication:", error);
           showLoginError(`Authentication failed: ${error.message}`);
           if (auth && auth.currentUser) {
-            await auth.signOut().catch((e) => // Changed from signOut(auth)
-              console.error("Sign out error during catch:", e)
-            );
+            await auth.signOut().catch((e) => console.error("Sign out error during catch:", e));
           }
           sessionStorage.removeItem("user_token");
           setButtonLoadingState(false);
@@ -223,9 +383,9 @@
         }
       }
 
-      let initialUserAuthCheckProcessed = false;
+      let initialUserAuthCheckProcessed = false; // Declare this variable
       if (auth) {
-        auth.onAuthStateChanged((user) => { // Changed from onAuthStateChanged(auth, user)
+        auth.onAuthStateChanged((user) => { 
           console.log(
             `User Login Page: onAuthStateChanged. User: ${
               user ? user.email : "null"
@@ -234,14 +394,10 @@
 
           if (user && !initialUserAuthCheckProcessed && !isProcessingLogin) {
             initialUserAuthCheckProcessed = true;
-            console.log(
-              "User Login Page: Initial check detected user. Handling authentication..."
-            );
+            console.log("User Login Page: Initial check detected user. Handling authentication...");
             handleUserAuthentication(user);
           } else if (!user) {
-            console.log(
-              "User Login Page: No user session detected by onAuthStateChanged or user signed out."
-            );
+            console.log("User Login Page: No user session detected by onAuthStateChanged or user signed out.");
             sessionStorage.removeItem("user_token");
             setButtonLoadingState(false);
             isProcessingLogin = false;
@@ -251,9 +407,7 @@
 
       async function triggerGoogleSignIn() {
         if (!auth || !googleProvider) {
-          showLoginError(
-            "Login service not available. Please check configuration."
-          );
+          showLoginError("Login service not available. Please check configuration.");
           return;
         }
         if (isProcessingLogin) {
@@ -267,11 +421,8 @@
 
         try {
           console.log("Triggering signInWithPopup for User Login...");
-          const result = await auth.signInWithPopup(googleProvider); // Changed from signInWithPopup(auth, googleProvider)
-          console.log(
-            "User Login: signInWithPopup successful, user:",
-            result.user.email
-          );
+          const result = await auth.signInWithPopup(googleProvider); 
+          console.log("User Login: signInWithPopup successful, user:", result.user.email);
           await handleUserAuthentication(result.user);
         } catch (err) {
           console.error("User Login: Google Sign-In Popup Error:", err);
@@ -284,8 +435,7 @@
             err.code === "auth/cancelled-popup-request" ||
             err.code === "auth/popup-blocked"
           ) {
-            friendlyMessage =
-              "Sign-in popup was blocked or cancelled. Please try again and allow popups.";
+            friendlyMessage = "Sign-in popup was blocked or cancelled. Please try again and allow popups.";
           }
           showLoginError(friendlyMessage);
           setButtonLoadingState(false);
@@ -296,6 +446,10 @@
       if (loginButton) {
         loginButton.addEventListener("click", triggerGoogleSignIn);
       } else {
-        console.error("Login button not found.");
+        // This log will appear if the script runs before the button is in the DOM,
+        // or if the ID is misspelled in the HTML.
+        console.error("Login button with ID 'login-button' not found.");
       }
     </script>
+  </body>
+</html>
