@@ -1,0 +1,37 @@
+# IDE and OS specific
+.vscode/
+.idea/
+*.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Backend specific (Next.js project inside 'backend' folder)
+backend/node_modules/
+backend/.next/
+backend/out/
+
+# Sensitive files for backend (should be handled by environment variables on Vercel)
+backend/.env
+backend/.env.local
+backend/.env.development.local
+backend/.env.production.local
+backend/.env.test.local
+backend/firebase-adminsdk.json # CRITICAL: Ensure this is gitignored
+
+# Frontend specific (if you ever add a build step or have temp files)
+# frontend/dist/
+# frontend/node_modules/ # If frontend ever becomes a JS project
+
+# Other common ignores
+coverage/
+dist/
+build/
+*.tgz
+*.swp

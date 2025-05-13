@@ -1,0 +1,31 @@
+# Node / Yarn / NPM
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Next.js build outputs
+.next/
+out/
+
+# Environment variables (these files should NOT be committed)
+.env
+.env.local
+.env.development.local
+.env.production.local
+.env.test.local
+
+# Firebase Admin SDK key (this file should NOT be committed)
+firebase-adminsdk.json
+
+# Prisma (if you use local SQLite for dev, or other generated files you don't want)
+# prisma/dev.db
+# prisma/dev.db-journal
+
+# Other
+coverage/
+*.log
+.DS_Store
+Thumbs.db

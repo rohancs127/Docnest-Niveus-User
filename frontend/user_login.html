@@ -1,0 +1,301 @@
+    <script type="module">
+      // Import Firebase v9 modular SDK
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+      import {
+        getAuth,
+        signInWithPopup,
+        GoogleAuthProvider,
+        onAuthStateChanged,
+        signOut,
+        getIdToken,
+      } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
+
+      // Firebase project configuration (should be the same as admin login)
+      const firebaseConfig = {
+        apiKey: "AIzaSyCbHWUEzqGjzeanOiMG0Z5Lb4wIjWWEMUQ", // Replace with your actual Firebase project API key
+        authDomain: "docnest-f85e2.firebaseapp.com",
+        projectId: "docnest-f85e2",
+        storageBucket: "docnest-f85e2.appspot.com",
+        messagingSenderId: "102395439437",
+        appId: "1:102395439437:web:84e6676388b5d54395af04",
+        measurementId: "G-YRMBR8BVSE",
+      };
+
+      // --- MODIFIED BASE URL ---
+      const BASE = ""; // For relative API paths (e.g., /api/auth)
+
+      let app;
+      let auth;
+      let googleProvider;
+      let isProcessingLogin = false; // Flag to prevent multiple concurrent login attempts
+
+      const loginButton = document.getElementById("login-button");
+      const errorMessageDiv = document.getElementById("error-message");
+      const themeToggleButtonLogin = document.getElementById(
+        "theme-toggle-button-login"
+      );
+
+      const sunIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>`;
+      const moonIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>`;
+
+      function applyLoginTheme(theme) {
+        if (theme === "light") {
+          document.body.classList.add("light-theme");
+          if (themeToggleButtonLogin)
+            themeToggleButtonLogin.innerHTML = moonIcon;
+          localStorage.setItem("loginTheme", "light");
+        } else {
+          document.body.classList.remove("light-theme");
+          if (themeToggleButtonLogin)
+            themeToggleButtonLogin.innerHTML = sunIcon;
+          localStorage.setItem("loginTheme", "dark");
+        }
+      }
+
+      if (themeToggleButtonLogin) {
+        themeToggleButtonLogin.addEventListener("click", () => {
+          applyLoginTheme(
+            document.body.classList.contains("light-theme") ? "dark" : "light"
+          );
+        });
+      }
+
+      const savedLoginTheme = localStorage.getItem("loginTheme");
+      const prefersDarkLogin = window.matchMedia(
+        "(prefers-color-scheme: dark)"
+      ).matches;
+      applyLoginTheme(savedLoginTheme || (prefersDarkLogin ? "dark" : "light")); // Default to light theme
+
+      function setButtonLoadingState(isLoading) {
+        const buttonTextSpan = loginButton.querySelector(".button-text");
+        if (isLoading) {
+          loginButton.disabled = true;
+          if (buttonTextSpan) {
+            buttonTextSpan.dataset.originalText = buttonTextSpan.textContent;
+            buttonTextSpan.innerHTML = `<span class="spinner"></span>Signing in...`;
+          }
+        } else {
+          loginButton.disabled = false;
+          if (buttonTextSpan && buttonTextSpan.dataset.originalText) {
+            buttonTextSpan.innerHTML = buttonTextSpan.dataset.originalText;
+          } else if (buttonTextSpan) {
+            buttonTextSpan.innerHTML = "Sign in with Google";
+          }
+        }
+      }
+
+      function showLoginError(message) {
+        if (errorMessageDiv) {
+            errorMessageDiv.textContent = message;
+            errorMessageDiv.classList.remove("hidden");
+        } else {
+            console.error("Error message div not found. Error:", message);
+        }
+      }
+
+      function clearLoginError() {
+        if (errorMessageDiv) {
+            errorMessageDiv.textContent = "";
+            errorMessageDiv.classList.add("hidden");
+        }
+      }
+
+      if (
+        firebaseConfig.apiKey &&
+        firebaseConfig.apiKey !== "YOUR_FIREBASE_API_KEY" // Simple check, ensure it's not the placeholder
+      ) {
+        try {
+          // Check if Firebase compat app is already initialized to avoid re-initialization errors
+          if (!firebase.apps.length) { // Using compat firebase global
+              app = firebase.initializeApp(firebaseConfig);
+          } else {
+              app = firebase.app(); // Get default app
+          }
+          auth = firebase.auth(app); // Using compat firebase.auth()
+          googleProvider = new firebase.auth.GoogleAuthProvider(); // Using compat
+          console.log("Firebase for User Login initialized successfully.");
+        } catch (e) {
+          console.error("Error initializing Firebase on User Login:", e);
+          showLoginError(
+            "Login service initialization failed. Please contact support."
+          );
+          if (loginButton) loginButton.disabled = true;
+        }
+      } else {
+        console.warn(
+          "Firebase config is not set with actual values. Please update firebaseConfig in the script."
+        );
+        showLoginError(
+          "Application not configured for login. Please contact support."
+        );
+        if (loginButton) loginButton.disabled = true;
+      }
+
+      // --- Centralized Authentication Handler for User Login ---
+      async function handleUserAuthentication(user) {
+        if (!user) {
+          console.log(
+            "User Login: handleUserAuthentication called with no user."
+          );
+          setButtonLoadingState(false);
+          isProcessingLogin = false;
+          return;
+        }
+
+        setButtonLoadingState(true);
+        clearLoginError();
+        console.log("User Login: Processing user", user.email);
+
+        try {
+          const token = await user.getIdToken(true); // Changed from getIdToken(user, true) to user.getIdToken(true) for compat SDK
+          sessionStorage.setItem("user_token", token); // Use a specific token key for user page
+          console.log(
+            "User Login: Token obtained, calling backend /api/auth..."
+          );
+
+          const backendResponse = await fetch(
+            `${BASE}/api/auth`, // Uses the new BASE constant
+            {
+              method: "POST",
+              headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+              },
+            }
+          );
+
+          console.log(
+            "User Login: Backend response status:",
+            backendResponse.status
+          );
+
+          if (!backendResponse.ok) {
+            const errorText = await backendResponse.text();
+            console.error("User Login: Backend auth error:", errorText);
+            let errorDetail = backendResponse.statusText;
+            try {
+                const errorData = JSON.parse(errorText || "{}");
+                errorDetail = errorData.error || errorData.detail || errorDetail;
+            } catch(e) { /* Ignore if not JSON */ }
+            throw new Error(
+              `Authorization failed: ${errorDetail} (Status: ${backendResponse.status})`
+            );
+          }
+
+          const userData = await backendResponse.json();
+          console.log("User Login: Backend auth success. User data:", userData);
+
+          if (
+            userData &&
+            (userData.isUser === true || userData.isAdmin === true)
+          ) {
+            console.log(
+              "User Login: User verified. Redirecting to userpage.html"
+            );
+            window.location.href = "userpage.html";
+          } else {
+            console.log(
+              "User Login: User does not have sufficient privileges."
+            );
+            showLoginError(
+              "Access Denied: You do not have authorized user privileges for this portal."
+            );
+            if (auth) {
+              await auth.signOut().catch((e) => // Changed from signOut(auth)
+                console.error("Sign out error:", e)
+              );
+            }
+            sessionStorage.removeItem("user_token");
+            setButtonLoadingState(false);
+          }
+        } catch (error) {
+          console.error("User Login: Error during authentication:", error);
+          showLoginError(`Authentication failed: ${error.message}`);
+          if (auth && auth.currentUser) {
+            await auth.signOut().catch((e) => // Changed from signOut(auth)
+              console.error("Sign out error during catch:", e)
+            );
+          }
+          sessionStorage.removeItem("user_token");
+          setButtonLoadingState(false);
+        } finally {
+          isProcessingLogin = false;
+        }
+      }
+
+      let initialUserAuthCheckProcessed = false;
+      if (auth) {
+        auth.onAuthStateChanged((user) => { // Changed from onAuthStateChanged(auth, user)
+          console.log(
+            `User Login Page: onAuthStateChanged. User: ${
+              user ? user.email : "null"
+            }. Initial Check Processed: ${initialUserAuthCheckProcessed}. IsProcessing: ${isProcessingLogin}`
+          );
+
+          if (user && !initialUserAuthCheckProcessed && !isProcessingLogin) {
+            initialUserAuthCheckProcessed = true;
+            console.log(
+              "User Login Page: Initial check detected user. Handling authentication..."
+            );
+            handleUserAuthentication(user);
+          } else if (!user) {
+            console.log(
+              "User Login Page: No user session detected by onAuthStateChanged or user signed out."
+            );
+            sessionStorage.removeItem("user_token");
+            setButtonLoadingState(false);
+            isProcessingLogin = false;
+          }
+        });
+      }
+
+      async function triggerGoogleSignIn() {
+        if (!auth || !googleProvider) {
+          showLoginError(
+            "Login service not available. Please check configuration."
+          );
+          return;
+        }
+        if (isProcessingLogin) {
+          console.log("Sign-in already in progress.");
+          return;
+        }
+
+        clearLoginError();
+        setButtonLoadingState(true);
+        isProcessingLogin = true;
+
+        try {
+          console.log("Triggering signInWithPopup for User Login...");
+          const result = await auth.signInWithPopup(googleProvider); // Changed from signInWithPopup(auth, googleProvider)
+          console.log(
+            "User Login: signInWithPopup successful, user:",
+            result.user.email
+          );
+          await handleUserAuthentication(result.user);
+        } catch (err) {
+          console.error("User Login: Google Sign-In Popup Error:", err);
+          let friendlyMessage = "Sign-in failed. Please try again.";
+          if (err.code === "auth/popup-closed-by-user") {
+            friendlyMessage = "Sign-in popup closed before completion.";
+          } else if (err.code === "auth/network-request-failed") {
+            friendlyMessage = "Network error. Please check your connection.";
+          } else if (
+            err.code === "auth/cancelled-popup-request" ||
+            err.code === "auth/popup-blocked"
+          ) {
+            friendlyMessage =
+              "Sign-in popup was blocked or cancelled. Please try again and allow popups.";
+          }
+          showLoginError(friendlyMessage);
+          setButtonLoadingState(false);
+          isProcessingLogin = false;
+        }
+      }
+
+      if (loginButton) {
+        loginButton.addEventListener("click", triggerGoogleSignIn);
+      } else {
+        console.error("Login button not found.");
+      }
+    </script>
