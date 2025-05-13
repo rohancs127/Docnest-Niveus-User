@@ -3,7 +3,7 @@ import { getAuth } from 'firebase-admin/auth';
 import { db } from './db.js'; // Ensure this path is correct from the root of your Next.js project
 import { ensureFirebaseInitialized } from './firebase-init.js'; // Ensure this path is correct
 
-const ALLOWED_ORIGIN = 'http://127.0.0.1:5500'; // Your frontend origin for development
+const ALLOWED_ORIGIN = 'https://docnest-niveus-user.vercel.app'; // Your frontend origin for development
 
 // Export this function for setting CORS headers and handling OPTIONS
 export function setCorsHeaders(req, res) {
