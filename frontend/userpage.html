@@ -653,7 +653,7 @@
           <div id="search-input-wrapper" class="relative">
             <div
               id="search-input-icon"
-              class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+              class="absolute inset-y-0 left-0 p-3 flex items-center pointer-events-none"
             >
               <svg
                 class="h-5 w-5 text-gray-400"
@@ -748,6 +748,11 @@
           id="current-folder-header"
           class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
         >
+          <button id="back-button" title="Go to parent folder" class="action-icon-btn p-1.5 flex-shrink-0" style="display: none;">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+                    </svg>
+                </button>
           <h2
             id="current-folder-name"
             class="text-2xl md:text-3xl font-bold text-[var(--text-card-header)]"
@@ -1004,6 +1009,7 @@
         "current-folder-name"
       );
       const loadingPlaceholder = document.getElementById("loading-placeholder");
+      const backButton = document.getElementById("back-button");
 
       // --- Global State ---
       let currentUserRoles = [];
@@ -1303,18 +1309,37 @@
           ? currentFolderObject.name
           : "Knowledge Base";
 
-        if (addItemToFolderBtn) {
-          if (
-            currentViewNodeId !== null &&
-            canAddContentToNode(currentViewNodeId) &&
-            !isSearchViewActive
-          ) {
-            addItemToFolderBtn.style.display = "inline-flex";
-            addItemToFolderBtn.onclick = () => toggleAddItemForm(true);
-          } else {
-            addItemToFolderBtn.style.display = "none";
+        if (isSearchViewActive) { // Handling UI state for search view
+            if(backButton) backButton.style.display = 'none';
+            if(addItemToFolderBtn) addItemToFolderBtn.style.display = 'none';
             toggleAddItemForm(false);
-          }
+            // currentFolderNameEl is updated by renderSearchResults
+            // breadcrumbContainer is updated by renderSearchResults
+        } else { // Handling UI state for normal folder view
+            renderFolderContents(); 
+            if(backButton) {
+                if (currentPath.length > 1 && currentViewNodeId !== null) {
+                    backButton.style.display = 'inline-flex';
+                    backButton.onclick = () => {
+                        if (currentPath.length > 1) { // Ensure there's a parent to go to
+                            const parentSegment = currentPath[currentPath.length - 2];
+                            navigateToFolder(parentSegment.id);
+                        }
+                    };
+                } else {
+                    backButton.style.display = 'none';
+                }
+            }
+
+            if (addItemToFolderBtn) {
+                if (currentViewNodeId !== null && canAddContentToNode(currentViewNodeId)) {
+                    addItemToFolderBtn.style.display = 'inline-flex';
+                    addItemToFolderBtn.onclick = () => toggleAddItemForm(true);
+                } else {
+                    addItemToFolderBtn.style.display = 'none';
+                    toggleAddItemForm(false); 
+                }
+            }
         }
       }
 
@@ -1857,6 +1882,8 @@
 
       function renderSearchResults(results, searchTerm = "") {
         folderContentContainer.innerHTML = "";
+        if (backButton) backButton.style.display = 'none';
+        if (addItemToFolderBtn) addItemToFolderBtn.style.display = 'none';
         toggleAddItemForm(false); 
         if (addItemToFolderBtn) addItemToFolderBtn.style.display = "none";
         currentFolderNameEl.textContent =
