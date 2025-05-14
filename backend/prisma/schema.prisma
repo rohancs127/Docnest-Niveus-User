@@ -19,8 +19,6 @@ model Node {
   artifacts Artifact[]
   access    Access[]
   createdAt DateTime  @default(now())
-  createdBy Int?     // Add this field - make it nullable
-  creator   User?    @relation("UserCreatedNodes", fields: [createdBy], references: [id]) // Add this relation
 }
 
 model Artifact {
