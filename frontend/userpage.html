@@ -919,1148 +919,1107 @@
       </div>
     </div>
 
-    <script>
-      const firebaseConfig = {
-        apiKey: "AIzaSyCbHWUEzqGjzeanOiMG0Z5Lb4wIjWWEMUQ", // Replace with your actual API key
-        authDomain: "docnest-f85e2.firebaseapp.com",
-        projectId: "docnest-f85e2",
-        storageBucket: "docnest-f85e2.appspot.com",
-        messagingSenderId: "102395439437",
-        appId: "1:102395439437:web:84e6676388b5d54395af04",
-        measurementId: "G-YRMBR8BVSE",
-      };
+<script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCbHWUEzqGjzeanOiMG0Z5Lb4wIjWWEMUQ", // If this is a placeholder, replace with your actual API key
+      authDomain: "docnest-f85e2.firebaseapp.com",   // Replace with your actual auth domain
+      projectId: "docnest-f85e2",                  // Replace with your actual project ID
+      storageBucket: "docnest-f85e2.appspot.com",    // Replace with your actual storage bucket
+      messagingSenderId: "102395439437",           // Replace with your actual sender ID
+      appId: "1:102395439437:web:84e6676388b5d54395af04", // Replace with your actual App ID
+      measurementId: "G-YRMBR8BVSE",               // Optional: Replace with your actual Measurement ID
+    };
 
-      // --- Global Helper Functions (Toast, Button Loading, Escape, Debounce) ---
-      window.showNotification = function (
-        message,
-        type = "success",
-        duration = 3000
-      ) {
-        const toastContainer = document.getElementById("toast-container");
-        if (!toastContainer) return;
-        const toast = document.createElement("div");
-        toast.classList.add("toast", type);
-        let iconHtml = "";
-        if (type === "success") {
-          iconHtml = `<svg class="toast-icon h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" /></svg>`;
-        } else if (type === "error") {
-          iconHtml = `<svg class="toast-icon h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm.293-10.293a1 1 0 00-1.414 0L9 8.586l-.293-.293a1 1 0 10-1.414 1.414L7.586 10l-.293.293a1 1 0 101.414 1.414L9 11.414l.293.293a1 1 0 001.414-1.414L10.414 10l.293-.293a1 1 0 000-1.414z" clip-rule="evenodd" /></svg>`;
-        }
-        toast.innerHTML = `${iconHtml}<span>${message}</span>`;
-        toastContainer.appendChild(toast);
-        toast.offsetHeight;
-        toast.classList.add("show");
+    // --- Global Helper Functions (Toast, Button Loading, Escape, Debounce) ---
+    window.showNotification = function (
+      message,
+      type = "success",
+      duration = 3000
+    ) {
+      const toastContainer = document.getElementById("toast-container");
+      if (!toastContainer) return;
+      const toast = document.createElement("div");
+      toast.classList.add("toast", type);
+      let iconHtml = "";
+      if (type === "success") {
+        iconHtml = `<svg class="toast-icon h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" /></svg>`;
+      } else if (type === "error") {
+        iconHtml = `<svg class="toast-icon h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm.293-10.293a1 1 0 00-1.414 0L9 8.586l-.293-.293a1 1 0 10-1.414 1.414L7.586 10l-.293.293a1 1 0 101.414 1.414L9 11.414l.293.293a1 1 0 001.414-1.414L10.414 10l.293-.293a1 1 0 000-1.414z" clip-rule="evenodd" /></svg>`;
+      }
+      toast.innerHTML = `${iconHtml}<span>${message}</span>`;
+      toastContainer.appendChild(toast);
+      toast.offsetHeight; // Trigger reflow
+      toast.classList.add("show");
+      setTimeout(() => {
+        toast.classList.remove("show");
         setTimeout(() => {
-          toast.classList.remove("show");
-          setTimeout(() => {
-            toast.remove();
-          }, 300);
-        }, duration);
-      };
-      window.setButtonLoading = function (
-        button,
-        isLoading,
-        originalText = null
-      ) {
-        if (!(button instanceof HTMLElement)) {
-          console.error("setButtonLoading: invalid button", button);
-          return;
-        }
-        const buttonTextSpan = button.querySelector(".button-text");
-        const defaultOriginal = buttonTextSpan
-          ? buttonTextSpan.dataset.originalText || buttonTextSpan.textContent
-          : button.dataset.originalText || button.textContent;
+          toast.remove();
+        }, 300);
+      }, duration);
+    };
 
-        if (isLoading) {
-          button.disabled = true;
-          if (buttonTextSpan) {
-            if (
-              originalText !== null &&
-              typeof buttonTextSpan.dataset.originalText === "undefined"
-            )
-              buttonTextSpan.dataset.originalText = defaultOriginal;
-            buttonTextSpan.innerHTML = `<span class="spinner"></span>Processing...`;
-          } else {
-            if (
-              originalText !== null &&
-              typeof button.dataset.originalText === "undefined"
-            )
-              button.dataset.originalText = defaultOriginal;
-            button.innerHTML = `<span class="spinner"></span>Processing...`;
-          }
+    window.setButtonLoading = function (
+      button,
+      isLoading,
+      originalText = null
+    ) {
+      if (!(button instanceof HTMLElement)) {
+        console.error("setButtonLoading: invalid button", button);
+        return;
+      }
+      const buttonTextSpan = button.querySelector(".button-text");
+      const defaultOriginal = buttonTextSpan
+        ? buttonTextSpan.dataset.originalText || buttonTextSpan.textContent
+        : button.dataset.originalText || button.textContent;
+
+      if (isLoading) {
+        button.disabled = true;
+        if (buttonTextSpan) {
+          if (
+            originalText !== null &&
+            typeof buttonTextSpan.dataset.originalText === "undefined"
+          )
+            buttonTextSpan.dataset.originalText = defaultOriginal;
+          buttonTextSpan.innerHTML = `<span class="spinner"></span>Processing...`;
         } else {
-          button.disabled = false;
-          if (buttonTextSpan) {
-            buttonTextSpan.innerHTML =
-              originalText || buttonTextSpan.dataset.originalText || "Submit";
-          } else {
-            button.innerHTML =
-              originalText || button.dataset.originalText || "Submit";
-          }
-        }
-      };
-      function escapeJSString(str) {
-        if (typeof str !== "string") return "";
-        return str
-          .replace(/\\/g, "\\\\")
-          .replace(/'/g, "\\'")
-          .replace(/"/g, '\\"')
-          .replace(/`/g, "\\`");
-      }
-      function debounce(func, delay) {
-        let timeoutId;
-        return function (...args) {
-          clearTimeout(timeoutId);
-          timeoutId = setTimeout(() => {
-            func.apply(this, args);
-          }, delay);
-        };
-      }
-
-      // --- Firebase Initialization ---
-      let firebaseApp;
-      let firebaseAuth;
-      if (
-        firebaseConfig.apiKey === "AIzaSyCbHWUEzqGjzeanOiMG0Z5Lb4wIjWWEMUQ"
-      ) {
-        try {
-          firebaseApp = firebase.initializeApp(firebaseConfig);
-          firebaseAuth = firebase.auth();
-        } catch (e) {
-          console.error("Error initializing Firebase:", e);
-          window.showNotification(
-            "Critical Error: Auth service init failed.",
-            "error",
-            10000
-          );
+          if (
+            originalText !== null &&
+            typeof button.dataset.originalText === "undefined"
+          )
+            button.dataset.originalText = defaultOriginal;
+          button.innerHTML = `<span class="spinner"></span>Processing...`;
         }
       } else {
-        console.warn("Firebase config missing or placeholder.");
+        button.disabled = false;
+        if (buttonTextSpan) {
+          buttonTextSpan.innerHTML =
+            originalText || buttonTextSpan.dataset.originalText || "Submit";
+          delete buttonTextSpan.dataset.originalText;
+        } else {
+          button.innerHTML =
+            originalText || button.dataset.originalText || "Submit";
+          delete button.dataset.originalText;
+        }
+      }
+    };
+    function escapeJSString(str) { 
+      if (typeof str !== "string") return "";
+      return str
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;")
+        .replace(/`/g, "&#96;");
+    }
+    function debounce(func, delay) {
+      let timeoutId;
+      return function (...args) {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => {
+          func.apply(this, args);
+        }, delay);
+      };
+    }
+    // --- End Global Helper Functions ---
+
+    // --- Firebase Initialization ---
+    let firebaseApp;
+    let firebaseAuth;
+
+    // NOTE: This condition means Firebase ONLY initializes if the apiKey IS the placeholder.
+    // For production, you'll want to ensure it initializes with your REAL key.
+    // A better check for development might be:
+    // if (firebaseConfig.apiKey && firebaseConfig.apiKey !== "YOUR_ACTUAL_PROD_KEY_OR_A_DIFFERENT_PLACEHOLDER")
+    if (
+      firebaseConfig.apiKey === "AIzaSyCbHWUEzqGjzeanOiMG0Z5Lb4wIjWWEMUQ" // If this IS your key, it's fine. If it's a placeholder, this logic is inverted for production.
+    ) {
+      console.log("User Page: Attempting Firebase initialization with current key.");
+      try {
+        firebaseApp = firebase.initializeApp(firebaseConfig);
+        firebaseAuth = firebase.auth();
+        console.log("User Page: Firebase initialized.");
+      } catch (e) {
+        console.error("User Page: Error initializing Firebase:", e);
         window.showNotification(
-          "Auth not configured. Please contact support.",
+          "Critical Error: Auth service init failed.",
           "error",
           10000
         );
-        // Fallback for critical failure or redirect to a config error page
-        if (document.body) {
-          document.body.innerHTML =
-            '<div style="padding: 20px; text-align: center; font-size: 1.2em; color: red;">Application cannot start: Firebase configuration is missing or invalid.</div>';
-        }
       }
+    } else {
+      console.warn("User Page: Firebase config apiKey is NOT the specific placeholder 'AIzaSy...'. Assuming it's a real key or a different placeholder. Attempting initialization.");
+      // If the key is NOT the placeholder, we assume it's the real one and try to init.
+      // Or, if it's a different placeholder, it will also go here and likely fail if that other placeholder is invalid.
+      try {
+        firebaseApp = firebase.initializeApp(firebaseConfig);
+        firebaseAuth = firebase.auth();
+        console.log("User Page: Firebase initialized (key was not the common placeholder).");
+      } catch (e) {
+         console.error("User Page: Error initializing Firebase (key was not common placeholder):", e);
+         window.showNotification(
+            "Auth service not configured correctly. Please contact support.",
+            "error",
+            10000
+         );
+         if (document.body && !window.location.pathname.endsWith("user_login.html")) {
+            document.body.innerHTML =
+            '<div style="padding: 20px; text-align: center; font-size: 1.2em; color: red;">Application cannot start: Firebase configuration is missing or invalid.</div>';
+         }
+      }
+    }
+    // --- End Firebase Initialization ---
 
-      // --- DOM Elements ---
-      const userMenuButton = document.getElementById("user-menu-button");
-      const userDisplayNameSpan = document.getElementById("user-display-name");
-      const userDropdownMenu = document.getElementById("user-dropdown-menu");
-      const dropdownUserName = document.getElementById("dropdown-user-name");
-      const dropdownUserEmail = document.getElementById("dropdown-user-email");
-      const logoutButtonDropdown = document.getElementById(
-        "logout-button-dropdown"
-      );
-      const searchInputElement = document.getElementById("search-input");
-      const breadcrumbContainer = document.getElementById(
-        "breadcrumb-container"
-      );
-      const folderContentContainer = document.getElementById(
-        "folder-content-container"
-      );
-      const addItemToFolderBtn = document.getElementById(
-        "add-item-to-current-folder-button"
-      );
-      const addItemFormContainer = document.getElementById(
-        "add-item-form-container"
-      );
-      const currentFolderNameEl = document.getElementById(
-        "current-folder-name"
-      );
-      const loadingPlaceholder = document.getElementById("loading-placeholder");
+    // --- DOM Elements ---
+    const userMenuButton = document.getElementById("user-menu-button");
+    const userDisplayNameSpan = document.getElementById("user-display-name");
+    const userDropdownMenu = document.getElementById("user-dropdown-menu");
+    const dropdownUserName = document.getElementById("dropdown-user-name");
+    const dropdownUserEmail = document.getElementById("dropdown-user-email");
+    const logoutButtonDropdown = document.getElementById("logout-button-dropdown");
+    const searchInputElement = document.getElementById("search-input");
+    const breadcrumbContainer = document.getElementById("breadcrumb-container");
+    const folderContentContainer = document.getElementById("folder-content-container");
+    const addItemToFolderBtn = document.getElementById("add-item-to-current-folder-button");
+    const addItemFormContainer = document.getElementById("add-item-form-container");
+    const currentFolderNameEl = document.getElementById("current-folder-name");
+    const loadingPlaceholder = document.getElementById("loading-placeholder");
+    const backButton = document.getElementById("back-button");
+    // --- End DOM Elements ---
 
-      // --- Global State ---
-      let currentUserRoles = [];
-      let fullTreeData = [];
-      let currentPath = [];
-      let currentViewNodeId = null;
-      let isSearchViewActive = false;
+    // --- Global State ---
+    let currentUserRoles = [];
+    let fullTreeData = [];
+    let currentPath = [];
+    let currentViewNodeId = null;
+    let isSearchViewActive = false;
+    // --- End Global State ---
 
-      // --- Authentication & Authorization ---
-      if (firebaseAuth) {
-        firebaseAuth.onAuthStateChanged(async (user) => {
-          if (user) {
-            if (userDisplayNameSpan)
-              userDisplayNameSpan.textContent =
-                user.displayName || user.email.split("@")[0];
-            if (dropdownUserName)
-              dropdownUserName.textContent = user.displayName || "N/A";
-            if (dropdownUserEmail) dropdownUserEmail.textContent = user.email;
+    // ================================================================
+    // DYNAMIC BACKEND URL CONFIGURATION
+    // ================================================================
+    let BASE_API_URL; // This will hold the chosen base URL for API calls
+    const localBaseUrl = "http://localhost:8000"; // NO TRAILING SLASH. Your local backend.
+
+    // IMPORTANT: Replace this placeholder with your *actual* Cloud Run service URL
+    const cloudRunBaseUrl = "https://docnest-780614596615.asia-south1.run.app"; // NO TRAILING SLASH. Example: "https://docnest-user-backend-xyz.a.run.app"
+
+    if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
+      BASE_API_URL = localBaseUrl;
+      console.log("USER PAGE: Using LOCAL backend API base:", BASE_API_URL);
+    } else {
+      BASE_API_URL = cloudRunBaseUrl;
+      console.log("USER PAGE: Using CLOUD backend API base:", BASE_API_URL);
+
+      // Safety check for placeholder Cloud Run URL when not on localhost
+      if (cloudRunBaseUrl.includes("your-userpage-backend-url") || // Check against the placeholder string
+          cloudRunBaseUrl.includes("your-actual-cloud-run-url")) { // Add any other common placeholder patterns you might use
+          const warningMessage = "CRITICAL: User Page Cloud Run URL (BASE_API_URL) is a placeholder! API calls will likely fail. Please update 'cloudRunBaseUrl' in the userpage.html script.";
+          console.error(warningMessage);
+          if (window.showNotification) { // Ensure showNotification is defined
+              window.showNotification(warningMessage, "error", 60000); // Display for a long time
+          } else {
+              alert(warningMessage); // Fallback
+          }
+          // Optionally, disable functionality or halt further data loading
+          if (loadingPlaceholder) {
+            loadingPlaceholder.innerHTML = `<p class="p-4 text-lg text-[var(--text-red-accent)]">${warningMessage}</p>`;
+            loadingPlaceholder.style.display = "flex";
+          }
+      }
+    }
+    // ================================================================
+
+    // --- Authentication & Authorization ---
+    if (firebaseAuth) { // Check if Firebase Auth was initialized
+      firebaseAuth.onAuthStateChanged(async (user) => {
+        if (user) {
+          console.log("User Page: User is signed in.", user.email);
+          if (userDisplayNameSpan)
+            userDisplayNameSpan.textContent =
+              user.displayName || user.email.split("@")[0];
+          if (dropdownUserName)
+            dropdownUserName.textContent = user.displayName || "N/A";
+          if (dropdownUserEmail) dropdownUserEmail.textContent = user.email;
+          
+          // Check if BASE_API_URL is properly configured before loading data
+          if (BASE_API_URL && (!BASE_API_URL.includes("your-userpage-backend-url") && !BASE_API_URL.includes("your-actual-cloud-run-url"))) {
             await loadInitialDataConcurrently();
           } else {
-            sessionStorage.removeItem("token");
-            currentUserRoles = [];
-            fullTreeData = [];
+            console.error("User Page: Backend API URL is not properly configured. Halting data load.");
+            if (loadingPlaceholder) {
+                loadingPlaceholder.innerHTML = `<p class="p-4 text-lg text-[var(--text-red-accent)]">Application error: Backend service URL is not configured. Please contact support.</p>`;
+                loadingPlaceholder.style.display = "flex";
+            }
+             // Optionally sign out user as they can't proceed
+            if(firebaseAuth) await firebaseAuth.signOut().catch(e => console.error("Error signing out due to config issue:", e));
+            // Redirecting here might be too aggressive if onAuthStateChanged handles it below.
+          }
+        } else {
+          console.log("User Page: No user signed in. Redirecting to user_login.html.");
+          sessionStorage.removeItem("userToken"); // Use "userToken" for consistency
+          currentUserRoles = [];
+          fullTreeData = [];
+          if (!window.location.pathname.endsWith("user_login.html")) {
             window.location.href = "user_login.html";
           }
-        });
-      } else {
-        // If firebaseAuth is still not initialized here, it means config was bad
-        if (
-          !window.location.pathname.endsWith("user_login.html") &&
-          document.getElementById("loading-placeholder")
-        ) {
-          document.getElementById("loading-placeholder").innerHTML =
-            '<p class="p-4 text-lg text-[var(--text-red-accent)]">Authentication service failed to initialize. Please check configuration or contact support. You may need to <a href="user_login.html" class="text-[var(--text-link)]">login again</a>.</p>';
-          document.getElementById("loading-placeholder").style.display = "flex";
+        }
+      });
+    } else {
+        // This block executes if Firebase Auth itself failed to initialize (e.g. bad config)
+        console.error("User Page: Firebase Auth service is not available. Cannot proceed.");
+        if (!window.location.pathname.endsWith("user_login.html")) {
+            if (loadingPlaceholder) { // Check if element exists
+                loadingPlaceholder.innerHTML =
+                '<p class="p-4 text-lg text-[var(--text-red-accent)]">Authentication service failed to initialize. Please check configuration or contact support. You may need to <a href="user_login.html" class="text-[var(--text-link)]">login again</a>.</p>';
+                loadingPlaceholder.style.display = "flex";
+            }
+            // Fallback redirect if UI cannot be updated
+            setTimeout(() => {
+                if (!window.location.pathname.endsWith("user_login.html")) {
+                     window.location.href = "user_login.html";
+                }
+            }, 3000);
+        }
+    }
+
+    async function getAuthToken() {
+      if (!firebaseAuth || !firebaseAuth.currentUser) {
+        console.warn("User Page: No Firebase current user for token request. Redirecting to login.");
+        if (!window.location.pathname.endsWith("user_login.html")) {
+            window.location.href = "user_login.html"; // Ensure redirect if no user
+        }
+        return null;
+      }
+      try {
+        const token = await firebaseAuth.currentUser.getIdToken(true); // Force refresh
+        sessionStorage.setItem("userToken", token); // Using "userToken" for consistency
+        return token;
+      } catch (error) {
+        console.error("User Page: Error getting ID token:", error);
+        window.showNotification(
+          "Your session may have expired. Please try logging in again.",
+          "error",
+          5000
+        );
+        if (firebaseAuth) {
+          await firebaseAuth.signOut().catch((e) => console.error("User Page: Signout failed after token error", e));
+          // onAuthStateChanged will handle the redirect
         } else if (!window.location.pathname.endsWith("user_login.html")) {
-          // Fallback if loading placeholder not available or already redirected
-          setTimeout(() => {
-            window.location.href = "user_login.html";
-          }, 500);
+            window.location.href = "user_login.html"; // Fallback redirect
         }
+        return null;
+      }
+    }
+
+    async function secureFetch(url, options = {}) {
+      const token = await getAuthToken();
+      if (!token) {
+        // getAuthToken handles redirection if token cannot be obtained.
+        // Throw an error to ensure promise chains are rejected and calling function can handle it.
+        throw new Error("Authentication token unavailable. User might be logged out or session expired.");
+      }
+      
+      const headers = { ...options.headers };
+      headers["Authorization"] = `Bearer ${token}`;
+
+      if (options.body && !(options.body instanceof FormData) && (options.method === 'POST' || options.method === 'PUT' || options.method === 'PATCH')) {
+        headers["Content-Type"] = "application/json";
       }
 
-      async function getAuthToken() {
-        if (!firebaseAuth || !firebaseAuth.currentUser) {
-          console.warn("No Firebase current user for token request.");
-          return null;
+      try {
+        const response = await fetch(url, { ...options, headers });
+        if (response.status === 401 || response.status === 403) {
+            console.error(`User Page: Authorization error (${response.status}) for ${url}.`);
+            window.showNotification("Authorization error. Your session may have expired. Please log in again.", "error", 5000);
+            if (firebaseAuth) await firebaseAuth.signOut().catch(e => console.error("Sign out after auth error failed", e));
+            // onAuthStateChanged will handle redirect eventually
+            throw new Error(`Authorization failed (${response.status})`); // Propagate error
         }
-        try {
-          const token = await firebaseAuth.currentUser.getIdToken(true);
-          sessionStorage.setItem("token", token);
-          return token;
-        } catch (error) {
-          console.error("Error getting ID token:", error);
-          window.showNotification(
-            "Session issue. Please log in again.",
-            "error"
-          );
-          if (firebaseAuth)
-            firebaseAuth
-              .signOut()
-              .catch((e) =>
-                console.error("Signout failed after token error", e)
-              );
-          return null;
-        }
+        return response; // Return the whole response object
+      } catch (networkError) {
+          // This catches actual network failures (e.g., server down, DNS issues, CORS if not preflighted)
+          // And also errors thrown from the 401/403 block above
+          console.error("User Page: Network or Auth error during secureFetch:", networkError);
+          if (!networkError.message.includes("Authorization failed")) { // Avoid double notification for auth errors
+            window.showNotification(`Network Error: ${networkError.message}. Check connection or server status.`, "error", 7000);
+          }
+          throw networkError; // Re-throw to be caught by calling function
       }
-      async function secureFetch(url, options = {}) {
-        const token = await getAuthToken();
-        if (!token) {
-          window.showNotification(
-            "Authentication failed. Please login.",
-            "error"
-          );
-          throw new Error("Auth token unavailable.");
-        }
-        const headers = {
-          ...options.headers,
-          Authorization: `Bearer ${token}`,
-        };
-        if (
-          !(options.body instanceof FormData) &&
-          options.method &&
-          options.method.toUpperCase() !== "GET"
-        ) {
-          headers["Content-Type"] = "application/json";
-        }
-        return fetch(url, { ...options, headers });
-      }
+    }
+    // --- End Authentication & Authorization ---
 
-      const BASE = "http://localhost:8000";
-
-      // --- Initial Data Loading (Parallel) ---
-      async function fetchRoles() {
-        const response = await secureFetch(`${BASE}/api/auth`, {
-          method: "POST",
+    // --- Initial Data Loading (Parallel) ---
+    async function fetchRoles() {
+      try {
+        const response = await secureFetch(`${BASE_API_URL}/api/auth`, { // USE DYNAMIC URL
+          method: "POST", 
         });
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({
-            detail: `Roles fetch failed (Status: ${response.status})`,
+            detail: `Roles/Auth verification failed (Status: ${response.status})`,
           }));
           throw new Error(errorData.detail);
         }
         const userData = await response.json();
-        currentUserRoles = userData.roles || [];
-        console.log("User roles fetched:", currentUserRoles);
+        // IMPORTANT: Ensure your backend's POST /api/auth (when called by an already Firebase-authed user)
+        // returns `isUser: true` or `isAdmin: true` if they should access this page.
+        if (!userData || (userData.isUser !== true && userData.isAdmin !== true)) {
+            console.warn("User Page: User does not have sufficient privileges according to backend verification. Signing out.");
+            window.showNotification("Access Denied. You do not have sufficient privileges for this portal.", "error", 7000);
+            if (firebaseAuth) await firebaseAuth.signOut().catch(e => console.error("Sign out after privilege check failed", e));
+            // onAuthStateChanged will redirect
+            throw new Error("Insufficient privileges determined by backend.");
+        }
+        currentUserRoles = userData.roles || []; 
+        console.log("User Page: User roles fetched/verified:", currentUserRoles);
+        return userData; // Return userData for further checks if needed
+      } catch (error) {
+        console.error("User Page: Error in fetchRoles:", error.message);
+        // If fetchRoles fails (e.g. token invalid, user not authorized by backend), sign out.
+        if (firebaseAuth) await firebaseAuth.signOut().catch(e => console.error("Sign out after fetchRoles error failed", e));
+        throw error; // Re-throw to be caught by loadInitialDataConcurrently
+      }
+    }
+
+    async function fetchTreeDataOnly() {
+      if (loadingPlaceholder && !isSearchViewActive) {
+        loadingPlaceholder.innerHTML =
+          '<p class="p-4 text-lg text-[var(--text-secondary)]">Loading knowledge base structure...</p>';
+        loadingPlaceholder.style.display = "flex";
       }
 
-      async function fetchTreeDataOnly() {
-        if (loadingPlaceholder && !isSearchViewActive) {
-          // Only show structure loading if not in search
-          loadingPlaceholder.innerHTML =
-            '<p class="p-4 text-lg text-[var(--text-secondary)]">Loading structure...</p>';
-          loadingPlaceholder.style.display = "flex"; // Changed to flex for centering
+      try {
+        const res = await secureFetch(`${BASE_API_URL}/api/tree`); // USE DYNAMIC URL
+        if (!res.ok) {
+            const errorText = await res.text();
+            throw new Error(`Failed to load knowledge base (HTTP ${res.status}): ${errorText || 'Server error'}`);
         }
-        // folderContentContainer.innerHTML = ''; // Clear only when starting to fetch tree -- NO, let navigateToFolder handle this
-
-        try {
-          const res = await secureFetch(`${BASE}/api/tree`);
-          if (!res.ok)
-            throw new Error(
-              `HTTP ${res.status}. Ensure /api/tree filters by user permission.`
-            );
-          const data = await res.json();
-          if (!Array.isArray(data)) {
-            console.error("Fetched tree data is not an array:", data);
-            throw new Error("Received invalid tree structure from server.");
-          }
-          fullTreeData = data;
-          console.log("Full tree data fetched:", fullTreeData);
-        } catch (error) {
-          console.error("Failed to fetch full tree:", error);
-          fullTreeData = [];
-          throw error;
+        const data = await res.json();
+        if (!Array.isArray(data)) {
+          console.error("User Page: Fetched tree data is not an array:", data);
+          throw new Error("Received invalid tree structure from server.");
         }
+        fullTreeData = data;
+        console.log("User Page: Full tree data fetched:", fullTreeData);
+      } catch (error) {
+        console.error("User Page: Failed to fetch full tree:", error);
+        fullTreeData = [];
+        throw error; 
       }
+    }
 
-      async function loadInitialDataConcurrently() {
-        if (loadingPlaceholder) {
-          loadingPlaceholder.innerHTML =
-            '<p class="p-4 text-lg text-[var(--text-secondary)]">Initializing...</p>';
-          loadingPlaceholder.style.display = "flex";
-        }
-        isSearchViewActive = false;
+    async function loadInitialDataConcurrently() {
+      if (loadingPlaceholder) {
+        loadingPlaceholder.innerHTML =
+          '<p class="p-4 text-lg text-[var(--text-secondary)]">Initializing knowledge base...</p>';
+        loadingPlaceholder.style.display = "flex";
+      }
+      isSearchViewActive = false;
 
-        try {
-          await Promise.all([fetchRoles(), fetchTreeDataOnly()]);
-          navigateToFolder(null);
-        } catch (error) {
-          console.error("Error during initial data load:", error);
-          window.showNotification(
-            `Could not load page data: ${error.message || "Unknown error"}`,
+      try {
+        // Fetch roles first to ensure user is authorized for the app before fetching tree
+        await fetchRoles(); 
+        await fetchTreeDataOnly();
+        navigateToFolder(null); 
+      } catch (error) {
+        console.error("User Page: Error during initial data load sequence:", error);
+        if(window.showNotification) window.showNotification( // Check if showNotification is defined
+            `Could not load page data: ${error.message || "Unknown error"}. Please try logging in again.`,
             "error",
-            7000
-          );
-          folderContentContainer.innerHTML = `<p class="text-[var(--text-red-accent)] p-4 text-center">Critical error loading initial page data. <br>Please try refreshing or contact support if the issue persists.</p>`;
-        } finally {
-          if (loadingPlaceholder) loadingPlaceholder.style.display = "none";
-        }
-      }
-
-      function canPerformAction(nodeId, allowedRoles) {
-        if (nodeId === null || typeof nodeId === "undefined") return false;
-        const roleEntry = currentUserRoles.find(
-          (r) => String(r.nodeId) === String(nodeId)
+            10000 // Longer duration for critical errors
         );
-        return !!(roleEntry && allowedRoles.includes(roleEntry.role));
+        if (folderContentContainer) { // Check if element exists
+            folderContentContainer.innerHTML = `<p class="text-[var(--text-red-accent)] p-4 text-center">Critical error loading page data. <br>Details: ${error.message}. <br>Please try refreshing. If the issue persists, you might need to log in again or contact support.</p>`;
+        }
+        // If fetchRoles failed due to auth, user would have been signed out and redirected by onAuthStateChanged eventually.
+      } finally {
+        if (loadingPlaceholder) loadingPlaceholder.style.display = "none";
       }
-      function canAddContentToNode(nodeId) {
-        return canPerformAction(nodeId, ["ADMIN", "EDITOR"]);
-      }
-      function canDeleteNode(nodeId) {
-        return canPerformAction(nodeId, ["ADMIN"]);
-      }
-      function canEditArtifactsInNode(parentNodeId) {
-        return canPerformAction(parentNodeId, ["ADMIN", "EDITOR"]);
-      }
+    }
+    // --- End Initial Data Loading ---
 
-      // --- Navigation and Rendering ---
-      function findNodeInTree(nodeId, nodesToSearch = fullTreeData) {
-        if (nodeId === null || typeof nodeId === "undefined") {
-          return {
-            id: null,
-            name: "Knowledge Base",
-            children: nodesToSearch,
-            artifacts: [],
-            type: "ROOT",
+    // --- Permissions ---
+    // (Your canPerformAction, canAddContentToNode, canDeleteNode, canEditArtifactsInNode functions)
+    // These should be mostly fine if currentUserRoles is populated correctly.
+    function canPerformAction(nodeId, allowedRoles) {
+      if (nodeId === null || typeof nodeId === "undefined") {
+         // Example: Allow if user has a global ADMIN role for root actions
+         // const isGlobalAdmin = currentUserRoles.some(r => r.nodeId === null && r.role === 'ADMIN');
+         // return isGlobalAdmin && allowedRoles.includes('ADMIN');
+         return false; // For now, explicit node roles needed for actions via this func
+      }
+      const roleEntry = currentUserRoles.find(
+        (r) => String(r.nodeId) === String(nodeId)
+      );
+      return !!(roleEntry && allowedRoles.includes(roleEntry.role));
+    }
+    function canAddContentToNode(nodeId) {
+      return canPerformAction(String(nodeId), ["ADMIN", "EDITOR"]);
+    }
+    function canDeleteNode(nodeId) {
+      return canPerformAction(String(nodeId), ["ADMIN"]);
+    }
+    function canEditArtifactsInNode(parentNodeId) {
+      return canPerformAction(String(parentNodeId), ["ADMIN", "EDITOR"]);
+    }
+    // --- End Permissions ---
+
+    // --- Navigation and Rendering ---
+    // (Your findNodeInTree, buildPathSegmentsRecursive, renderBreadcrumbs, 
+    //  navigateToFolder, renderFolderContents functions)
+    // Ensure they use global fullTreeData and currentUserRoles, and BASE_API_URL where needed.
+    // (Keeping your existing functions as they were mostly UI logic)
+    function findNodeInTree(nodeId, nodesToSearch = fullTreeData) {
+      if (nodeId === null || typeof nodeId === "undefined" || nodeId === "null") { // Handle string "null" too
+        return {
+          id: null, name: "Knowledge Base", children: nodesToSearch, artifacts: [], type: "ROOT",
+        };
+      }
+      for (const node of nodesToSearch) {
+        if (String(node.id) === String(nodeId)) return node;
+        if (node.children && Array.isArray(node.children)) {
+          const found = findNodeInTree(nodeId, node.children);
+          if (found) return found;
+        }
+      }
+      return null;
+    }
+
+    function buildPathSegmentsRecursive(targetNodeId, nodesToSearch, currentStack) {
+      for (const node of nodesToSearch) {
+        const nodePathSegment = { id: node.id, name: node.name };
+        if (String(node.id) === String(targetNodeId)) {
+          return [...currentStack, nodePathSegment];
+        }
+        if (node.children && Array.isArray(node.children)) {
+          const foundPath = buildPathSegmentsRecursive(targetNodeId, node.children, [...currentStack, nodePathSegment]);
+          if (foundPath) return foundPath;
+        }
+      }
+      return null;
+    }
+
+    function renderBreadcrumbs() {
+      if(!breadcrumbContainer) return;
+      breadcrumbContainer.innerHTML = "";
+      if (!currentPath || currentPath.length === 0) {
+        currentPath = [{ id: null, name: "Knowledge Base" }];
+      }
+      currentPath.forEach((segment, index) => {
+        const segEl = document.createElement("span");
+        if (index < currentPath.length - 1) {
+          const link = document.createElement("a");
+          link.textContent = segment.name;
+          link.href = "#";
+          link.classList.add("breadcrumb-item");
+          link.onclick = (e) => {
+            e.preventDefault();
+            if (!isSearchViewActive) navigateToFolder(segment.id);
+            else {
+              isSearchViewActive = false;
+              if(searchInputElement) searchInputElement.value = "";
+              navigateToFolder(segment.id);
+            }
           };
+          segEl.appendChild(link);
+          breadcrumbContainer.appendChild(segEl);
+
+          const separator = document.createElement("span");
+          separator.classList.add("breadcrumb-separator");
+          separator.innerHTML = "&gt;";
+          breadcrumbContainer.appendChild(separator);
+        } else {
+          segEl.textContent = segment.name;
+          segEl.classList.add("breadcrumb-current");
+          breadcrumbContainer.appendChild(segEl);
         }
-        for (const node of nodesToSearch) {
-          if (String(node.id) === String(nodeId)) return node;
-          if (node.children && Array.isArray(node.children)) {
-            const found = findNodeInTree(nodeId, node.children);
-            if (found) return found;
-          }
-        }
-        return null;
-      }
+      });
+    }
+    
+    function navigateToFolder(nodeId) {
+        currentViewNodeId = (nodeId === undefined || nodeId === null || nodeId === "null") ? null : String(nodeId);
 
-      function buildPathSegmentsRecursive(
-        targetNodeId,
-        nodesToSearch,
-        currentStack
-      ) {
-        for (const node of nodesToSearch) {
-          const nodePathSegment = { id: node.id, name: node.name };
-          if (String(node.id) === String(targetNodeId)) {
-            return [...currentStack, nodePathSegment];
-          }
-          if (node.children && Array.isArray(node.children)) {
-            const foundPath = buildPathSegmentsRecursive(
-              targetNodeId,
-              node.children,
-              [...currentStack, nodePathSegment]
-            );
-            if (foundPath) return foundPath;
-          }
-        }
-        return null;
-      }
+        if (!isSearchViewActive && searchInputElement) searchInputElement.value = "";
 
-      function renderBreadcrumbs() {
-        breadcrumbContainer.innerHTML = "";
-        if (!currentPath || currentPath.length === 0) {
-          currentPath = [{ id: null, name: "Knowledge Base" }];
-        }
-        currentPath.forEach((segment, index) => {
-          const segEl = document.createElement("span");
-          if (index < currentPath.length - 1) {
-            const link = document.createElement("a");
-            link.textContent = segment.name;
-            link.href = "#";
-            link.classList.add("breadcrumb-item");
-            link.onclick = (e) => {
-              e.preventDefault();
-              if (!isSearchViewActive) navigateToFolder(segment.id);
-              else {
-                isSearchViewActive = false;
-                searchInputElement.value = "";
-                navigateToFolder(segment.id);
-              }
-            };
-            segEl.appendChild(link);
-            breadcrumbContainer.appendChild(segEl);
-
-            const separator = document.createElement("span");
-            separator.classList.add("breadcrumb-separator");
-            separator.innerHTML = "&gt;";
-            breadcrumbContainer.appendChild(separator);
-          } else {
-            segEl.textContent = segment.name;
-            segEl.classList.add("breadcrumb-current");
-            breadcrumbContainer.appendChild(segEl);
-          }
-        });
-      }
-
-      const backButton = document.getElementById("back-button");
-
-      // --- Navigation and Rendering ---
-      function navigateToFolder(nodeId) {
-          currentViewNodeId =
-            nodeId === undefined || nodeId === null ? null : nodeId;
-
-          if (!isSearchViewActive && searchInputElement)
-            searchInputElement.value = "";
-
-          let newPath;
-          if (currentViewNodeId === null) {
+        let newPath;
+        if (currentViewNodeId === null) {
             newPath = [{ id: null, name: "Knowledge Base" }];
-          } else {
-            const pathSegments = buildPathSegmentsRecursive(
-              currentViewNodeId,
-              fullTreeData,
-              []
-            );
-            if (pathSegments) {
-              newPath = [{ id: null, name: "Knowledge Base" }, ...pathSegments];
+        } else {
+            const pathSegments = buildPathSegmentsRecursive(currentViewNodeId, fullTreeData, []);
+            if (pathSegments && pathSegments.length > 0) { // Ensure pathSegments are found
+                newPath = [{ id: null, name: "Knowledge Base" }, ...pathSegments];
             } else {
-              console.warn(
-                `Node ID ${currentViewNodeId} not found for path. Navigating to root.`
-              );
-              newPath = [{ id: null, name: "Knowledge Base" }];
-              currentViewNodeId = null;
+                console.warn(`User Page: Node ID ${currentViewNodeId} not found for path. Navigating to root.`);
+                newPath = [{ id: null, name: "Knowledge Base" }];
+                currentViewNodeId = null; 
             }
-          }
-          currentPath = newPath;
+        }
+        currentPath = newPath;
 
-          renderBreadcrumbs();
-          if (!isSearchViewActive) {
+        renderBreadcrumbs();
+        if (!isSearchViewActive) {
             renderFolderContents();
-          }
+        }
 
-          const currentFolderObject = currentPath[currentPath.length - 1];
-          currentFolderNameEl.textContent = currentFolderObject
-            ? currentFolderObject.name
-            : "Knowledge Base";
-
-          // Back button logic
-          if (backButton) { // Ensure backButton element exists
-              if (currentPath.length > 1 && !isSearchViewActive) { // Show if not at root and not in search view
-                  backButton.style.display = "inline-flex"; // or "block" or "flex" depending on styling needs
-                  backButton.onclick = () => {
-                      if (currentPath.length > 1) { // Double check path length before navigating
-                          const parentSegment = currentPath[currentPath.length - 2];
-                          navigateToFolder(parentSegment.id);
-                      }
-                  };
-              } else {
-                  backButton.style.display = "none";
-              }
-          }
-
-          if (addItemToFolderBtn) {
-            if (
-              currentViewNodeId !== null &&
-              canAddContentToNode(currentViewNodeId) &&
-              !isSearchViewActive
-            ) {
-              addItemToFolderBtn.style.display = "inline-flex";
-              addItemToFolderBtn.onclick = () => toggleAddItemForm(true);
+        const currentFolderObject = currentPath[currentPath.length - 1];
+        if(currentFolderNameEl) currentFolderNameEl.textContent = currentFolderObject ? currentFolderObject.name : "Knowledge Base";
+        
+        if (backButton) {
+            if (currentPath.length > 1 && !isSearchViewActive) { 
+                backButton.style.display = "inline-flex"; 
+                backButton.onclick = () => {
+                    if (currentPath.length > 1) { 
+                        const parentSegment = currentPath[currentPath.length - 2];
+                        navigateToFolder(parentSegment.id);
+                    }
+                };
             } else {
-              addItemToFolderBtn.style.display = "none";
-              toggleAddItemForm(false);
+                backButton.style.display = "none";
             }
-          }
-      }
+        }
 
+        if (addItemToFolderBtn) {
+            // Ensure currentViewNodeId is treated as a string for canAddContentToNode if it expects string
+            const nodeIdForPermissionCheck = currentViewNodeId === null ? null : String(currentViewNodeId);
+            if (nodeIdForPermissionCheck !== null && canAddContentToNode(nodeIdForPermissionCheck) && !isSearchViewActive) {
+                addItemToFolderBtn.style.display = "inline-flex";
+                addItemToFolderBtn.onclick = () => toggleAddItemForm(true);
+            } else {
+                addItemToFolderBtn.style.display = "none";
+                toggleAddItemForm(false); 
+            }
+        }
+    }
 
-      function renderFolderContents() {
-        folderContentContainer.innerHTML = "";
+    function renderFolderContents() {
+        if (!folderContentContainer) return;
+        folderContentContainer.innerHTML = ""; 
         const nodeToDisplay = findNodeInTree(currentViewNodeId, fullTreeData);
 
-        if (loadingPlaceholder) loadingPlaceholder.style.display = "flex";
+        if (loadingPlaceholder) loadingPlaceholder.style.display = 'flex';
 
         if (!nodeToDisplay) {
-          folderContentContainer.innerHTML =
-            '<p class="p-4 text-[var(--text-tertiary)] text-center">Folder not found or access denied.</p>';
-          if (loadingPlaceholder) loadingPlaceholder.style.display = "none";
-          return;
+            folderContentContainer.innerHTML =
+            '<p class="p-4 text-[var(--text-tertiary)] text-center">Folder not found or you may not have access to it.</p>';
+            if (loadingPlaceholder) loadingPlaceholder.style.display = 'none';
+            return;
         }
 
         const itemsToShow = [];
         if (nodeToDisplay.children && Array.isArray(nodeToDisplay.children)) {
-          itemsToShow.push(
-            ...nodeToDisplay.children.map((c) => ({
-              ...c,
-              itemType: "folder",
-              parentIdActual: nodeToDisplay.id,
-            }))
-          );
+            itemsToShow.push(...nodeToDisplay.children.map(c => ({ ...c, itemType: 'folder', parentIdActual: String(nodeToDisplay.id === null ? 'null' : nodeToDisplay.id) })));
         }
         if (nodeToDisplay.artifacts && Array.isArray(nodeToDisplay.artifacts)) {
-          itemsToShow.push(
-            ...nodeToDisplay.artifacts.map((a) => ({
-              ...a,
-              itemType: "artifact",
-              parentIdActual: nodeToDisplay.id,
-            }))
-          );
+            itemsToShow.push(...nodeToDisplay.artifacts.map(a => ({ ...a, itemType: 'artifact', parentIdActual: String(nodeToDisplay.id === null ? 'null' : nodeToDisplay.id) })));
         }
+        
+        itemsToShow.sort((a, b) => {
+            if (a.itemType === 'folder' && b.itemType !== 'folder') return -1;
+            if (a.itemType !== 'folder' && b.itemType === 'folder') return 1;
+            const nameA = (a.name || a.title || '').toLowerCase();
+            const nameB = (b.name || b.title || '').toLowerCase();
+            return nameA.localeCompare(nameB);
+        });
 
         if (itemsToShow.length === 0) {
-          folderContentContainer.innerHTML =
+            folderContentContainer.innerHTML =
             '<p class="p-4 text-lg text-[var(--text-tertiary)] text-center">This folder is empty.</p>';
         } else {
-          itemsToShow.forEach((item) => {
+            itemsToShow.forEach(item => {
             const card = document.createElement("div");
             card.classList.add("item-card");
             card.dataset.itemId = item.id;
             card.dataset.itemType = item.itemType;
 
             const itemName = escapeJSString(item.name || item.title);
-            const iconClass =
-              item.itemType === "folder"
-                ? "text-[var(--text-yellow-accent)]"
-                : "text-[var(--text-blue-accent)]";
-            const iconSVG =
-              item.itemType === "folder"
+            const iconClass = item.itemType === "folder" ? "text-[var(--text-yellow-accent)]" : "text-[var(--text-blue-accent)]";
+            const iconSVG = item.itemType === "folder"
                 ? `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 0 1 4.5 9.75h15A2.25 2.25 0 0 1 21.75 12v.75m-8.69-6.44-2.12-2.12a1.5 1.5 0 0 0-1.061-.44H4.5A2.25 2.25 0 0 0 2.25 6v12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9a2.25 2.25 0 0 0-2.25-2.25h-5.379a1.5 1.5 0 0 1-1.06-.44Z" /></svg>`
                 : `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>`;
 
             let descriptionHTML = "";
             if (item.itemType === "artifact" && item.description) {
-              descriptionHTML = `<p class="item-card-description">${escapeJSString(
-                item.description
-              )}</p>`;
+                descriptionHTML = `<p class="item-card-description">${escapeJSString(item.description)}</p>`;
             } else if (item.itemType === "artifact" && !item.description) {
-              descriptionHTML = `<p class="item-card-description"><em>No description provided.</em></p>`;
+                descriptionHTML = `<p class="item-card-description"><em>No description provided.</em></p>`;
             }
 
             let actionsDivContent = "";
-            const parentIdForPerms =
-              item.parentIdActual !== undefined
-                ? item.parentIdActual
-                : currentViewNodeId;
+            // Ensure parentIdForPerms is always a string or null, matching how canPerformAction might expect it.
+            const parentIdForPerms = String(item.parentIdActual === null || item.parentIdActual === 'null' ? null : item.parentIdActual);
 
-            if (
-              item.itemType === "folder" &&
-              canDeleteNode(item.id) &&
-              item.id !== null &&
-              parentIdForPerms !== null
-            ) {
-              actionsDivContent += `<button title="Delete folder" class="action-icon-btn delete" onclick="event.stopPropagation(); deleteNode(${item.id})">
-                                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                                    </button>`;
-            } else if (
-              item.itemType === "artifact" &&
-              canEditArtifactsInNode(parentIdForPerms)
-            ) {
-              actionsDivContent += `<button title="Delete file" class="action-icon-btn delete" onclick="event.stopPropagation(); deleteArtifact(${item.id}, ${parentIdForPerms})">
-                                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                                    </button>`;
+
+            if (item.itemType === "folder" && canDeleteNode(String(item.id)) && String(item.id) !== "null" && parentIdForPerms !== "null") {
+                actionsDivContent += `<button title="Delete folder" class="action-icon-btn delete" onclick="event.stopPropagation(); deleteNode('${String(item.id)}')"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></button>`;
+            } else if (item.itemType === "artifact" && canEditArtifactsInNode(parentIdForPerms)) {
+                 actionsDivContent += `<button title="Delete file" class="action-icon-btn delete" onclick="event.stopPropagation(); deleteArtifact('${String(item.id)}', '${parentIdForPerms}')"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></button>`;
             }
+
             card.innerHTML = `
-                      <div> 
-                          <div class="item-card-icon-wrapper"><span class="item-card-icon ${iconClass}">${iconSVG}</span></div>
-                          <h3 class="item-card-name">${itemName}</h3>
-                          <p class="item-card-type">${
-                            item.itemType === "folder" ? "Folder" : "File"
-                          }</p>
-                          ${descriptionHTML} 
-                      </div>
-                      ${
-                        actionsDivContent
-                          ? `<div class="item-card-actions">${actionsDivContent}</div>`
-                          : ""
-                      }
-                  `;
+                <div> 
+                    <div class="item-card-icon-wrapper"><span class="item-card-icon ${iconClass}">${iconSVG}</span></div>
+                    <h3 class="item-card-name">${itemName}</h3>
+                    <p class="item-card-type">${item.itemType === "folder" ? "Folder" : "File"}</p>
+                    ${descriptionHTML} 
+                </div>
+                ${actionsDivContent ? `<div class="item-card-actions">${actionsDivContent}</div>` : ""}
+            `;
 
             if (item.itemType === "folder") {
-              card.onclick = () => navigateToFolder(item.id);
-            } else {
-              // Artifact
-              card.onclick = (e) => {
-                // Prevent click if it's on a button inside the card or the scrollbar of the description
-                if (
-                  e.target.closest("button") ||
-                  (e.target.classList.contains("item-card-description") &&
-                    e.offsetX > e.target.clientWidth)
-                ) {
-                  return;
-                }
-                showArtifactDetailsModal(
-                  item.title,
-                  item.description,
-                  item.link
-                );
-              };
+                card.onclick = () => navigateToFolder(item.id);
+            } else { 
+                card.onclick = (e) => {
+                    if (e.target.closest("button") || (e.target.classList.contains("item-card-description") && e.offsetX > e.target.clientWidth)) {
+                        return; 
+                    }
+                    showArtifactDetailsModal(item.title, item.description, item.link);
+                };
             }
             folderContentContainer.appendChild(card);
-          });
-        }
-        if (loadingPlaceholder) loadingPlaceholder.style.display = "none";
-      }
-
-      // --- Inline Add Item Form Logic ---
-      function toggleAddItemForm(show) {
-        if (show && currentViewNodeId !== null) {
-          populateAddItemForm();
-          addItemFormContainer.style.display = "block";
-          document.getElementById("addItemName")?.focus();
-        } else {
-          addItemFormContainer.style.display = "none";
-        }
-      }
-      function populateAddItemForm() {
-        const parentId = currentViewNodeId;
-        if (parentId === null) {
-          addItemFormContainer.innerHTML =
-            '<p class="text-[var(--text-tertiary)]">Adding items to the root is not directly supported here. Please select a folder.</p>';
-          return;
-        }
-        const currentFolder = findNodeInTree(parentId, fullTreeData);
-        const currentFolderName = currentFolder
-          ? currentFolder.name
-          : "Selected Folder";
-
-        addItemFormContainer.innerHTML = `
-              <h3 class="text-xl font-semibold mb-4 text-[var(--text-primary)]">Add to '${escapeJSString(
-                currentFolderName
-              )}'</h3>
-              <form onsubmit="event.preventDefault(); submitAddItemForm(this.querySelector('button[type=submit]'))">
-                  <input type="hidden" id="addItemParentId" value="${parentId}">
-                  <div class="mb-4"><label for="addItemName" class="label-text">Name (Folder/File)</label><input type="text" id="addItemName" class="input-field text-sm" required></div>
-                  <div class="mb-4"><label for="addItemType" class="label-text">Type</label><select id="addItemType" class="input-field text-sm" onchange="toggleAddItemFileOptions()"><option value="SUBFOLDER">Subfolder</option><option value="FILE">File</option></select></div>
-                  <div class="mb-4"><label for="addItemDescription" class="label-text">Description (Optional)</label><textarea id="addItemDescription" class="input-field text-sm" rows="2"></textarea></div>
-                  <div id="addItemFileMethodOptions" style="display:none;" class="mt-2 mb-4">
-                      <div><label for="addItemFileSource" class="label-text text-xs">File Source:</label><select id="addItemFileSource" class="input-field text-xs py-1" onchange="toggleAddItemLinkOrUpload()"><option value="link">Enter Link</option><option value="upload">Upload File</option></select></div>
-                      <div id="addItemLinkInputContainer" class="mt-2"><input type="url" placeholder="Link (e.g., https://...)" id="addItemLink" class="input-field text-sm"></div>
-                      <div id="addItemUploadInputContainer" style="display:none;" class="mt-2"><input type="file" id="addItemFileUpload" class="input-field text-sm p-2"></div>
-                  </div>
-                  <div class="mt-6 flex items-center gap-3">
-                      <button type="submit" class="submit-button primary">
-                          <span class="button-text">Add Item</span>
-                      </button>
-                      <button type="button" class="submit-button secondary" onclick="toggleAddItemForm(false)">
-                          <span class="button-text">Cancel</span>
-                      </button>
-                  </div>
-              </form>`;
-        toggleAddItemFileOptions();
-      }
-      function toggleAddItemFileOptions() {
-        const typeSelect = document.getElementById("addItemType");
-        const fileMethodOptionsDiv = document.getElementById(
-          "addItemFileMethodOptions"
-        );
-        if (!typeSelect || !fileMethodOptionsDiv) return;
-
-        if (typeSelect.value === "FILE") {
-          fileMethodOptionsDiv.style.display = "block";
-          const fileSourceSelect = document.getElementById("addItemFileSource");
-          if (fileSourceSelect) fileSourceSelect.value = "link";
-          toggleAddItemLinkOrUpload();
-        } else {
-          fileMethodOptionsDiv.style.display = "none";
-        }
-      }
-      function toggleAddItemLinkOrUpload() {
-        const fileSourceSelect = document.getElementById("addItemFileSource");
-        const linkContainer = document.getElementById(
-          "addItemLinkInputContainer"
-        );
-        const uploadContainer = document.getElementById(
-          "addItemUploadInputContainer"
-        );
-        if (!fileSourceSelect || !linkContainer || !uploadContainer) return;
-
-        const fileSource = fileSourceSelect.value;
-        linkContainer.style.display = fileSource === "link" ? "block" : "none";
-        uploadContainer.style.display =
-          fileSource === "upload" ? "block" : "none";
-      }
-      async function submitAddItemForm(buttonElement) {
-        const parentId = document.getElementById("addItemParentId").value;
-        const name = document.getElementById("addItemName").value.trim();
-        const type = document.getElementById("addItemType").value;
-        const description = document
-          .getElementById("addItemDescription")
-          .value.trim();
-
-        const originalButtonText =
-          buttonElement.querySelector(".button-text")?.textContent ||
-          buttonElement.textContent;
-        window.setButtonLoading(buttonElement, true, originalButtonText);
-
-        if (!name) {
-          window.showNotification("Name is required.", "error");
-          window.setButtonLoading(buttonElement, false, originalButtonText);
-          return;
-        }
-        if (
-          parentId === null ||
-          typeof parentId === "undefined" ||
-          parentId === "null"
-        ) {
-          window.showNotification(
-            "Cannot add item: No parent folder selected.",
-            "error"
-          );
-          window.setButtonLoading(buttonElement, false, originalButtonText);
-          return;
-        }
-
-        try {
-          let response;
-          if (type === "FILE") {
-            const fileSource =
-              document.getElementById("addItemFileSource").value;
-            let payload = {
-              title: name,
-              description,
-              nodeId: parseInt(parentId),
-            };
-            if (fileSource === "link") {
-              const link = document.getElementById("addItemLink").value.trim();
-              if (!link)
-                throw new Error("Link is required for file type 'link'.");
-              payload.link = link;
-              response = await secureFetch(`${BASE}/api/artifacts`, {
-                method: "POST",
-                body: JSON.stringify(payload),
-              });
-            } else {
-              const fileInput = document.getElementById("addItemFileUpload");
-              const file = fileInput.files[0];
-              if (!file) throw new Error("Please select a file to upload.");
-              const formData = new FormData();
-              formData.append("file", file);
-              formData.append("title", name);
-              formData.append("description", description);
-              formData.append("nodeId", String(parentId));
-              response = await secureFetch(`${BASE}/api/upload`, {
-                method: "POST",
-                body: formData,
-              });
-            }
-          } else {
-            let payload = {
-              name,
-              type: "FOLDER",
-              parentId: parseInt(parentId),
-              description,
-            };
-            response = await secureFetch(`${BASE}/api/nodes`, {
-              method: "POST",
-              body: JSON.stringify(payload),
             });
-          }
+        }
+        if (loadingPlaceholder) loadingPlaceholder.style.display = 'none';
+    }
+    // --- End Navigation and Rendering ---
 
-          if (!response.ok) {
-            const errorData = await response
-              .json()
-              .catch(() => ({ detail: response.statusText }));
-            throw new Error(
-              errorData.detail ||
-                `Failed to add item (Status: ${response.status})`
-            );
-          }
-          window.showNotification("Item added successfully! ✅", "success");
-          toggleAddItemForm(false);
-          await fetchTreeDataOnly();
-          navigateToFolder(currentViewNodeId);
-        } catch (error) {
-          console.error("Error submitting add item form:", error);
-          window.showNotification(`Error: ${error.message}`, "error");
-        } finally {
+    // --- Inline Add Item Form Logic ---
+    // (Your toggleAddItemForm, populateAddItemForm, toggleAddItemFileOptions, toggleAddItemLinkOrUpload functions)
+    // Ensure submitAddItemForm uses BASE_API_URL for its fetch calls.
+    function toggleAddItemForm(show) {
+      if (show && currentViewNodeId !== null && String(currentViewNodeId) !== "null") { // Prevent adding to root "null" node
+        populateAddItemForm();
+        if(addItemFormContainer) addItemFormContainer.style.display = "block";
+        if(document.getElementById("addItemName")) document.getElementById("addItemName").focus();
+      } else {
+        if(addItemFormContainer) addItemFormContainer.style.display = "none";
+      }
+    }
+    function populateAddItemForm() {
+      const parentId = currentViewNodeId; 
+      if (parentId === null || String(parentId) === "null") { // Explicitly check for null or string "null"
+        if(addItemFormContainer) addItemFormContainer.innerHTML = '<p class="text-[var(--text-tertiary)]">Adding items to the main Knowledge Base root is not supported here. Please select or create a folder.</p>';
+        return;
+      }
+      const currentFolder = findNodeInTree(String(parentId), fullTreeData); // Ensure parentId is string for findNode
+      const currentFolderName = currentFolder ? currentFolder.name : "Selected Folder";
+
+      if(addItemFormContainer) addItemFormContainer.innerHTML = `
+            <h3 class="text-xl font-semibold mb-4 text-[var(--text-primary)]">Add to '${escapeJSString(currentFolderName)}'</h3>
+            <form onsubmit="event.preventDefault(); submitAddItemForm(this.querySelector('button[type=submit]'))">
+                <input type="hidden" id="addItemParentId" value="${parentId}">
+                <div class="mb-4"><label for="addItemName" class="label-text">Name (Folder/File)</label><input type="text" id="addItemName" class="input-field text-sm" required></div>
+                <div class="mb-4"><label for="addItemType" class="label-text">Type</label><select id="addItemType" class="input-field text-sm" onchange="toggleAddItemFileOptions()"><option value="SUBFOLDER">Subfolder</option><option value="FILE">File</option></select></div>
+                <div class="mb-4"><label for="addItemDescription" class="label-text">Description (Optional)</label><textarea id="addItemDescription" class="input-field text-sm" rows="2"></textarea></div>
+                <div id="addItemFileMethodOptions" style="display:none;" class="mt-2 mb-4">
+                    <div><label for="addItemFileSource" class="label-text text-xs">File Source:</label><select id="addItemFileSource" class="input-field text-xs py-1" onchange="toggleAddItemLinkOrUpload()"><option value="link">Enter Link</option><option value="upload">Upload File</option></select></div>
+                    <div id="addItemLinkInputContainer" class="mt-2"><input type="url" placeholder="Link (e.g., https://...)" id="addItemLink" class="input-field text-sm"></div>
+                    <div id="addItemUploadInputContainer" style="display:none;" class="mt-2"><input type="file" id="addItemFileUpload" class="input-field text-sm p-2"></div>
+                </div>
+                <div class="mt-6 flex items-center gap-3">
+                    <button type="submit" class="submit-button primary">
+                        <span class="button-text">Add Item</span>
+                    </button>
+                    <button type="button" class="submit-button secondary" onclick="toggleAddItemForm(false)">
+                        <span class="button-text">Cancel</span>
+                    </button>
+                </div>
+            </form>`;
+      toggleAddItemFileOptions();
+    }
+    function toggleAddItemFileOptions() {
+      const typeSelect = document.getElementById("addItemType");
+      const fileMethodOptionsDiv = document.getElementById("addItemFileMethodOptions");
+      if (!typeSelect || !fileMethodOptionsDiv) return;
+
+      if (typeSelect.value === "FILE") {
+        fileMethodOptionsDiv.style.display = "block";
+        const fileSourceSelect = document.getElementById("addItemFileSource");
+        if(fileSourceSelect) fileSourceSelect.value = "link";
+        toggleAddItemLinkOrUpload();
+      } else {
+        fileMethodOptionsDiv.style.display = "none";
+      }
+    }
+    function toggleAddItemLinkOrUpload() {
+      const fileSourceSelect = document.getElementById("addItemFileSource");
+      const linkContainer = document.getElementById("addItemLinkInputContainer");
+      const uploadContainer = document.getElementById("addItemUploadInputContainer");
+      if (!fileSourceSelect || !linkContainer || !uploadContainer) return;
+      
+      const fileSource = fileSourceSelect.value;
+      linkContainer.style.display = fileSource === "link" ? "block" : "none";
+      uploadContainer.style.display = fileSource === "upload" ? "block" : "none";
+      if (fileSource === 'link' && document.getElementById('addItemFileUpload')) document.getElementById('addItemFileUpload').value = '';
+      if (fileSource === 'upload' && document.getElementById('addItemLink')) document.getElementById('addItemLink').value = '';
+    }
+
+    async function submitAddItemForm(buttonElement) {
+      const parentIdValue = document.getElementById("addItemParentId").value;
+      const parentId = (parentIdValue === "null" || parentIdValue === null || parentIdValue === "") ? null : parseInt(parentIdValue); // Ensure parentId is null if it's the root or empty string
+
+      const name = document.getElementById("addItemName").value.trim();
+      const type = document.getElementById("addItemType").value; // SUBFOLDER or FILE
+      const description = document.getElementById("addItemDescription").value.trim();
+
+      const originalButtonText = buttonElement.querySelector(".button-text")?.textContent || buttonElement.textContent;
+      window.setButtonLoading(buttonElement, true, originalButtonText);
+
+      if (!name) {
+        window.showNotification("Name is required.", "error");
+        window.setButtonLoading(buttonElement, false, originalButtonText);
+        document.getElementById("addItemName")?.focus();
+        return;
+      }
+      if (parentId === null) { 
+          window.showNotification("Cannot add item: A valid parent folder must be selected.", "error");
           window.setButtonLoading(buttonElement, false, originalButtonText);
-        }
+          return;
       }
 
-      // --- CRUD Operations (Delete) ---
-      async function deleteNode(nodeId) {
-        if (
-          !confirm(
-            "Are you sure you want to delete this folder and all its contents? This action cannot be undone."
-          )
-        )
-          return;
+      try {
+        let response;
+        let endpoint;
+        let options = { method: "POST" };
+        let bodyPayload;
+
+        if (type === "FILE") {
+          const fileSource = document.getElementById("addItemFileSource").value;
+          let commonPayload = { title: name, description, nodeId: parentId };
+
+          if (fileSource === "link") {
+            const link = document.getElementById("addItemLink").value.trim();
+            if (!link || !link.startsWith("http")) throw new Error("A valid Link (starting with http/https) is required for file type 'link'.");
+            commonPayload.link = link;
+            endpoint = `${BASE_API_URL}/api/artifacts`; // USE DYNAMIC URL
+            bodyPayload = JSON.stringify(commonPayload);
+            options.body = bodyPayload;
+          } else { // upload
+            const fileInput = document.getElementById("addItemFileUpload");
+            const file = fileInput.files[0];
+            if (!file) throw new Error("Please select a file to upload.");
+            const formData = new FormData();
+            formData.append("file", file);
+            formData.append("title", name);
+            formData.append("description", description);
+            formData.append("nodeId", String(parentId));
+            endpoint = `${BASE_API_URL}/api/upload`; // USE DYNAMIC URL
+            options.body = formData; // No Content-Type needed for FormData
+          }
+        } else { // SUBFOLDER (backend treats as FOLDER)
+          bodyPayload = JSON.stringify({ name, type: "FOLDER", parentId: parentId, description });
+          endpoint = `${BASE_API_URL}/api/nodes`; // USE DYNAMIC URL
+          options.body = bodyPayload;
+        }
+        
+        response = await secureFetch(endpoint, options);
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({ detail: `Request failed with status ${response.status}. ${response.statusText}` }));
+          throw new Error(errorData.detail || `Failed to add item (Status: ${response.status})`);
+        }
+        window.showNotification("Item added successfully! ✅", "success");
+        toggleAddItemForm(false); 
+        const formElement = document.getElementById("addItemName")?.form;
+        if(formElement) formElement.reset();
+        toggleAddItemFileOptions(); // Reset file options after form reset
+        await fetchTreeDataOnly(); 
+        navigateToFolder(currentViewNodeId); 
+      } catch (error) {
+        console.error("User Page: Error submitting add item form:", error);
+        window.showNotification(`Error: ${error.message}`, "error", 5000); // Longer display for submission errors
+      } finally {
+        window.setButtonLoading(buttonElement, false, originalButtonText);
+      }
+    }
+    // --- End Inline Add Item Form Logic ---
+
+    // --- CRUD Operations (Delete) ---
+    // (Your deleteNode and deleteArtifact functions - ensure they use BASE_API_URL)
+     async function deleteNode(nodeId) {
+        if (!confirm("Are you sure you want to delete this folder and all its contents? This action cannot be undone.")) return;
         try {
-          const response = await secureFetch(`${BASE}/api/nodes/${nodeId}`, {
-            method: "DELETE",
-          });
-          if (!response.ok) {
-            const errorData = await response
-              .json()
-              .catch(() => ({ detail: response.statusText }));
+            const response = await secureFetch(`${BASE_API_URL}/api/nodes/${nodeId}`, { method: "DELETE" });
+            if (!response.ok) {
+            const errorData = await response.json().catch(() => ({ detail: response.statusText }));
             throw new Error(errorData.detail || "Failed to delete folder.");
-          }
-          window.showNotification("Folder deleted successfully. ✅", "success");
+            }
+            window.showNotification("Folder deleted successfully. ✅", "success");
+            
+            let parentToNavigateTo = null; // Default to root if path logic fails
+            // Find the parent of the deleted node in the current path
+            const pathIndex = currentPath.findIndex(p => String(p.id) === String(nodeId));
+            if (pathIndex > 0) { // If deleted node was in path and not the root "Knowledge Base" segment
+                parentToNavigateTo = currentPath[pathIndex - 1].id;
+            } else if (String(currentViewNodeId) === String(nodeId)) { // If deleting the folder currently being viewed
+                 parentToNavigateTo = currentPath.length > 1 ? currentPath[currentPath.length - 2].id : null;
+            } else { // If deleted node was a child of currentViewNodeId but not in path (e.g. deeper orphan)
+                parentToNavigateTo = currentViewNodeId;
+            }
 
-          let parentToNavigate = null;
-          const deletedNodePathIndex = currentPath.findIndex(
-            (p) => String(p.id) === String(nodeId)
-          );
+            await fetchTreeDataOnly(); // Refresh tree data first
+            navigateToFolder(parentToNavigateTo); // Then navigate
 
-          await fetchTreeDataOnly();
-
-          if (deletedNodePathIndex > 0) {
-            parentToNavigate = currentPath[deletedNodePathIndex - 1].id;
-          } else if (String(currentViewNodeId) === String(nodeId)) {
-            parentToNavigate =
-              currentPath.length > 1 && currentPath[currentPath.length - 2]
-                ? currentPath[currentPath.length - 2].id
-                : null;
-          } else {
-            parentToNavigate = currentViewNodeId;
-            if (String(parentToNavigate) === String(nodeId))
-              parentToNavigate = null;
-          }
-          navigateToFolder(parentToNavigate);
         } catch (error) {
-          console.error("Error deleting node:", error);
-          window.showNotification(`Error: ${error.message}`, "error");
+            console.error("User Page: Error deleting node:", error);
+            window.showNotification(`Error: ${error.message}`, "error");
         }
-      }
-      async function deleteArtifact(artifactId, parentNodeId) {
-        if (
-          !confirm(
-            "Are you sure you want to delete this file? This action cannot be undone."
-          )
-        )
-          return;
+    }
+    async function deleteArtifact(artifactId, parentNodeIdString) { // parentNodeIdString is string
+        if (!confirm("Are you sure you want to delete this file? This action cannot be undone.")) return;
         try {
-          const response = await secureFetch(
-            `${BASE}/api/artifacts/${artifactId}`,
-            { method: "DELETE" }
-          );
-          if (!response.ok) {
-            const errorData = await response
-              .json()
-              .catch(() => ({ detail: response.statusText }));
+            const response = await secureFetch(`${BASE_API_URL}/api/artifacts/${artifactId}`, { method: "DELETE" });
+            if (!response.ok) {
+            const errorData = await response.json().catch(() => ({ detail: response.statusText }));
             throw new Error(errorData.detail || "Failed to delete file.");
-          }
-          window.showNotification("File deleted successfully. ✅", "success");
-          await fetchTreeDataOnly();
-          navigateToFolder(currentViewNodeId);
+            }
+            window.showNotification("File deleted successfully. ✅", "success");
+            await fetchTreeDataOnly();
+            // currentViewNodeId should be the parentNodeId if we are deleting an artifact from the current view
+            navigateToFolder(currentViewNodeId); 
         } catch (error) {
-          console.error("Error deleting artifact:", error);
-          window.showNotification(`Error: ${error.message}`, "error");
+            console.error("User Page: Error deleting artifact:", error);
+            window.showNotification(`Error: ${error.message}`, "error");
         }
-      }
+    }
+    // --- End CRUD Operations ---
 
-      // --- Modals & UI Toggles ---
-      function showArtifactDetailsModal(title, description, link) {
-        const modal = document.getElementById("artifact-details-modal");
-        document.getElementById("artifact-modal-title").textContent =
-          title || "Artifact Details";
-        document.getElementById(
-          "artifact-details-modal-description"
-        ).textContent = description || "No description provided.";
-        const linkEl = document.getElementById("artifact-modal-link");
-        let processedLink = link || "#";
-        if (
-          processedLink &&
-          !processedLink.startsWith("http://") &&
-          !processedLink.startsWith("https://") &&
-          processedLink !== "#"
-        ) {
-          processedLink = `https://${processedLink}`;
-        }
-        linkEl.href = processedLink;
+    // --- Modals & UI Toggles ---
+    // (Your showArtifactDetailsModal, closeArtifactDetailsModal, Theme Toggle, User Menu Dropdown logic)
+    // Make sure these are generally fine and don't have hardcoded URLs if any.
+     function showArtifactDetailsModal(title, description, link) {
+      const modal = document.getElementById("artifact-details-modal");
+      if (!modal) return;
+      const titleEl = document.getElementById("artifact-modal-title");
+      const descEl = document.getElementById("artifact-details-modal-description");
+      const linkEl = document.getElementById("artifact-modal-link");
+
+      if(titleEl) titleEl.textContent = title || "Artifact Details";
+      if(descEl) descEl.innerHTML = description ? escapeJSString(description).replace(/\n/g, '<br>') : "<em>No description provided.</em>";
+      
+      let processedLink = link || "#";
+      if (processedLink && !processedLink.startsWith("http://") && !processedLink.startsWith("https://") && processedLink !== "#") {
+        processedLink = `https://${processedLink}`;
+      }
+      if(linkEl) linkEl.href = processedLink;
+
+      if (linkEl) {
         if (!link || link === "#") {
-          linkEl.classList.add("opacity-50", "cursor-not-allowed");
-          linkEl.removeAttribute("target");
-          linkEl.onclick = (e) => e.preventDefault();
+            linkEl.classList.add("opacity-50", "cursor-not-allowed");
+            linkEl.removeAttribute("target");
+            linkEl.onclick = (e) => e.preventDefault();
+            linkEl.title = "No link provided";
         } else {
-          linkEl.classList.remove("opacity-50", "cursor-not-allowed");
-          linkEl.setAttribute("target", "_blank");
-          linkEl.onclick = null;
+            linkEl.classList.remove("opacity-50", "cursor-not-allowed");
+            linkEl.setAttribute("target", "_blank");
+            linkEl.onclick = null; 
+            linkEl.title = `Go to: ${processedLink}`;
         }
-        modal.classList.add("active");
       }
-      function closeArtifactDetailsModal() {
-        document
-          .getElementById("artifact-details-modal")
-          .classList.remove("active");
-      }
+      modal.classList.add("active");
+    }
+    function closeArtifactDetailsModal() {
+      const modal = document.getElementById("artifact-details-modal");
+      if (modal) modal.classList.remove("active");
+    }
 
-      // Theme Toggle
-      const themeToggleButton = document.getElementById("theme-toggle-button");
-      const sunIconHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>`;
-      const moonIconHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>`;
-      function applyTheme(theme) {
+    // Theme Toggle
+    const themeToggleButton = document.getElementById("theme-toggle-button");
+    const sunIconHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>`;
+    const moonIconHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>`;
+    
+    function applyTheme(theme) {
         if (theme === "light") {
-          document.body.classList.add("light-theme");
-          themeToggleButton.innerHTML = moonIconHTML;
-          localStorage.setItem("theme", "light");
+            document.body.classList.add("light-theme");
+            if(themeToggleButton) themeToggleButton.innerHTML = moonIconHTML;
+            localStorage.setItem("userPageTheme", "light"); // Use distinct localStorage key
         } else {
-          document.body.classList.remove("light-theme");
-          themeToggleButton.innerHTML = sunIconHTML;
-          localStorage.setItem("theme", "dark");
+            document.body.classList.remove("light-theme");
+            if(themeToggleButton) themeToggleButton.innerHTML = sunIconHTML;
+            localStorage.setItem("userPageTheme", "dark"); // Use distinct localStorage key
         }
-      }
-      themeToggleButton.addEventListener("click", () => {
-        applyTheme(
-          document.body.classList.contains("light-theme") ? "dark" : "light"
-        );
-      });
-      applyTheme(
-        localStorage.getItem("theme") ||
-          (window.matchMedia("(prefers-color-scheme: dark)").matches
-            ? "dark"
-            : "dark") // Default to dark if no preference or local storage
-      );
+    }
+    if(themeToggleButton) {
+        themeToggleButton.addEventListener("click", () => {
+            applyTheme(document.body.classList.contains("light-theme") ? "dark" : "light");
+        });
+        applyTheme(localStorage.getItem("userPageTheme") || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "dark"));
+    }
 
-      // User Menu Dropdown
-      if (userMenuButton && userDropdownMenu) {
-        userMenuButton.addEventListener("click", () => {
-          const isExpanded =
-            userMenuButton.getAttribute("aria-expanded") === "true";
-          userMenuButton.setAttribute("aria-expanded", String(!isExpanded));
-          userDropdownMenu.classList.toggle("hidden");
+    // User Menu Dropdown
+    if (userMenuButton && userDropdownMenu) {
+        userMenuButton.addEventListener("click", (event) => {
+            event.stopPropagation();
+            const isExpanded = userMenuButton.getAttribute("aria-expanded") === "true";
+            userMenuButton.setAttribute("aria-expanded", String(!isExpanded));
+            userDropdownMenu.classList.toggle("hidden");
         });
         document.addEventListener("click", (event) => {
-          if (
-            userMenuButton &&
-            userDropdownMenu &&
-            !userMenuButton.contains(event.target) &&
-            !userDropdownMenu.contains(event.target)
-          ) {
-            userDropdownMenu.classList.add("hidden");
-            userMenuButton.setAttribute("aria-expanded", "false");
-          }
-        });
-      }
-      if (logoutButtonDropdown) {
-        logoutButtonDropdown.addEventListener("click", async () => {
-          if (firebaseAuth) {
-            try {
-              await firebaseAuth.signOut();
-              sessionStorage.removeItem("token");
-              window.showNotification("Logged out successfully.", "success");
-            } catch (error) {
-              console.error("Error signing out:", error);
-              window.showNotification(
-                "Logout failed. Please try again.",
-                "error"
-              );
+            if (userDropdownMenu && !userDropdownMenu.classList.contains("hidden") &&
+                userMenuButton && !userMenuButton.contains(event.target) && 
+                !userDropdownMenu.contains(event.target)) {
+                userDropdownMenu.classList.add("hidden");
+                userMenuButton.setAttribute("aria-expanded", "false");
             }
-          }
         });
-      }
+    }
+    if (logoutButtonDropdown && firebaseAuth) { 
+        logoutButtonDropdown.addEventListener("click", async () => {
+            try {
+                await firebaseAuth.signOut();
+                sessionStorage.removeItem("userToken"); // Consistent token name
+                window.showNotification("Logged out successfully.", "success");
+                // onAuthStateChanged will redirect
+            } catch (error) {
+                console.error("User Page: Error signing out:", error);
+                window.showNotification("Logout failed. Please try again.", "error");
+            }
+        });
+    }
+    // --- End Modals & UI Toggles ---
 
-      // --- Search Functionality ---
-      let searchResults = [];
+    // --- Search Functionality ---
+    // (Your highlightText, debouncedPerformGlobalSearch, performGlobalSearch, renderSearchResults functions)
+    // Ensure they use global fullTreeData and escapeJSString.
+    let searchResults = [];
 
-      function highlightText(text, query) {
-        if (!query || typeof text !== "string")
-          return escapeJSString(text || "");
-        const safeQuery = escapeJSString(query).replace(
-          /[.*+?^${}()|[\]\\]/g,
-          "\\$&"
-        );
+    function highlightText(text, query) {
+        if (!query || typeof text !== 'string') return escapeJSString(text || "");
+        const safeQuery = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
         const regex = new RegExp(`(${safeQuery})`, "gi");
-        return escapeJSString(text).replace(
-          regex,
-          '<span class="highlight">$1</span>'
-        );
-      }
+        return escapeJSString(text).replace(regex, '<span class="highlight">$1</span>');
+    }
 
-      const debouncedPerformGlobalSearch = debounce(performGlobalSearch, 350); // Adjusted debounce time
+    const debouncedPerformGlobalSearch = debounce(performGlobalSearch, 350);
 
-      searchInputElement.addEventListener("input", (e) => {
-        debouncedPerformGlobalSearch(e.target.value);
-      });
+    if(searchInputElement) {
+        searchInputElement.addEventListener("input", (e) => {
+            debouncedPerformGlobalSearch(e.target.value);
+        });
+    }
 
-      function performGlobalSearch(term) {
-        
+    function performGlobalSearch(term) {
         searchResults = [];
         const searchTerm = term.trim().toLowerCase();
         if (!searchTerm) {
-          isSearchViewActive = false;
-          navigateToFolder(currentViewNodeId);
-          return;
+            isSearchViewActive = false;
+            navigateToFolder(currentViewNodeId); 
+            return;
         }
         isSearchViewActive = true;
 
         function recurseSearch(nodes, pathStack) {
-          for (const node of nodes) {
-            const currentItemPath = [
-              ...pathStack,
-              { id: node.id, name: node.name },
-            ];
+            for (const node of nodes) {
+                if (!node) continue; 
+                const currentItemPath = [...pathStack, { id: node.id, name: node.name }];
 
-            if (node.name && node.name.toLowerCase().includes(searchTerm)) {
-              searchResults.push({
-                item: node,
-                path: currentItemPath,
-                itemType: "folder",
-                matchSource: "name",
-              });
-            }
+                if (node.name && node.name.toLowerCase().includes(searchTerm)) {
+                    searchResults.push({ item: node, path: currentItemPath, itemType: "folder", matchSource: "name" });
+                }
 
-            if (node.artifacts && Array.isArray(node.artifacts)) {
-              for (const artifact of node.artifacts) {
-                let artifactMatchedThisSource = false;
-                if (
-                  artifact.title &&
-                  artifact.title.toLowerCase().includes(searchTerm)
-                ) {
-                  searchResults.push({
-                    item: artifact,
-                    path: currentItemPath,
-                    itemType: "artifact",
-                    matchSource: "title",
-                  });
-                  artifactMatchedThisSource = true;
+                if (node.artifacts && Array.isArray(node.artifacts)) {
+                    for (const artifact of node.artifacts) {
+                        if (!artifact) continue;
+                        let artifactAlreadyAdded = searchResults.some(sr => sr.item.id === artifact.id && sr.itemType === 'artifact');
+                        
+                        if (artifact.title && artifact.title.toLowerCase().includes(searchTerm) && !artifactAlreadyAdded) {
+                            searchResults.push({ item: artifact, path: currentItemPath, itemType: "artifact", matchSource: "title" });
+                            artifactAlreadyAdded = true; 
+                        }
+                        if (artifact.description && artifact.description.toLowerCase().includes(searchTerm) && !artifactAlreadyAdded) {
+                            searchResults.push({ item: artifact, path: currentItemPath, itemType: "artifact", matchSource: "description" });
+                        }
+                    }
                 }
-                // Also search artifact descriptions
-                if (
-                  !artifactMatchedThisSource &&
-                  artifact.description &&
-                  artifact.description.toLowerCase().includes(searchTerm)
-                ) {
-                  // Check if already added from title match
-                  const alreadyAdded = searchResults.some(
-                    (sr) =>
-                      sr.item.id === artifact.id && sr.itemType === "artifact"
-                  );
-                  if (!alreadyAdded) {
-                    searchResults.push({
-                      item: artifact,
-                      path: currentItemPath,
-                      itemType: "artifact",
-                      matchSource: "description",
-                    });
-                  }
+                if (node.children && Array.isArray(node.children)) {
+                    recurseSearch(node.children, currentItemPath);
                 }
-              }
             }
-            if (node.children && Array.isArray(node.children)) {
-              recurseSearch(node.children, currentItemPath);
-            }
-          }
         }
-        recurseSearch(fullTreeData, [{ id: null, name: "Knowledge Base" }]);
+        recurseSearch(fullTreeData, [{ id: null, name: "Knowledge Base" }]); 
         renderSearchResults(searchResults, searchTerm);
-      }
-
-      function renderSearchResults(results, searchTerm = "") {  
-        folderContentContainer.innerHTML = "";
-        toggleAddItemForm(false);
-        if (backButton) { // Ensure backButton element exists
-        backButton.style.display = 'none'; // Hide back button in search results
     }
-        if (addItemToFolderBtn) addItemToFolderBtn.style.display = "none";
-        currentFolderNameEl.textContent =
-          results.length > 0
-            ? `Search Results for "${escapeJSString(searchTerm)}"`
-            : `No Results for "${escapeJSString(searchTerm)}"`;
-        breadcrumbContainer.innerHTML = `<span class="breadcrumb-current">Search Results</span>`;
+
+    function renderSearchResults(results, searchTerm = "") {
+        if(!folderContentContainer) return;
+        folderContentContainer.innerHTML = "";
+        toggleAddItemForm(false); 
+        if(backButton) backButton.style.display = 'none';
+        if(addItemToFolderBtn) addItemToFolderBtn.style.display = 'none';
+
+        const resultsTitle = results.length > 0 ? `Search Results for "${escapeJSString(searchTerm)}"` : `No Results for "${escapeJSString(searchTerm)}"`;
+        if(currentFolderNameEl) currentFolderNameEl.textContent = resultsTitle;
+        if(breadcrumbContainer) breadcrumbContainer.innerHTML = `<span class="breadcrumb-current">Search Results</span>`;
 
         if (results.length === 0) {
-          folderContentContainer.innerHTML = `<p class="p-4 text-lg text-[var(--text-tertiary)] text-center">No items found matching your search.</p>`;
-          return;
+            folderContentContainer.innerHTML = `<p class="p-4 text-lg text-[var(--text-tertiary)] text-center">No items found matching your search.</p>`;
+            return;
         }
 
-        results.forEach((result) => {
-          const card = document.createElement("div");
-          card.classList.add("search-result-card"); // Keep search specific class
-          // card.classList.add("item-card"); // if you want completely identical styling (hover etc)
+        results.forEach(result => {
+            const card = document.createElement("div");
+            card.classList.add("search-result-card"); 
 
-          const itemName = result.item.name || result.item.title;
-          const itemTypeDisplay =
-            result.itemType.charAt(0).toUpperCase() + result.itemType.slice(1);
+            const itemName = result.item.name || result.item.title;
+            const itemTypeDisplay = result.itemType.charAt(0).toUpperCase() + result.itemType.slice(1);
+            let displayPathString = result.path.map(p => p.name).join(" > ");
 
-          let displayPathString = result.path.map((p) => p.name).join(" > ");
+            const iconClass = result.itemType === "folder" ? "text-[var(--text-yellow-accent)]" : "text-[var(--text-blue-accent)]";
+            const iconSVG = result.itemType === "folder"
+                ? `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 0 1 4.5 9.75h15A2.25 2.25 0 0 1 21.75 12v.75m-8.69-6.44-2.12-2.12a1.5 1.5 0 0 0-1.061-.44H4.5A2.25 2.25 0 0 0 2.25 6v12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9a2.25 2.25 0 0 0-2.25-2.25h-5.379a1.5 1.5 0 0 1-1.06-.44Z" /></svg>`
+                : `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>`;
 
-          const iconClass =
-            result.itemType === "folder"
-              ? "text-[var(--text-yellow-accent)]"
-              : "text-[var(--text-blue-accent)]";
-          const iconSVG =
-            result.itemType === "folder"
-              ? `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 0 1 4.5 9.75h15A2.25 2.25 0 0 1 21.75 12v.75m-8.69-6.44-2.12-2.12a1.5 1.5 0 0 0-1.061-.44H4.5A2.25 2.25 0 0 0 2.25 6v12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9a2.25 2.25 0 0 0-2.25-2.25h-5.379a1.5 1.5 0 0 1-1.06-.44Z" /></svg>`
-              : `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>`;
-
-          let descriptionHTML = "";
-          if (result.itemType === "artifact" && result.item.description) {
-            descriptionHTML = `<p class="search-result-description">${highlightText(
-              result.item.description,
-              searchTerm
-            )}</p>`;
-          } else if (
-            result.itemType === "artifact" &&
-            !result.item.description
-          ) {
-            descriptionHTML = `<p class="search-result-description"><em>No description provided.</em></p>`;
-          }
-
-          card.innerHTML = `
-                  <div> 
-                      <div class="item-card-icon-wrapper"><span class="search-result-icon ${iconClass}">${iconSVG}</span></div>
-                      <h3 class="search-result-name">${highlightText(
-                        itemName,
-                        searchTerm
-                      )}</h3>
-                      <p class="search-result-type">${itemTypeDisplay}</p>
-                      ${descriptionHTML} 
-                      <p class="search-result-path">In: ${escapeJSString(
-                        displayPathString
-                      )}</p>
-                  </div>
-              `;
-          card.onclick = () => {
-            isSearchViewActive = false;
-            if (searchInputElement) searchInputElement.value = "";
-            if (result.itemType === "folder") {
-              navigateToFolder(result.item.id);
-            } else {
-              // artifact
-              const parentFolderId = result.path[result.path.length - 1].id;
-              navigateToFolder(parentFolderId);
-              setTimeout(() => {
-                showArtifactDetailsModal(
-                  result.item.title,
-                  result.item.description,
-                  result.item.link
-                );
-              }, 150);
+            let descriptionHTML = "";
+            if (result.itemType === "artifact" && result.item.description) {
+                descriptionHTML = `<p class="search-result-description">${highlightText(result.item.description, searchTerm)}</p>`;
+            } else if (result.itemType === "artifact" && !result.item.description) {
+                descriptionHTML = `<p class="search-result-description"><em>No description provided.</em></p>`;
             }
-          };
-          folderContentContainer.appendChild(card);
+            
+            card.innerHTML = `
+                <div> 
+                    <div class="item-card-icon-wrapper"><span class="search-result-icon ${iconClass}">${iconSVG}</span></div>
+                    <h3 class="search-result-name">${highlightText(itemName, searchTerm)}</h3>
+                    <p class="search-result-type">${itemTypeDisplay}</p>
+                    ${descriptionHTML} 
+                    <p class="search-result-path">In: ${escapeJSString(displayPathString)}</p>
+                </div>
+            `;
+            card.onclick = () => {
+                isSearchViewActive = false; 
+                if(searchInputElement) searchInputElement.value = ""; 
+                if (result.itemType === "folder") {
+                    navigateToFolder(result.item.id);
+                } else { 
+                    const parentFolderId = result.path.length > 1 ? result.path[result.path.length - 1].id : null;
+                    navigateToFolder(parentFolderId); 
+                    setTimeout(() => {
+                        showArtifactDetailsModal(result.item.title, result.item.description, result.item.link);
+                    }, 100); 
+                }
+            };
+            folderContentContainer.appendChild(card);
         });
-      }
-    </script>
-  </body>
+    }
+    // --- End Search Functionality ---
+
+    // --- Global Event Listeners (Escape key) ---
+    document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
+            const artifactModal = document.getElementById("artifact-details-modal");
+            if (artifactModal?.classList.contains("active")) { // Optional chaining
+                closeArtifactDetailsModal();
+            }
+            if (addItemFormContainer?.style.display === "block") { // Optional chaining
+                toggleAddItemForm(false);
+            }
+            if (userDropdownMenu && !userDropdownMenu.classList.contains("hidden")) {
+                userDropdownMenu.classList.add("hidden");
+                if(userMenuButton) userMenuButton.setAttribute("aria-expanded", "false");
+            }
+        }
+    });
+    // --- End Global Event Listeners ---
+  </script>
+</body>
 </html>
