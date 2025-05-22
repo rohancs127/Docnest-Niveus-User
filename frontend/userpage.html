@@ -688,14 +688,15 @@
       >
         <div class="flex items-center">
           <img
+            id="user-page-logo"
             src="https://niveussolutions.com/wp-content/uploads/2025/02/Niveus-ntt-data.png"
             alt="DocNest Logo"
-            class="h-10 w-auto mr-3"
+            class="h-12 w-auto mr-3 pt-3"
           />
           <h1
             class="text-3xl sm:text-4xl font-extrabold tracking-tight text-[var(--text-card-header)]"
           >
-            DocNest
+            DocNest KB
           </h1>
         </div>
         <div class="header-controls flex items-center gap-3">
@@ -1828,17 +1829,27 @@
     const sunIconHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>`;
     const moonIconHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>`;
     
+    const USER_PAGE_LIGHT_MODE_LOGO = "https://niveussolutions.com/wp-content/uploads/2025/02/Niveus-ntt-data.png"; // Your black text logo
+    const USER_PAGE_DARK_MODE_LOGO = "https://gitlab.niveussolutions.com/uploads/-/system/appearance/header_logo/1/Nivues_log.png"; // Your white text logo
+
+    // Get a reference to the logo image element
+    const userPageLogoElement = document.getElementById('user-page-logo');
+
     function applyTheme(theme) {
-        if (theme === "light") {
-            document.body.classList.add("light-theme");
-            if(themeToggleButton) themeToggleButton.innerHTML = moonIconHTML;
-            localStorage.setItem("userPageTheme", "light"); // Use distinct localStorage key
-        } else {
-            document.body.classList.remove("light-theme");
-            if(themeToggleButton) themeToggleButton.innerHTML = sunIconHTML;
-            localStorage.setItem("userPageTheme", "dark"); // Use distinct localStorage key
-        }
+    if (!userPageLogoElement) return; // Add a check to ensure the logo element exists
+
+    if (theme === "light") {
+        document.body.classList.add("light-theme");
+        if(themeToggleButton) themeToggleButton.innerHTML = moonIconHTML;
+        userPageLogoElement.src = USER_PAGE_LIGHT_MODE_LOGO; // Set light mode logo
+        localStorage.setItem("userPageTheme", "light"); // Use distinct localStorage key
+    } else {
+        document.body.classList.remove("light-theme");
+        if(themeToggleButton) themeToggleButton.innerHTML = sunIconHTML;
+        userPageLogoElement.src = USER_PAGE_DARK_MODE_LOGO; // Set dark mode logo
+        localStorage.setItem("userPageTheme", "dark"); // Use distinct localStorage key
     }
+}
     if(themeToggleButton) {
         themeToggleButton.addEventListener("click", () => {
             applyTheme(document.body.classList.contains("light-theme") ? "dark" : "light");
