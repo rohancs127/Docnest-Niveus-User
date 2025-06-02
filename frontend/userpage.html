@@ -1803,12 +1803,14 @@ function navigateToFolder(nodeId) {
                 }
 
                 card.innerHTML = `
-                    <div>
-                        <div class="item-card-icon-wrapper"><span class="item-card-icon text-[var(--text-yellow-accent)]"><span class="math-inline">\{iconSVG\}</span\></div\>
-                          <h3 class="item-card-name">{itemName}</h3>
-<p class="item-card-type">Folder</p>
-</div>
-${actionsDivContent ? <div class="item-card-actions">${actionsDivContent}</div> : ""}
+    <div>
+        <div class="item-card-icon-wrapper">
+            <span class="item-card-icon text-[var(--text-yellow-accent)]">${iconSVG}</span>
+        </div>
+        <h3 class="item-card-name">${itemName}</h3>
+        <p class="item-card-type">Folder</p>
+    </div>
+    ${actionsDivContent ? `<div class="item-card-actions">${actionsDivContent}</div>` : ""}
 `;
 card.onclick = () => navigateToFolder(item.id);
 folderContentContainer.appendChild(card);
