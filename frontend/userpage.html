@@ -267,6 +267,130 @@
         opacity: 1;
       }
 
+      /* Styles for Artifact List Items */
+.artifact-list-item {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-card);
+    border-radius: 0.5rem; /* Slightly less rounded than cards for a list feel */
+    padding: 0.75rem 1rem;
+    margin-bottom: 0.75rem; /* Space between list items */
+    transition: background-color 0.2s ease;
+}
+
+/* No hover effect needed if click toggles */
+/* .artifact-list-item:hover {
+    background-color: var(--bg-card-hover);
+} */
+
+.artifact-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    cursor: pointer; /* Indicate the header is clickable for dropdown */
+}
+
+.artifact-icon svg {
+    width: 1.25rem; /* 20px */
+    height: 1.25rem;
+    flex-shrink: 0;
+    color: var(--text-blue-accent); /* Default file icon color */
+}
+
+.artifact-title {
+    font-weight: 500;
+    color: var(--text-primary);
+    flex-grow: 1;
+    word-break: break-word;
+}
+
+.artifact-actions {
+    display: flex;
+    gap: 0.25rem; /* Smaller gap for icon buttons */
+    margin-left: auto; /* Pushes actions to the right */
+}
+.artifact-actions .action-icon-btn { /* Reduce padding for actions in list */
+    padding: 0.3rem;
+}
+
+
+.artifact-dropdown-arrow {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    transition: transform 0.2s ease;
+    padding: 0.25rem;
+    margin-left: 0.5rem; /* Space from actions */
+}
+
+.artifact-dropdown-arrow.expanded {
+    transform: rotate(180deg);
+}
+
+.artifact-description {
+    padding: 0.75rem 0 0.25rem 0;
+    /* Align with title: icon width (1.25rem) + gap (0.75rem) */
+    margin-left: calc(1.25rem + 0.75rem);
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    border-top: 1px solid var(--border-input);
+    margin-top: 0.75rem;
+    line-height: 1.6;
+}
+.artifact-description p {
+    margin-bottom: 0.5rem;
+}
+.artifact-description .artifact-link { /* For the "Go to Resource" link inside the description */
+    font-size: 0.8rem !important; /* Tailwind overrides can be tricky */
+    padding: 0.25rem 0.6rem !important;
+    margin-top: 0.25rem;
+    display: inline-flex; /* For icon alignment */
+    align-items: center;
+}
+.artifact-description .artifact-link svg {
+    width: 0.75rem; /* 12px */
+    height: 0.75rem;
+}
+
+
+/* If all items are artifacts, make container a block */
+#folder-content-container.list-view-only {
+    display: block;
+}
+
+/* Styles for PartnerBU Readme */
+#partnerbu-readme-container {
+    padding: 1.5rem;
+    border: 1px solid var(--border-primary);
+    margin-bottom: 1.5rem;
+    border-radius: 0.75rem; /* Match card radius */
+    background-color: var(--bg-inline-form); /* Slightly different for emphasis */
+    box-shadow: var(--shadow-card-item);
+}
+#partnerbu-readme-container h3 {
+    font-size: 1.25rem; /* Tailwind text-xl */
+    font-weight: 600; /* Tailwind semibold */
+    color: var(--text-card-header);
+    border-bottom: 1px solid var(--border-input);
+    padding-bottom: 0.75rem;
+    margin-bottom: 1rem;
+}
+#partnerbu-readme-container img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 0.375rem; /* Tailwind rounded-md */
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    border: 1px solid var(--border-input);
+    padding: 0.25rem; /* Small padding around image */
+    background-color: var(--bg-primary); /* Background for the image padding */
+    margin-bottom: 1rem;
+}
+#partnerbu-readme-container p.readme-text {
+    font-size: 0.9rem; /* Tailwind text-sm */
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
       /* Styles for artifact description in cards */
       .item-card-description,
 .search-result-description {
@@ -1094,7 +1218,137 @@
     let currentPath = [];
     let currentViewNodeId = null;
     let isSearchViewActive = false;
+
+    const PARTNERBU_README_ID = 'partnerbu-readme-container'; // Changed ID for clarity
+const PARTNERBU_FOLDER_NAME = "PartnerBU"; // Make it a constant
     // --- End Global State ---
+
+    function displayPartnerBuReadme(show, imageUrl = "PLEASE_REPLACE_WITH_YOUR_IMAGE_PATH.png") {
+    const existingReadme = document.getElementById(PARTNERBU_README_ID);
+    if (existingReadme) {
+        existingReadme.remove();
+    }
+
+    if (show) {
+        const readmeContainer = document.createElement('div');
+        readmeContainer.id = PARTNERBU_README_ID;
+        // Basic styling will be handled by CSS with this ID
+        readmeContainer.innerHTML = `
+            <h3><span class="math-inline">\{PARTNERBU\_FOLDER\_NAME\} Overview</h3\>
+            <img src="{imageUrl}" alt="PARTNERBU FOLDER NAMEInformation"><pclass="readme−text">Thisisaspecialdemonstrationmessageforthe<strong>{PARTNERBU_FOLDER_NAME}</strong> folder. The image above is a placeholder; please ensure the path is correct. This content is shown only for demo purposes when viewing this specific folder.</p>`;
+            const currentFolderHeader = document.getElementById('current-folder-header');
+        if (currentFolderHeader && currentFolderHeader.parentNode) {
+            // Insert after the current folder header, before add item form or content grid
+            currentFolderHeader.parentNode.insertBefore(readmeContainer, currentFolderHeader.nextSibling);
+        } else {
+            const folderContentArea = document.getElementById('folder-content-container');
+            if (folderContentArea && folderContentArea.parentNode) {
+                folderContentArea.parentNode.insertBefore(readmeContainer, folderContentArea);
+            }
+        }
+    }
+}
+
+
+function customSortItems(a, b) {
+    const aIsFolder = a.itemType === 'folder';
+    const bIsFolder = b.itemType === 'folder';
+
+    // Folders always come before files
+    if (aIsFolder && !bIsFolder) return -1;
+    if (!aIsFolder && bIsFolder) return 1;
+
+    // Both are folders or both are artifacts, apply number/alpha sort
+    const nameA = (a.name || a.title || '').toString();
+    const nameB = (b.name || b.title || '').toString();
+
+    const numRegex = /^(\d+)/;
+    const matchA = nameA.match(numRegex);
+    const matchB = nameB.match(numRegex);
+
+    const numA = matchA ? parseInt(matchA[1], 10) : null;
+    const numB = matchB ? parseInt(matchB[1], 10) : null;
+
+    if (numA !== null && numB !== null) {
+        if (numA !== numB) return numA - numB;
+        // If numbers are the same, sort alphabetically on the rest of the name
+        const restA = nameA.substring(matchA[1].length).trim().toLowerCase();
+        const restB = nameB.substring(matchB[1].length).trim().toLowerCase();
+        return restA.localeCompare(restB);
+    }
+    if (numA !== null && numB === null) return -1; // Numbered items first
+    if (numA === null && numB !== null) return 1;
+
+    // No leading numbers or both had identical leading numbers, sort alphabetically
+    return nameA.toLowerCase().localeCompare(nameB.toLowerCase());
+}
+
+function navigateToFolder(nodeId) {
+    // Clear PartnerBU readme before processing new folder view
+    displayPartnerBuReadme(false); // ADD THIS LINE AT THE START
+
+    currentViewNodeId = (nodeId === undefined || nodeId === null || nodeId === "null") ? null : String(nodeId);
+
+    if (!isSearchViewActive && searchInputElement) searchInputElement.value = "";
+
+    let newPath;
+    if (currentViewNodeId === null) {
+        newPath = [{ id: null, name: "Knowledge Base" }];
+    } else {
+        const pathSegments = buildPathSegmentsRecursive(currentViewNodeId, fullTreeData, []);
+        if (pathSegments && pathSegments.length > 0) {
+            newPath = [{ id: null, name: "Knowledge Base" }, ...pathSegments];
+        } else {
+            console.warn(`User Page: Node ID ${currentViewNodeId} not found for path. Navigating to root.`);
+            newPath = [{ id: null, name: "Knowledge Base" }];
+            currentViewNodeId = null;
+        }
+    }
+    currentPath = newPath;
+
+    const currentFolderObject = findNodeInTree(currentViewNodeId, fullTreeData); // Get the folder object early
+
+    // Conditionally display PartnerBU readme AFTER path and folder object are determined
+    if (currentFolderObject && currentFolderObject.name === PARTNERBU_FOLDER_NAME && !isSearchViewActive) {
+         // IMPORTANT: Replace "YOUR_IMAGE_PATH_HERE.png" with the actual path to your image
+        displayPartnerBuReadme(true, "YOUR_IMAGE_PATH_HERE.png");
+    }
+
+    renderBreadcrumbs();
+    if (!isSearchViewActive) {
+        renderFolderContents(); // This will use currentViewNodeId
+    }
+
+    // Update folder name display
+    if(currentFolderNameEl) currentFolderNameEl.textContent = currentFolderObject ? currentFolderObject.name : "Knowledge Base";
+
+    if (backButton) {
+        if (currentPath.length > 1 && !isSearchViewActive) {
+            backButton.style.display = "inline-flex";
+            backButton.onclick = () => {
+                if (currentPath.length > 1) {
+                    const parentSegment = currentPath[currentPath.length - 2];
+                    navigateToFolder(parentSegment.id);
+                }
+            };
+        } else {
+            backButton.style.display = "none";
+        }
+    }
+
+    if (addItemToFolderBtn) {
+        const nodeIdForPermissionCheck = currentViewNodeId === null ? null : String(currentViewNodeId);
+        if (nodeIdForPermissionCheck !== null && canAddContentToNode(nodeIdForPermissionCheck) && !isSearchViewActive) {
+            addItemToFolderBtn.style.display = "inline-flex";
+            addItemToFolderBtn.onclick = () => toggleAddItemForm(true);
+        } else {
+            addItemToFolderBtn.style.display = "none";
+            toggleAddItemForm(false);
+        }
+    }
+}
+
+
 
     // ================================================================
     // DYNAMIC BACKEND URL CONFIGURATION
@@ -1494,94 +1748,121 @@
     }
 
     function renderFolderContents() {
-        if (!folderContentContainer) return;
-        folderContentContainer.innerHTML = ""; 
-        const nodeToDisplay = findNodeInTree(currentViewNodeId, fullTreeData);
+    if (!folderContentContainer) return;
+    folderContentContainer.innerHTML = "";
+    // PartnerBU readme is handled by navigateToFolder now
 
-        if (loadingPlaceholder) loadingPlaceholder.style.display = 'flex';
+    const nodeToDisplay = findNodeInTree(currentViewNodeId, fullTreeData);
 
-        if (!nodeToDisplay) {
-            folderContentContainer.innerHTML =
+    if (loadingPlaceholder) loadingPlaceholder.style.display = 'flex';
+
+    if (!nodeToDisplay) {
+        folderContentContainer.innerHTML =
             '<p class="p-4 text-[var(--text-tertiary)] text-center">Folder not found or you may not have access to it.</p>';
-            if (loadingPlaceholder) loadingPlaceholder.style.display = 'none';
-            return;
-        }
+        if (loadingPlaceholder) loadingPlaceholder.style.display = 'none';
+        return;
+    }
 
-        const itemsToShow = [];
-        if (nodeToDisplay.children && Array.isArray(nodeToDisplay.children)) {
-            itemsToShow.push(...nodeToDisplay.children.map(c => ({ ...c, itemType: 'folder', parentIdActual: String(nodeToDisplay.id === null ? 'null' : nodeToDisplay.id) })));
-        }
-        if (nodeToDisplay.artifacts && Array.isArray(nodeToDisplay.artifacts)) {
-            itemsToShow.push(...nodeToDisplay.artifacts.map(a => ({ ...a, itemType: 'artifact', parentIdActual: String(nodeToDisplay.id === null ? 'null' : nodeToDisplay.id) })));
-        }
-        
-        itemsToShow.sort((a, b) => {
-            if (a.itemType === 'folder' && b.itemType !== 'folder') return -1;
-            if (a.itemType !== 'folder' && b.itemType === 'folder') return 1;
-            const nameA = (a.name || a.title || '').toLowerCase();
-            const nameB = (b.name || b.title || '').toLowerCase();
-            return nameA.localeCompare(nameB);
-        });
+    const itemsToShow = [];
+    if (nodeToDisplay.children && Array.isArray(nodeToDisplay.children)) {
+        itemsToShow.push(...nodeToDisplay.children.map(c => ({ ...c, itemType: 'folder', parentIdActual: String(nodeToDisplay.id === null ? 'null' : nodeToDisplay.id) })));
+    }
+    if (nodeToDisplay.artifacts && Array.isArray(nodeToDisplay.artifacts)) {
+        itemsToShow.push(...nodeToDisplay.artifacts.map(a => ({ ...a, itemType: 'artifact', parentIdActual: String(nodeToDisplay.id === null ? 'null' : nodeToDisplay.id) })));
+    }
 
-        if (itemsToShow.length === 0) {
-            folderContentContainer.innerHTML =
+    itemsToShow.sort(customSortItems); // APPLY THE NEW SORTING FUNCTION
+
+    const allArtifacts = itemsToShow.length > 0 && itemsToShow.every(item => item.itemType === 'artifact');
+    if (allArtifacts) {
+        folderContentContainer.classList.add('list-view-only'); // Use this class for CSS to set display: block;
+        folderContentContainer.style.display = "block"; // Or force here
+    } else {
+        folderContentContainer.classList.remove('list-view-only');
+        folderContentContainer.style.display = "grid"; // Reset to grid if folders are present
+    }
+
+    if (itemsToShow.length === 0) {
+        folderContentContainer.innerHTML = // No += needed here, it's the only content
             '<p class="p-4 text-lg text-[var(--text-tertiary)] text-center">This folder is empty.</p>';
-        } else {
-            itemsToShow.forEach(item => {
-            const card = document.createElement("div");
-            card.classList.add("item-card");
-            card.dataset.itemId = item.id;
-            card.dataset.itemType = item.itemType;
-
+    } else {
+        itemsToShow.forEach(item => {
             const itemName = escapeJSString(item.name || item.title);
-            const iconClass = item.itemType === "folder" ? "text-[var(--text-yellow-accent)]" : "text-[var(--text-blue-accent)]";
-            const iconSVG = item.itemType === "folder"
-                ? `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 0 1 4.5 9.75h15A2.25 2.25 0 0 1 21.75 12v.75m-8.69-6.44-2.12-2.12a1.5 1.5 0 0 0-1.061-.44H4.5A2.25 2.25 0 0 0 2.25 6v12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9a2.25 2.25 0 0 0-2.25-2.25h-5.379a1.5 1.5 0 0 1-1.06-.44Z" /></svg>`
-                : `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>`;
-
-            let descriptionHTML = "";
-            if (item.itemType === "artifact" && item.description) {
-                descriptionHTML = `<p class="item-card-description">${escapeJSString(item.description)}</p>`;
-            } else if (item.itemType === "artifact" && !item.description) {
-                descriptionHTML = `<p class="item-card-description"><em>No description provided.</em></p>`;
-            }
-
-            let actionsDivContent = "";
-            // Ensure parentIdForPerms is always a string or null, matching how canPerformAction might expect it.
             const parentIdForPerms = String(item.parentIdActual === null || item.parentIdActual === 'null' ? null : item.parentIdActual);
 
+            if (item.itemType === 'folder') {
+                const card = document.createElement("div");
+                card.classList.add("item-card"); // Folders remain as cards
+                card.dataset.itemId = item.id;
+                card.dataset.itemType = item.itemType;
 
-            if (item.itemType === "folder" && canDeleteNode(String(item.id)) && String(item.id) !== "null" && parentIdForPerms !== "null") {
-                actionsDivContent += `<button title="Delete folder" class="action-icon-btn delete" onclick="event.stopPropagation(); deleteNode('${String(item.id)}')"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></button>`;
-            } else if (item.itemType === "artifact" && canEditArtifactsInNode(parentIdForPerms)) {
-                 actionsDivContent += `<button title="Delete file" class="action-icon-btn delete" onclick="event.stopPropagation(); deleteArtifact('${String(item.id)}', '${parentIdForPerms}')"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></button>`;
-            }
+                const iconSVG = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 0 1 4.5 9.75h15A2.25 2.25 0 0 1 21.75 12v.75m-8.69-6.44-2.12-2.12a1.5 1.5 0 0 0-1.061-.44H4.5A2.25 2.25 0 0 0 2.25 6v12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9a2.25 2.25 0 0 0-2.25-2.25h-5.379a1.5 1.5 0 0 1-1.06-.44Z" /></svg>`;
+                let actionsDivContent = "";
+                if (canDeleteNode(String(item.id)) && String(item.id) !== "null" && parentIdForPerms !== "null") {
+                    actionsDivContent += `<button title="Delete folder" class="action-icon-btn delete" onclick="event.stopPropagation(); deleteNode('${String(item.id)}')"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></button>`;
+                }
 
-            card.innerHTML = `
-                <div> 
-                    <div class="item-card-icon-wrapper"><span class="item-card-icon ${iconClass}">${iconSVG}</span></div>
-                    <h3 class="item-card-name">${itemName}</h3>
-                    <p class="item-card-type">${item.itemType === "folder" ? "Folder" : "File"}</p>
-                    ${descriptionHTML} 
-                </div>
-                ${actionsDivContent ? `<div class="item-card-actions">${actionsDivContent}</div>` : ""}
-            `;
+                card.innerHTML = `
+                    <div>
+                        <div class="item-card-icon-wrapper"><span class="item-card-icon text-[var(--text-yellow-accent)]"><span class="math-inline">\{iconSVG\}</span\></div\>
+                          <h3 class="item-card-name">{itemName}</h3>
+<p class="item-card-type">Folder</p>
+</div>
+${actionsDivContent ? <div class="item-card-actions">${actionsDivContent}</div> : ""}
+`;
+card.onclick = () => navigateToFolder(item.id);
+folderContentContainer.appendChild(card);
+} else { // item.itemType === 'artifact' - RENDER AS LIST ITEM
+                const listItem = document.createElement("div");
+                listItem.classList.add("artifact-list-item");
+                listItem.dataset.itemId = String(item.id);
 
-            if (item.itemType === "folder") {
-                card.onclick = () => navigateToFolder(item.id);
-            } else { 
-                card.onclick = (e) => {
-                    if (e.target.closest("button") || (e.target.classList.contains("item-card-description") && e.offsetX > e.target.clientWidth)) {
-                        return; 
-                    }
-                    showArtifactDetailsModal(item.title, item.description, item.link);
-                };
-            }
-            folderContentContainer.appendChild(card);
-            });
-        }
-        if (loadingPlaceholder) loadingPlaceholder.style.display = 'none';
-    }
+                const fileIconSVG = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>`;
+                let artifactActionsHtml = "";
+                if (canEditArtifactsInNode(parentIdForPerms)) {
+                    artifactActionsHtml += `<button title="Delete file" class="action-icon-btn delete" onclick="event.stopPropagation(); deleteArtifact('<span class="math-inline">\{String\(item\.id\)\}', '</span>{parentIdForPerms}')"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></button>`;
+                }
+                // Button to open the modal
+                artifactActionsHtml += `<button title="View details in modal" class="action-icon-btn" onclick="event.stopPropagation(); showArtifactDetailsModal('<span class="math-inline">\{escapeJSString\(item\.title\)\}', '</span>{escapeJSString(item.description)}', '${escapeJSString(item.link)}')"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" /></svg></button>`;
+
+                let processedLink = item.link || "#";
+                if (processedLink && !processedLink.startsWith("http://") && !processedLink.startsWith("https://") && processedLink !== "#") {
+                    processedLink = `https://${processedLink}`;
+                }
+                const linkTarget = (processedLink === "#" || !item.link) ? "" : "target='_blank'";
+                const linkRel = (processedLink === "#" || !item.link) ? "" : "rel='noopener noreferrer'";
+
+
+                listItem.innerHTML = `
+    <div class="artifact-header">
+        <span class="artifact-icon">${fileIconSVG}</span>   النسخة المصححة: Removed extra span and corrected variable
+        <span class="artifact-title">${itemName}</span> النسخة المصححة: Added $
+        <div class="artifact-actions">${artifactActionsHtml}</div> <span class="artifact-dropdown-arrow">▼</span> النسخة المصححة: Added $, ensured space
+    </div>
+    <div class="artifact-description" style="display:none;"> النسخة المصححة: Ensured space
+        <p>${item.description ? escapeJSString(item.description).replace(/\n/g, '<br>') : '<em>No description provided.</em>'}</p> النسخة المصححة: Added $
+        ${(item.link && item.link !== "#") ? `<a href="${processedLink}" ${linkTarget} ${linkRel} class="artifact-link submit-button primary" onclick="event.stopPropagation();">Go to Resource <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 inline-block ml-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg></a>` : ''}
+    </div>
+`;
+                          const header = listItem.querySelector('.artifact-header');
+                                          const descriptionDiv = listItem.querySelector('.artifact-description');
+                                          const arrow = listItem.querySelector('.artifact-dropdown-arrow');
+
+                                          header.addEventListener('click', (e) => {
+                                              // Prevent toggle if a button within actions was clicked OR the link itself
+                                              if (e.target.closest('.action-icon-btn') || e.target.closest('a.artifact-link')) {
+                                                  return;
+                                              }
+                                              const isHidden = descriptionDiv.style.display === 'none';
+                                              descriptionDiv.style.display = isHidden ? 'block' : 'none';
+                                              arrow.classList.toggle('expanded', isHidden);
+                                          });
+                                          folderContentContainer.appendChild(listItem);
+                                      }
+                                  });
+                              }
+                              if (loadingPlaceholder) loadingPlaceholder.style.display = 'none';
+                          }
     // --- End Navigation and Rendering ---
 
     // --- Inline Add Item Form Logic ---
@@ -1953,6 +2234,7 @@
 
     function renderSearchResults(results, searchTerm = "") {
         if(!folderContentContainer) return;
+        displayPartnerBuReadme(false);
         folderContentContainer.innerHTML = "";
         toggleAddItemForm(false); 
         if(backButton) backButton.style.display = 'none';
