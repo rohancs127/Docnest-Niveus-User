@@ -287,11 +287,10 @@
 
       .artifact-title-area {
         display: flex;
-        flex-direction: row;   /* Title and Snippet side-by-side */
-        align-items: baseline; /* Aligns text nicely if font sizes differ */
-        flex-grow: 1;          /* Takes up available horizontal space */
-        min-width: 0;          /* Crucial for allowing children to truncate with ellipsis */
-        overflow: hidden;  /* Space before actions/arrow */
+        align-items: baseline; 
+        flex-grow: 1;         
+        min-width: 0;        
+        overflow: hidden; 
     }
 
       .artifact-icon svg {
@@ -302,23 +301,23 @@
       }
 
       .artifact-title {
-         font-weight: 500;
-          color: var(--text-primary);
-          white-space: nowrap;     /* Keep title on one line */
-          overflow: hidden;        /* Hide overflow */
-          text-overflow: ellipsis; /* Add ... if title is too long */
-          flex-shrink: 0;          /* Title tries not to shrink initially, let snippet shrink first */
-          margin-right: 0.5em;   
+        font-weight: 500;
+        color: var(--text-primary);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        flex-shrink: 0; /* Title tries not to shrink as much initially */
+        margin-right: 0.8em;
       }
 
       .artifact-description-snippet {
         font-size: 0.8rem;
         color: var(--text-secondary);
-        white-space: nowrap;      /* Keep snippet on one line */
-        overflow: hidden;         /* Hide overflow */
-        text-overflow: ellipsis;  /* This will add the "..." based on available space */
-        flex-grow: 1;             /* Allows snippet to take remaining space if title is short */
-        min-width: 20px;  /* Show ... (though createSnippet also does this) */
+        white-space: nowrap;
+        overflow: hidden;
+        /* text-overflow: ellipsis; /* This is now less critical if JS adds "..." but good as a fallback */
+        flex-grow: 1; 
+        min-width: 20px; 
     }
 
     .artifact-header .artifact-description-snippet {
@@ -1169,13 +1168,28 @@
         };
     }
 
-    function createSnippet(text) { // Removed maxLength parameter
+    function createSnippet(text, maxLength = 55) { // You can adjust maxLength
     if (!text || typeof text !== 'string') {
-        return '<em>No description.</em>'; // Return a placeholder if no text
+        return '<em>No description.</em>';
     }
-    // Clean newlines and multiple spaces for a better single-line representation for the snippet
+
+    // Replace multiple spaces/newlines with a single space and trim
     const cleanedText = text.replace(/\s+/g, ' ').trim();
-    return escapeJSString(cleanedText); // CSS will handle the ellipsis
+
+    if (cleanedText.length <= maxLength) {
+        return escapeJSString(cleanedText);
+    }
+
+    // Truncate and try to break at the last space to keep words whole
+    let truncated = cleanedText.substring(0, maxLength);
+    const lastSpaceIndex = truncated.lastIndexOf(' ');
+
+    // If a space was found and it's not at the very beginning, and we are actually truncating
+    if (lastSpaceIndex > 0 && cleanedText.length > maxLength) {
+        truncated = truncated.substring(0, lastSpaceIndex);
+    }
+    
+    return escapeJSString(truncated.trim()) + "...";
 }
     // --- End Global Helper Functions ---
 
@@ -1781,23 +1795,24 @@
               const linkRel = (processedLink === "#" || !item.link) ? "" : "rel='noopener noreferrer'";
 
               // Use the updated createSnippet function (which doesn't add "...")
-              const descriptionSnippetText = createSnippet(item.description);
+              const SNIPPET_MAX_LENGTH = 50; // Adjust this value as needed for visual balance
+              const descriptionSnippetText = createSnippet(item.description, SNIPPET_MAX_LENGTH);
+
+
 
               listItem.innerHTML = `
-                  <div class="artifact-header">
-                      <span class="artifact-icon">${fileIconSVG}</span>
-                      <div class="artifact-title-area"> 
-                          <span class="artifact-title">${itemName}</span>
-                          <span class="artifact-description-snippet">${descriptionSnippetText}</span>
-                      </div>
-                      ${artifactActionsHtml ? `<div class="artifact-actions">${artifactActionsHtml}</div>` : ""}
-                      <span class="artifact-dropdown-arrow">▼</span>
+              <div class="artifact-header">
+                  <span class="artifact-icon">${fileIconSVG}</span>
+                  <div class="artifact-title-area">
+                      <span class="artifact-title">${itemName}</span>
+                      <span class="artifact-description-snippet">${descriptionSnippetText}</span>
                   </div>
-                  <div class="artifact-description" style="display: none;">
-                      <p>${item.description ? escapeJSString(item.description).replace(/\n/g, '<br>') : '<em>No description provided.</em>'}</p>
-                      ${(item.link && item.link !== "#") ? `<a href="${processedLink}" ${linkTarget} ${linkRel} class="artifact-link submit-button primary" onclick="event.stopPropagation();">Go to Resource <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 inline-block ml-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg></a>` : ''}
-                  </div>
-              `;
+                  ${artifactActionsHtml ? `<div class="artifact-actions">${artifactActionsHtml}</div>` : ""}
+                  <span class="artifact-dropdown-arrow">▼</span>
+              </div>
+              <div class="artifact-description" style="display: none;">
+              </div>
+          `;
 
               const header = listItem.querySelector('.artifact-header');
               const descriptionDiv = listItem.querySelector('.artifact-description');
