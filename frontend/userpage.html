@@ -307,7 +307,7 @@
         overflow: hidden;
         text-overflow: ellipsis;
         flex-shrink: 0; /* Title tries not to shrink as much initially */
-        margin-right: 1.5em;
+        margin-right: 0.8em;
       }
 
       .artifact-description-snippet {
@@ -1795,7 +1795,7 @@
               const linkRel = (processedLink === "#" || !item.link) ? "" : "rel='noopener noreferrer'";
 
               // Use the updated createSnippet function (which doesn't add "...")
-              const SNIPPET_MAX_LENGTH = 100; // Adjust this value as needed for visual balance
+              const SNIPPET_MAX_LENGTH = 50; // Adjust this value as needed for visual balance
               const descriptionSnippetText = createSnippet(item.description, SNIPPET_MAX_LENGTH);
 
 
