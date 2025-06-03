@@ -173,7 +173,7 @@
           minmax(260px, 1fr)
         ); /* Slightly smaller min for more items */
         gap: 1.25rem; /* Reduced gap slightly */
-        align-items: start;
+        min-height: 300px;
       }
 
       .item-card,
@@ -274,10 +274,10 @@
         border: 1px solid var(--border-card);
         border-radius: 0.5rem;
         padding: 0.75rem 1rem;
-        /* margin-bottom: 0.75rem; */
+        /* margin-bottom: 0.75rem; */ /* MAKE SURE THIS IS REMOVED OR COMMENTED OUT */
         transition: background-color 0.2s ease;
         grid-column: 1 / -1; 
-        align-self: start;
+        align-self: start; /* ADD THIS: Prevents only file items from stretching vertically */
     }
 
       .artifact-header {
@@ -1710,9 +1710,8 @@
     if (loadingPlaceholder) loadingPlaceholder.style.display = 'flex';
 
     if (!nodeToDisplay) {
-        // --- MODIFICATION: Handle container style for empty/not found ---
-        folderContentContainer.style.display = "block"; // Use block for single message
-        folderContentContainer.style.gap = ""; // Reset/clear any dynamic gap
+        folderContentContainer.style.display = "block"; 
+        folderContentContainer.style.gap = ""; // Reset gap
         folderContentContainer.innerHTML =
             '<p class="p-4 text-[var(--text-tertiary)] text-center">Folder not found or you may not have access to it.</p>';
         if (loadingPlaceholder) loadingPlaceholder.style.display = 'none';
@@ -1730,32 +1729,24 @@
     itemsToShow.sort(customSortItems); // Sorts artifacts (files) first
 
     if (itemsToShow.length === 0) {
-        // --- MODIFICATION: Handle container style for empty folder ---
-        folderContentContainer.style.display = "block"; // Use block for single message
-        folderContentContainer.style.gap = ""; // Reset/clear any dynamic gap
+        folderContentContainer.style.display = "block";
+        folderContentContainer.style.gap = ""; // Reset gap
         folderContentContainer.innerHTML =
             '<p class="p-4 text-lg text-[var(--text-tertiary)] text-center">This folder is empty.</p>';
     } else {
-        // --- MODIFICATION START: Dynamic gap logic and container styling ---
-        folderContentContainer.style.display = "grid"; // Always use grid if there are items
-        // The 'align-items: start;' should be in your CSS for #folder-content-container for persistence
+        folderContentContainer.style.display = "grid"; // Essential for grid layout
 
         const onlyFiles = itemsToShow.every(item => item.itemType === 'artifact');
 
         if (onlyFiles) {
-            // When displaying only files, use a smaller row gap.
-            folderContentContainer.style.rowGap = '0.75rem';
-            // columnGap is less relevant for full-width items but can be set if desired
-            folderContentContainer.style.columnGap = '0px'; // Or '0.75rem' or keep based on main 'gap'
+            // For a list of only files, use a smaller row gap.
+            folderContentContainer.style.rowGap = '0.75rem'; // Your desired smaller gap
+            folderContentContainer.style.columnGap = '0px';  // No column gap needed for full-width items
         } else {
-            // For mixed content or folders-only, revert to the default gap defined in CSS.
-            // Setting to empty string allows the stylesheet's 'gap' property to take effect.
-            folderContentContainer.style.rowGap = '';
+            // For mixed content or folders-only, revert to the default gap defined in CSS for #folder-content-container.
+            folderContentContainer.style.rowGap = ''; 
             folderContentContainer.style.columnGap = '';
-            // If #folder-content-container has a 'gap' shorthand in CSS (e.g., gap: 1.25rem;),
-            // the above lines resetting rowGap and columnGap will let that shorthand re-apply effectively.
         }
-        // --- MODIFICATION END ---
 
         itemsToShow.forEach(item => {
             const itemName = escapeJSString(item.name || item.title);
@@ -1766,20 +1757,17 @@
                 card.classList.add("item-card");
                 card.dataset.itemId = item.id;
                 card.dataset.itemType = item.itemType;
-
                 const iconSVG = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 0 1 4.5 9.75h15A2.25 2.25 0 0 1 21.75 12v.75m-8.69-6.44-2.12-2.12a1.5 1.5 0 0 0-1.061-.44H4.5A2.25 2.25 0 0 0 2.25 6v12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9a2.25 2.25 0 0 0-2.25-2.25h-5.379a1.5 1.5 0 0 1-1.06-.44Z" /></svg>`;
                 let actionsDivContent = "";
                 if (canDeleteNode(String(item.id)) && String(item.id) !== "null" && parentIdForPerms !== "null") {
                     actionsDivContent += `<button title="Delete folder" class="action-icon-btn delete" onclick="event.stopPropagation(); deleteNode('${String(item.id)}')"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></button>`;
                 }
-
                 let folderDescriptionHTML = "";
                 if (item.description) {
                     folderDescriptionHTML = `<p class="item-card-description">${escapeJSString(item.description)}</p>`;
                 } else {
                     folderDescriptionHTML = `<p class="item-card-description"><em>No description provided.</em></p>`;
                 }
-
                 card.innerHTML = `
                     <div>
                         <div class="item-card-icon-wrapper">
@@ -1796,7 +1784,7 @@
 
             } else { // item.itemType === 'artifact'
                 const listItem = document.createElement("div");
-                listItem.classList.add("artifact-list-item");
+                listItem.classList.add("artifact-list-item"); // This item will span full width and use align-self: start
                 listItem.dataset.itemId = String(item.id);
 
                 const fileIconSVG = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>`;
@@ -1804,16 +1792,14 @@
                 if (canEditArtifactsInNode(parentIdForPerms)) {
                     artifactActionsHtml += `<button title="Delete file" class="action-icon-btn delete" onclick="event.stopPropagation(); deleteArtifact('${String(item.id)}', '${parentIdForPerms}')"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></button>`;
                 }
-
                 let processedLink = item.link || "#";
                 if (processedLink && !processedLink.startsWith("http://") && !processedLink.startsWith("https://") && processedLink !== "#") {
                     processedLink = `https://${processedLink}`;
                 }
                 const linkTarget = (processedLink === "#" || !item.link) ? "" : "target='_blank'";
                 const linkRel = (processedLink === "#" || !item.link) ? "" : "rel='noopener noreferrer'";
-                const SNIPPET_MAX_LENGTH = 100; // You can adjust this value
+                const SNIPPET_MAX_LENGTH = 50; 
                 const descriptionSnippetText = createSnippet(item.description, SNIPPET_MAX_LENGTH);
-
                 listItem.innerHTML = `
                     <div class="artifact-header">
                         <span class="artifact-icon">${fileIconSVG}</span>
@@ -1829,12 +1815,10 @@
                         ${(item.link && item.link !== "#") ? `<a href="${processedLink}" ${linkTarget} ${linkRel} class="artifact-link submit-button primary" onclick="event.stopPropagation();">Go to Resource <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 inline-block ml-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg></a>` : ''}
                     </div>
                 `;
-
                 const header = listItem.querySelector('.artifact-header');
                 const descriptionDiv = listItem.querySelector('.artifact-description');
                 const arrow = listItem.querySelector('.artifact-dropdown-arrow');
                 const snippetSpan = listItem.querySelector('.artifact-description-snippet');
-
                 header.addEventListener('click', (e) => {
                     if (e.target.closest('.action-icon-btn') || e.target.closest('a.artifact-link')) {
                         return;
