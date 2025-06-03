@@ -282,13 +282,16 @@
         align-items: center;
         gap: 0.75rem;
         cursor: pointer; /* Indicate the header is clickable for dropdown */
+        overflow: hidden; 
       }
 
       .artifact-title-area {
         display: flex;
-        flex-grow: 1;         /* Allows this area to take available space */
-        min-width: 0;         /* Important for flex children to allow truncation */
-        margin-right: 0.5rem; /* Space before actions/arrow */
+        flex-direction: row;   /* Title and Snippet side-by-side */
+        align-items: baseline; /* Aligns text nicely if font sizes differ */
+        flex-grow: 1;          /* Takes up available horizontal space */
+        min-width: 0;          /* Crucial for allowing children to truncate with ellipsis */
+        overflow: hidden;  /* Space before actions/arrow */
     }
 
       .artifact-icon svg {
@@ -301,27 +304,31 @@
       .artifact-title {
          font-weight: 500;
           color: var(--text-primary);
-          word-break: break-word; /* Keep this */
-          white-space: nowrap;      /* Prevent title from wrapping */
-          overflow: hidden;         /* Hide overflow */
-          text-overflow: ellipsis;  
+          white-space: nowrap;     /* Keep title on one line */
+          overflow: hidden;        /* Hide overflow */
+          text-overflow: ellipsis; /* Add ... if title is too long */
+          flex-shrink: 0;          /* Title tries not to shrink initially, let snippet shrink first */
+          margin-right: 0.5em;   
       }
 
       .artifact-description-snippet {
         font-size: 0.8rem;
         color: var(--text-secondary);
-        margin-top: 2px;          /* Small space below title */
-        display: block;           /* Take full width available to it */
-        white-space: nowrap;      /* Ensure snippet stays on one line */
-        overflow: hidden;         /* Hide overflow if createSnippet somehow fails */
-        text-overflow: ellipsis;  /* Show ... (though createSnippet also does this) */
+        white-space: nowrap;      /* Keep snippet on one line */
+        overflow: hidden;         /* Hide overflow */
+        text-overflow: ellipsis;  /* This will add the "..." based on available space */
+        flex-grow: 1;             /* Allows snippet to take remaining space if title is short */
+        min-width: 20px;  /* Show ... (though createSnippet also does this) */
     }
 
+    .artifact-header .artifact-description-snippet {
+    display: flex; /* or inline-flex, or just let it be the default for span in flex */
+}
+
       .artifact-actions {
-         display: flex;
-        gap: 0.25rem; 
-        margin-left: auto; /* This might not be needed if artifact-title-area uses flex-grow */
-        flex-shrink: 0; /* Prevent actions from shrinking */
+          display: flex;
+          gap: 0.25rem; 
+          flex-shrink: 0;
       }
       .artifact-actions .action-icon-btn { /* Reduce padding for actions in list */
         padding: 0.3rem;
@@ -332,8 +339,8 @@
         color: var(--text-secondary);
         transition: transform 0.2s ease;
         padding: 0.25rem;
-        margin-left: 0.25rem; /* Reduced margin if actions are present, or adjust as needed */
-        flex-shrink: 0; /* Prevent arrow from shrinking */
+        margin-left: 0.25rem; 
+        flex-shrink: 0; 
       }
 
       .artifact-dropdown-arrow.expanded {
@@ -342,13 +349,12 @@
 
       .artifact-description {
         padding: 0.75rem 0 0.25rem 0;
-        margin-left: calc(1.25rem + 0.75rem); /* Align with title: icon width + gap */
+        margin-left: calc(1.25rem + 0.75rem); 
         font-size: 0.875rem;
         color: var(--text-secondary);
         border-top: 1px solid var(--border-input);
         margin-top: 0.75rem;
         line-height: 1.6;
-        /* display: none; by default, handled by JS */
       }
       .artifact-description p {
         margin-bottom: 0.5rem;
