@@ -1746,7 +1746,7 @@
                     const descriptionDiv = listItem.querySelector('.artifact-description');
                     const arrow = listItem.querySelector('.artifact-dropdown-arrow');
 
-                    header.addEventListener('click', (e) => {
+                    header.addEventListener('hover', (e) => {
                         if (e.target.closest('.action-icon-btn') || e.target.closest('a.artifact-link')) {
                             return;
                         }
