@@ -268,146 +268,139 @@
       }
 
       /* Styles for Artifact List Items */
-.artifact-list-item {
-    background-color: var(--bg-card);
-    border: 1px solid var(--border-card);
-    border-radius: 0.5rem; /* Slightly less rounded than cards for a list feel */
-    padding: 0.75rem 1rem;
-    margin-bottom: 0.75rem; /* Space between list items */
-    transition: background-color 0.2s ease;
-}
+      .artifact-list-item {
+        background-color: var(--bg-card);
+        border: 1px solid var(--border-card);
+        border-radius: 0.5rem; /* Slightly less rounded than cards for a list feel */
+        padding: 0.75rem 1rem;
+        margin-bottom: 0.75rem; /* Space between list items */
+        transition: background-color 0.2s ease;
+      }
 
-/* No hover effect needed if click toggles */
-/* .artifact-list-item:hover {
-    background-color: var(--bg-card-hover);
-} */
+      .artifact-header {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        cursor: pointer; /* Indicate the header is clickable for dropdown */
+      }
 
-.artifact-header {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    cursor: pointer; /* Indicate the header is clickable for dropdown */
-}
+      .artifact-icon svg {
+        width: 1.25rem; /* 20px */
+        height: 1.25rem;
+        flex-shrink: 0;
+        color: var(--text-blue-accent); /* Default file icon color */
+      }
 
-.artifact-icon svg {
-    width: 1.25rem; /* 20px */
-    height: 1.25rem;
-    flex-shrink: 0;
-    color: var(--text-blue-accent); /* Default file icon color */
-}
+      .artifact-title {
+        font-weight: 500;
+        color: var(--text-primary);
+        flex-grow: 1;
+        word-break: break-word;
+      }
 
-.artifact-title {
-    font-weight: 500;
-    color: var(--text-primary);
-    flex-grow: 1;
-    word-break: break-word;
-}
+      .artifact-actions {
+        display: flex;
+        gap: 0.25rem; /* Smaller gap for icon buttons */
+        margin-left: auto; /* Pushes actions to the right */
+      }
+      .artifact-actions .action-icon-btn { /* Reduce padding for actions in list */
+        padding: 0.3rem;
+      }
 
-.artifact-actions {
-    display: flex;
-    gap: 0.25rem; /* Smaller gap for icon buttons */
-    margin-left: auto; /* Pushes actions to the right */
-}
-.artifact-actions .action-icon-btn { /* Reduce padding for actions in list */
-    padding: 0.3rem;
-}
-
-
-.artifact-dropdown-arrow {
-    font-size: 0.8rem;
-    color: var(--text-secondary);
-    transition: transform 0.2s ease;
-    padding: 0.25rem;
-    margin-left: 0.5rem; /* Space from actions */
-}
-
-.artifact-dropdown-arrow.expanded {
-    transform: rotate(180deg);
-}
-
-.artifact-description {
-    padding: 0.75rem 0 0.25rem 0;
-    /* Align with title: icon width (1.25rem) + gap (0.75rem) */
-    margin-left: calc(1.25rem + 0.75rem);
-    font-size: 0.875rem;
-    color: var(--text-secondary);
-    border-top: 1px solid var(--border-input);
-    margin-top: 0.75rem;
-    line-height: 1.6;
-}
-.artifact-description p {
-    margin-bottom: 0.5rem;
-}
-.artifact-description .artifact-link { /* For the "Go to Resource" link inside the description */
-    font-size: 0.8rem !important; /* Tailwind overrides can be tricky */
-    padding: 0.25rem 0.6rem !important;
-    margin-top: 0.25rem;
-    display: inline-flex; /* For icon alignment */
-    align-items: center;
-}
-.artifact-description .artifact-link svg {
-    width: 0.75rem; /* 12px */
-    height: 0.75rem;
-}
-
-
-/* If all items are artifacts, make container a block */
-#folder-content-container.list-view-only {
-    display: block;
-}
-
-/* Styles for PartnerBU Readme */
-#partnerbu-readme-container {
-    padding: 1.5rem;
-    border: 1px solid var(--border-primary);
-    margin-bottom: 1.5rem;
-    border-radius: 0.75rem; /* Match card radius */
-    background-color: var(--bg-inline-form); /* Slightly different for emphasis */
-    box-shadow: var(--shadow-card-item);
-}
-#partnerbu-readme-container h3 {
-    font-size: 1.25rem; /* Tailwind text-xl */
-    font-weight: 600; /* Tailwind semibold */
-    color: var(--text-card-header);
-    border-bottom: 1px solid var(--border-input);
-    padding-bottom: 0.75rem;
-    margin-bottom: 1rem;
-}
-#partnerbu-readme-container img {
-    max-width: 100%;
-    height: auto;
-    border-radius: 0.375rem; /* Tailwind rounded-md */
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    border: 1px solid var(--border-input);
-    padding: 0.25rem; /* Small padding around image */
-    background-color: var(--bg-primary); /* Background for the image padding */
-    margin-bottom: 1rem;
-}
-#partnerbu-readme-container p.readme-text {
-    font-size: 0.9rem; /* Tailwind text-sm */
-    color: var(--text-secondary);
-    line-height: 1.6;
-}
-
-      /* Styles for artifact description in cards */
-      .item-card-description,
-.search-result-description {
-    font-size: 0.8rem;
+      .artifact-dropdown-arrow {
+        font-size: 0.8rem;
         color: var(--text-secondary);
-    margin-top: 0.5rem; /* Was 0.75rem */
-    max-height: 63px; /* Approx 3 lines with 1.5 line height and padding */
-    overflow-y: auto;
-    scrollbar-width: thin;
-    scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
-    word-break: break-word;
-    line-height: 1.5; /* Increased for better readability */
-    padding: 0.5rem 0.75rem; /* Added padding for internal spacing */
-    border-radius: 0.375rem; /* Tailwind: rounded-md */
-    border: 1px solid transparent; /* Prepare for potential border on hover/focus */
-    transition: background-color 0.2s ease, border-color 0.2s ease;
-}
+        transition: transform 0.2s ease;
+        padding: 0.25rem;
+        margin-left: 0.5rem; /* Space from actions */
+      }
+
+      .artifact-dropdown-arrow.expanded {
+        transform: rotate(180deg);
+      }
+
+      .artifact-description {
+        padding: 0.75rem 0 0.25rem 0;
+        /* Align with title: icon width (1.25rem) + gap (0.75rem) */
+        margin-left: calc(1.25rem + 0.75rem);
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        border-top: 1px solid var(--border-input);
+        margin-top: 0.75rem;
+        line-height: 1.6;
+      }
+      .artifact-description p {
+        margin-bottom: 0.5rem;
+      }
+      .artifact-description .artifact-link { /* For the "Go to Resource" link inside the description */
+        font-size: 0.8rem !important;
+        padding: 0.25rem 0.6rem !important;
+        margin-top: 0.25rem;
+        display: inline-flex; /* For icon alignment */
+        align-items: center;
+      }
+      .artifact-description .artifact-link svg {
+        width: 0.75rem; /* 12px */
+        height: 0.75rem;
+      }
+
+      /* If all items are artifacts, make container a block */
+      #folder-content-container.list-view-only {
+        display: block;
+      }
+
+      /* Styles for PartnerBU Readme */
+      #partnerbu-readme-container {
+        padding: 1.5rem;
+        border: 1px solid var(--border-primary);
+        margin-bottom: 1.5rem;
+        border-radius: 0.75rem; /* Match card radius */
+        background-color: var(--bg-inline-form); /* Slightly different for emphasis */
+        box-shadow: var(--shadow-card-item);
+      }
+      #partnerbu-readme-container h3 {
+        font-size: 1.25rem; /* Tailwind text-xl */
+        font-weight: 600; /* Tailwind semibold */
+        color: var(--text-card-header);
+        border-bottom: 1px solid var(--border-input);
+        padding-bottom: 0.75rem;
+        margin-bottom: 1rem;
+      }
+      #partnerbu-readme-container img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 0.375rem; /* Tailwind rounded-md */
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        border: 1px solid var(--border-input);
+        padding: 0.25rem; /* Small padding around image */
+        background-color: var(--bg-primary); /* Background for the image padding */
+        margin-bottom: 1rem;
+      }
+      #partnerbu-readme-container p.readme-text {
+        font-size: 0.9rem; /* Tailwind text-sm */
+        color: var(--text-secondary);
+        line-height: 1.6;
+      }
+
+      /* Styles for artifact description in cards (original, keep if search results use it) */
+      .item-card-description,
+      .search-result-description {
+        font-size: 0.8rem;
+        color: var(--text-secondary);
+        margin-top: 0.5rem;
+        max-height: 63px; 
+        overflow-y: auto;
+        scrollbar-width: thin;
+        scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+        word-break: break-word;
+        line-height: 1.5;
+        padding: 0.5rem 0.75rem;
+        border-radius: 0.375rem;
+        border: 1px solid transparent;
+        transition: background-color 0.2s ease, border-color 0.2s ease;
+      }
 
       .item-card-description::-webkit-scrollbar,
       .search-result-description::-webkit-scrollbar {
@@ -923,33 +916,33 @@
           class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
         >
          <div class="flex items-center gap-2 md:gap-3"> <button
-        id="back-button"
-        title="Go Back"
-        class="p-2 rounded-md text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-action-icon-hover)] flex-shrink-0"
-        style="display: none;"
-        >
+          id="back-button"
+          title="Go Back"
+          class="p-2 rounded-md text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-action-icon-hover)] flex-shrink-0"
+          style="display: none;"
+          >
             <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-5 w-5 md:h-6 md:w-6" 
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                stroke-width="2"
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5 md:h-6 md:w-6" 
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="2"
             >
-                <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M10 19l-7-7m0 0l7-7m-7 7h18"
-                />
+              <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M10 19l-7-7m0 0l7-7m-7 7h18"
+              />
             </svg>
-        </button>
-        <h2
+          </button>
+          <h2
             id="current-folder-name"
             class="text-xl md:text-2xl font-bold text-[var(--text-card-header)]"
-        >
+          >
             Knowledge Base
-        </h2>
-      </div>
+          </h2>
+        </div>
           <button
             id="add-item-to-current-folder-button"
             class="submit-button primary text-sm py-2 px-4 self-start sm:self-center"
@@ -1046,105 +1039,105 @@
 
 <script>
     const firebaseConfig = {
-      apiKey: "AIzaSyCbHWUEzqGjzeanOiMG0Z5Lb4wIjWWEMUQ", // If this is a placeholder, replace with your actual API key
-      authDomain: "docnest-f85e2.firebaseapp.com",   // Replace with your actual auth domain
-      projectId: "docnest-f85e2",                  // Replace with your actual project ID
-      storageBucket: "docnest-f85e2.appspot.com",    // Replace with your actual storage bucket
-      messagingSenderId: "102395439437",           // Replace with your actual sender ID
-      appId: "1:102395439437:web:84e6676388b5d54395af04", // Replace with your actual App ID
-      measurementId: "G-YRMBR8BVSE",               // Optional: Replace with your actual Measurement ID
+        apiKey: "AIzaSyCbHWUEzqGjzeanOiMG0Z5Lb4wIjWWEMUQ", // If this is a placeholder, replace with your actual API key
+        authDomain: "docnest-f85e2.firebaseapp.com",   // Replace with your actual auth domain
+        projectId: "docnest-f85e2",                     // Replace with your actual project ID
+        storageBucket: "docnest-f85e2.appspot.com",    // Replace with your actual storage bucket
+        messagingSenderId: "102395439437",               // Replace with your actual sender ID
+        appId: "1:102395439437:web:84e6676388b5d54395af04", // Replace with your actual App ID
+        measurementId: "G-YRMBR8BVSE",                 // Optional: Replace with your actual Measurement ID
     };
 
     // --- Global Helper Functions (Toast, Button Loading, Escape, Debounce) ---
     window.showNotification = function (
-      message,
-      type = "success",
-      duration = 3000
+        message,
+        type = "success",
+        duration = 3000
     ) {
-      const toastContainer = document.getElementById("toast-container");
-      if (!toastContainer) return;
-      const toast = document.createElement("div");
-      toast.classList.add("toast", type);
-      let iconHtml = "";
-      if (type === "success") {
-        iconHtml = `<svg class="toast-icon h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" /></svg>`;
-      } else if (type === "error") {
-        iconHtml = `<svg class="toast-icon h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm.293-10.293a1 1 0 00-1.414 0L9 8.586l-.293-.293a1 1 0 10-1.414 1.414L7.586 10l-.293.293a1 1 0 101.414 1.414L9 11.414l.293.293a1 1 0 001.414-1.414L10.414 10l.293-.293a1 1 0 000-1.414z" clip-rule="evenodd" /></svg>`;
-      }
-      toast.innerHTML = `${iconHtml}<span>${message}</span>`;
-      toastContainer.appendChild(toast);
-      toast.offsetHeight; // Trigger reflow
-      toast.classList.add("show");
-      setTimeout(() => {
-        toast.classList.remove("show");
+        const toastContainer = document.getElementById("toast-container");
+        if (!toastContainer) return;
+        const toast = document.createElement("div");
+        toast.classList.add("toast", type);
+        let iconHtml = "";
+        if (type === "success") {
+            iconHtml = `<svg class="toast-icon h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" /></svg>`;
+        } else if (type === "error") {
+            iconHtml = `<svg class="toast-icon h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm.293-10.293a1 1 0 00-1.414 0L9 8.586l-.293-.293a1 1 0 10-1.414 1.414L7.586 10l-.293.293a1 1 0 101.414 1.414L9 11.414l.293.293a1 1 0 001.414-1.414L10.414 10l.293-.293a1 1 0 000-1.414z" clip-rule="evenodd" /></svg>`;
+        }
+        toast.innerHTML = `${iconHtml}<span>${message}</span>`;
+        toastContainer.appendChild(toast);
+        toast.offsetHeight; // Trigger reflow
+        toast.classList.add("show");
         setTimeout(() => {
-          toast.remove();
-        }, 300);
-      }, duration);
+            toast.classList.remove("show");
+            setTimeout(() => {
+                toast.remove();
+            }, 300);
+        }, duration);
     };
 
     window.setButtonLoading = function (
-      button,
-      isLoading,
-      originalText = null
+        button,
+        isLoading,
+        originalText = null
     ) {
-      if (!(button instanceof HTMLElement)) {
-        console.error("setButtonLoading: invalid button", button);
-        return;
-      }
-      const buttonTextSpan = button.querySelector(".button-text");
-      const defaultOriginal = buttonTextSpan
-        ? buttonTextSpan.dataset.originalText || buttonTextSpan.textContent
-        : button.dataset.originalText || button.textContent;
+        if (!(button instanceof HTMLElement)) {
+            console.error("setButtonLoading: invalid button", button);
+            return;
+        }
+        const buttonTextSpan = button.querySelector(".button-text");
+        const defaultOriginal = buttonTextSpan
+            ? buttonTextSpan.dataset.originalText || buttonTextSpan.textContent
+            : button.dataset.originalText || button.textContent;
 
-      if (isLoading) {
-        button.disabled = true;
-        if (buttonTextSpan) {
-          if (
-            originalText !== null &&
-            typeof buttonTextSpan.dataset.originalText === "undefined"
-          )
-            buttonTextSpan.dataset.originalText = defaultOriginal;
-          buttonTextSpan.innerHTML = `<span class="spinner"></span>Processing...`;
+        if (isLoading) {
+            button.disabled = true;
+            if (buttonTextSpan) {
+                if (
+                    originalText !== null &&
+                    typeof buttonTextSpan.dataset.originalText === "undefined"
+                )
+                    buttonTextSpan.dataset.originalText = defaultOriginal;
+                buttonTextSpan.innerHTML = `<span class="spinner"></span>Processing...`;
+            } else {
+                if (
+                    originalText !== null &&
+                    typeof button.dataset.originalText === "undefined"
+                )
+                    button.dataset.originalText = defaultOriginal;
+                button.innerHTML = `<span class="spinner"></span>Processing...`;
+            }
         } else {
-          if (
-            originalText !== null &&
-            typeof button.dataset.originalText === "undefined"
-          )
-            button.dataset.originalText = defaultOriginal;
-          button.innerHTML = `<span class="spinner"></span>Processing...`;
+            button.disabled = false;
+            if (buttonTextSpan) {
+                buttonTextSpan.innerHTML =
+                    originalText || buttonTextSpan.dataset.originalText || "Submit";
+                delete buttonTextSpan.dataset.originalText;
+            } else {
+                button.innerHTML =
+                    originalText || button.dataset.originalText || "Submit";
+                delete button.dataset.originalText;
+            }
         }
-      } else {
-        button.disabled = false;
-        if (buttonTextSpan) {
-          buttonTextSpan.innerHTML =
-            originalText || buttonTextSpan.dataset.originalText || "Submit";
-          delete buttonTextSpan.dataset.originalText;
-        } else {
-          button.innerHTML =
-            originalText || button.dataset.originalText || "Submit";
-          delete button.dataset.originalText;
-        }
-      }
     };
-    function escapeJSString(str) { 
-      if (typeof str !== "string") return "";
-      return str
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#39;")
-        .replace(/`/g, "&#96;");
+    function escapeJSString(str) {
+        if (typeof str !== "string") return "";
+        return str
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#39;")
+            .replace(/`/g, "&#96;");
     }
     function debounce(func, delay) {
-      let timeoutId;
-      return function (...args) {
-        clearTimeout(timeoutId);
-        timeoutId = setTimeout(() => {
-          func.apply(this, args);
-        }, delay);
-      };
+        let timeoutId;
+        return function (...args) {
+            clearTimeout(timeoutId);
+            timeoutId = setTimeout(() => {
+                func.apply(this, args);
+            }, delay);
+        };
     }
     // --- End Global Helper Functions ---
 
@@ -1152,46 +1145,40 @@
     let firebaseApp;
     let firebaseAuth;
 
-    // NOTE: This condition means Firebase ONLY initializes if the apiKey IS the placeholder.
-    // For production, you'll want to ensure it initializes with your REAL key.
-    // A better check for development might be:
-    // if (firebaseConfig.apiKey && firebaseConfig.apiKey !== "YOUR_ACTUAL_PROD_KEY_OR_A_DIFFERENT_PLACEHOLDER")
     if (
-      firebaseConfig.apiKey === "AIzaSyCbHWUEzqGjzeanOiMG0Z5Lb4wIjWWEMUQ" // If this IS your key, it's fine. If it's a placeholder, this logic is inverted for production.
+        firebaseConfig.apiKey === "AIzaSyCbHWUEzqGjzeanOiMG0Z5Lb4wIjWWEMUQ"
     ) {
-      console.log("User Page: Attempting Firebase initialization with current key.");
-      try {
-        firebaseApp = firebase.initializeApp(firebaseConfig);
-        firebaseAuth = firebase.auth();
-        console.log("User Page: Firebase initialized.");
-      } catch (e) {
-        console.error("User Page: Error initializing Firebase:", e);
-        window.showNotification(
-          "Critical Error: Auth service init failed.",
-          "error",
-          10000
-        );
-      }
+        console.log("User Page: Attempting Firebase initialization with current key.");
+        try {
+            firebaseApp = firebase.initializeApp(firebaseConfig);
+            firebaseAuth = firebase.auth();
+            console.log("User Page: Firebase initialized.");
+        } catch (e) {
+            console.error("User Page: Error initializing Firebase:", e);
+            window.showNotification(
+                "Critical Error: Auth service init failed.",
+                "error",
+                10000
+            );
+        }
     } else {
-      console.warn("User Page: Firebase config apiKey is NOT the specific placeholder 'AIzaSy...'. Assuming it's a real key or a different placeholder. Attempting initialization.");
-      // If the key is NOT the placeholder, we assume it's the real one and try to init.
-      // Or, if it's a different placeholder, it will also go here and likely fail if that other placeholder is invalid.
-      try {
-        firebaseApp = firebase.initializeApp(firebaseConfig);
-        firebaseAuth = firebase.auth();
-        console.log("User Page: Firebase initialized (key was not the common placeholder).");
-      } catch (e) {
-         console.error("User Page: Error initializing Firebase (key was not common placeholder):", e);
-         window.showNotification(
-            "Auth service not configured correctly. Please contact support.",
-            "error",
-            10000
-         );
-         if (document.body && !window.location.pathname.endsWith("user_login.html")) {
-            document.body.innerHTML =
-            '<div style="padding: 20px; text-align: center; font-size: 1.2em; color: red;">Application cannot start: Firebase configuration is missing or invalid.</div>';
-         }
-      }
+        console.warn("User Page: Firebase config apiKey is NOT the specific placeholder 'AIzaSy...'. Assuming it's a real key or a different placeholder. Attempting initialization.");
+        try {
+            firebaseApp = firebase.initializeApp(firebaseConfig);
+            firebaseAuth = firebase.auth();
+            console.log("User Page: Firebase initialized (key was not the common placeholder).");
+        } catch (e) {
+            console.error("User Page: Error initializing Firebase (key was not common placeholder):", e);
+            window.showNotification(
+                "Auth service not configured correctly. Please contact support.",
+                "error",
+                10000
+            );
+            if (document.body && !window.location.pathname.endsWith("user_login.html")) {
+                document.body.innerHTML =
+                    '<div style="padding: 20px; text-align: center; font-size: 1.2em; color: red;">Application cannot start: Firebase configuration is missing or invalid.</div>';
+            }
+        }
     }
     // --- End Firebase Initialization ---
 
@@ -1219,480 +1206,384 @@
     let currentViewNodeId = null;
     let isSearchViewActive = false;
 
-    const PARTNERBU_README_ID = 'partnerbu-readme-container'; // Changed ID for clarity
-const PARTNERBU_FOLDER_NAME = "PartnerBU"; // Make it a constant
+    const PARTNERBU_README_ID = 'partnerbu-readme-container';
+    const PARTNERBU_FOLDER_NAME = "PartnerBU";
     // --- End Global State ---
 
+    // --- Helper function for PartnerBU Readme ---
     function displayPartnerBuReadme(show, imageUrl = "PLEASE_REPLACE_WITH_YOUR_IMAGE_PATH.png") {
-    const existingReadme = document.getElementById(PARTNERBU_README_ID);
-    if (existingReadme) {
-        existingReadme.remove();
-    }
+        const existingReadme = document.getElementById(PARTNERBU_README_ID);
+        if (existingReadme) {
+            existingReadme.remove();
+        }
 
-    if (show) {
-        const readmeContainer = document.createElement('div');
-        readmeContainer.id = PARTNERBU_README_ID;
-        // Basic styling will be handled by CSS with this ID
-        readmeContainer.innerHTML = `
-            <h3><span class="math-inline">\{PARTNERBU\_FOLDER\_NAME\} Overview</h3\>
-            <img src="{imageUrl}" alt="PARTNERBU FOLDER NAMEInformation"><pclass="readme−text">Thisisaspecialdemonstrationmessageforthe<strong>{PARTNERBU_FOLDER_NAME}</strong> folder. The image above is a placeholder; please ensure the path is correct. This content is shown only for demo purposes when viewing this specific folder.</p>`;
+        if (show) {
+            const readmeContainer = document.createElement('div');
+            readmeContainer.id = PARTNERBU_README_ID;
+            // CSS classes will style this based on #partnerbu-readme-container
+            readmeContainer.innerHTML = `
+                <h3>${PARTNERBU_FOLDER_NAME} Overview</h3>
+                <img src="${imageUrl}" alt="${PARTNERBU_FOLDER_NAME} Information">
+                <p class="readme-text">This is a special demonstration message for the <strong>${PARTNERBU_FOLDER_NAME}</strong> folder. The image above is a placeholder; please ensure the path is correct. This content is shown only for demo purposes when viewing this specific folder.</p>
+            `;
+
             const currentFolderHeader = document.getElementById('current-folder-header');
-        if (currentFolderHeader && currentFolderHeader.parentNode) {
-            // Insert after the current folder header, before add item form or content grid
-            currentFolderHeader.parentNode.insertBefore(readmeContainer, currentFolderHeader.nextSibling);
-        } else {
-            const folderContentArea = document.getElementById('folder-content-container');
-            if (folderContentArea && folderContentArea.parentNode) {
-                folderContentArea.parentNode.insertBefore(readmeContainer, folderContentArea);
+            if (currentFolderHeader && currentFolderHeader.parentNode) {
+                currentFolderHeader.parentNode.insertBefore(readmeContainer, currentFolderHeader.nextSibling);
+            } else {
+                const folderContentArea = document.getElementById('folder-content-container');
+                if (folderContentArea && folderContentArea.parentNode) {
+                    folderContentArea.parentNode.insertBefore(readmeContainer, folderContentArea);
+                }
             }
         }
     }
-}
 
+    // --- Sorting Function ---
+    function customSortItems(a, b) {
+        const aIsFolder = a.itemType === 'folder';
+        const bIsFolder = b.itemType === 'folder';
 
-function customSortItems(a, b) {
-    const aIsFolder = a.itemType === 'folder';
-    const bIsFolder = b.itemType === 'folder';
+        if (aIsFolder && !bIsFolder) return -1;
+        if (!aIsFolder && bIsFolder) return 1;
 
-    // Folders always come before files
-    if (aIsFolder && !bIsFolder) return -1;
-    if (!aIsFolder && bIsFolder) return 1;
+        const nameA = (a.name || a.title || '').toString();
+        const nameB = (b.name || b.title || '').toString();
 
-    // Both are folders or both are artifacts, apply number/alpha sort
-    const nameA = (a.name || a.title || '').toString();
-    const nameB = (b.name || b.title || '').toString();
+        const numRegex = /^(\d+)/;
+        const matchA = nameA.match(numRegex);
+        const matchB = nameB.match(numRegex);
 
-    const numRegex = /^(\d+)/;
-    const matchA = nameA.match(numRegex);
-    const matchB = nameB.match(numRegex);
+        const numA = matchA ? parseInt(matchA[1], 10) : null;
+        const numB = matchB ? parseInt(matchB[1], 10) : null;
 
-    const numA = matchA ? parseInt(matchA[1], 10) : null;
-    const numB = matchB ? parseInt(matchB[1], 10) : null;
-
-    if (numA !== null && numB !== null) {
-        if (numA !== numB) return numA - numB;
-        // If numbers are the same, sort alphabetically on the rest of the name
-        const restA = nameA.substring(matchA[1].length).trim().toLowerCase();
-        const restB = nameB.substring(matchB[1].length).trim().toLowerCase();
-        return restA.localeCompare(restB);
-    }
-    if (numA !== null && numB === null) return -1; // Numbered items first
-    if (numA === null && numB !== null) return 1;
-
-    // No leading numbers or both had identical leading numbers, sort alphabetically
-    return nameA.toLowerCase().localeCompare(nameB.toLowerCase());
-}
-
-function navigateToFolder(nodeId) {
-    // Clear PartnerBU readme before processing new folder view
-    displayPartnerBuReadme(false); // ADD THIS LINE AT THE START
-
-    currentViewNodeId = (nodeId === undefined || nodeId === null || nodeId === "null") ? null : String(nodeId);
-
-    if (!isSearchViewActive && searchInputElement) searchInputElement.value = "";
-
-    let newPath;
-    if (currentViewNodeId === null) {
-        newPath = [{ id: null, name: "Knowledge Base" }];
-    } else {
-        const pathSegments = buildPathSegmentsRecursive(currentViewNodeId, fullTreeData, []);
-        if (pathSegments && pathSegments.length > 0) {
-            newPath = [{ id: null, name: "Knowledge Base" }, ...pathSegments];
-        } else {
-            console.warn(`User Page: Node ID ${currentViewNodeId} not found for path. Navigating to root.`);
-            newPath = [{ id: null, name: "Knowledge Base" }];
-            currentViewNodeId = null;
+        if (numA !== null && numB !== null) {
+            if (numA !== numB) return numA - numB;
+            const restA = nameA.substring(matchA[1].length).trim().toLowerCase();
+            const restB = nameB.substring(matchB[1].length).trim().toLowerCase();
+            return restA.localeCompare(restB);
         }
+        if (numA !== null && numB === null) return -1;
+        if (numA === null && numB !== null) return 1;
+
+        return nameA.toLowerCase().localeCompare(nameB.toLowerCase());
     }
-    currentPath = newPath;
-
-    const currentFolderObject = findNodeInTree(currentViewNodeId, fullTreeData); // Get the folder object early
-
-    // Conditionally display PartnerBU readme AFTER path and folder object are determined
-    if (currentFolderObject && currentFolderObject.name === PARTNERBU_FOLDER_NAME && !isSearchViewActive) {
-         // IMPORTANT: Replace "YOUR_IMAGE_PATH_HERE.png" with the actual path to your image
-        displayPartnerBuReadme(true, "YOUR_IMAGE_PATH_HERE.png");
-    }
-
-    renderBreadcrumbs();
-    if (!isSearchViewActive) {
-        renderFolderContents(); // This will use currentViewNodeId
-    }
-
-    // Update folder name display
-    if(currentFolderNameEl) currentFolderNameEl.textContent = currentFolderObject ? currentFolderObject.name : "Knowledge Base";
-
-    if (backButton) {
-        if (currentPath.length > 1 && !isSearchViewActive) {
-            backButton.style.display = "inline-flex";
-            backButton.onclick = () => {
-                if (currentPath.length > 1) {
-                    const parentSegment = currentPath[currentPath.length - 2];
-                    navigateToFolder(parentSegment.id);
-                }
-            };
-        } else {
-            backButton.style.display = "none";
-        }
-    }
-
-    if (addItemToFolderBtn) {
-        const nodeIdForPermissionCheck = currentViewNodeId === null ? null : String(currentViewNodeId);
-        if (nodeIdForPermissionCheck !== null && canAddContentToNode(nodeIdForPermissionCheck) && !isSearchViewActive) {
-            addItemToFolderBtn.style.display = "inline-flex";
-            addItemToFolderBtn.onclick = () => toggleAddItemForm(true);
-        } else {
-            addItemToFolderBtn.style.display = "none";
-            toggleAddItemForm(false);
-        }
-    }
-}
-
-
 
     // ================================================================
     // DYNAMIC BACKEND URL CONFIGURATION
     // ================================================================
-    let BASE_API_URL; // This will hold the chosen base URL for API calls
-    const localBaseUrl = "http://localhost:8000"; // NO TRAILING SLASH. Your local backend.
-
-    // IMPORTANT: Replace this placeholder with your *actual* Cloud Run service URL
-    const cloudRunBaseUrl = "https://docnest-780614596615.asia-south1.run.app"; // NO TRAILING SLASH. Example: "https://docnest-user-backend-xyz.a.run.app"
+    let BASE_API_URL;
+    const localBaseUrl = "http://localhost:8000";
+    const cloudRunBaseUrl = "https://docnest-780614596615.asia-south1.run.app";
 
     if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
-      BASE_API_URL = localBaseUrl;
-      console.log("USER PAGE: Using LOCAL backend API base:", BASE_API_URL);
+        BASE_API_URL = localBaseUrl;
+        console.log("USER PAGE: Using LOCAL backend API base:", BASE_API_URL);
     } else {
-      BASE_API_URL = cloudRunBaseUrl;
-      console.log("USER PAGE: Using CLOUD backend API base:", BASE_API_URL);
+        BASE_API_URL = cloudRunBaseUrl;
+        console.log("USER PAGE: Using CLOUD backend API base:", BASE_API_URL);
 
-      // Safety check for placeholder Cloud Run URL when not on localhost
-      if (cloudRunBaseUrl.includes("your-userpage-backend-url") || // Check against the placeholder string
-          cloudRunBaseUrl.includes("your-actual-cloud-run-url")) { // Add any other common placeholder patterns you might use
-          const warningMessage = "CRITICAL: User Page Cloud Run URL (BASE_API_URL) is a placeholder! API calls will likely fail. Please update 'cloudRunBaseUrl' in the userpage.html script.";
-          console.error(warningMessage);
-          if (window.showNotification) { // Ensure showNotification is defined
-              window.showNotification(warningMessage, "error", 60000); // Display for a long time
-          } else {
-              alert(warningMessage); // Fallback
-          }
-          // Optionally, disable functionality or halt further data loading
-          if (loadingPlaceholder) {
-            loadingPlaceholder.innerHTML = `<p class="p-4 text-lg text-[var(--text-red-accent)]">${warningMessage}</p>`;
-            loadingPlaceholder.style.display = "flex";
-          }
-      }
+        if (cloudRunBaseUrl.includes("your-userpage-backend-url") ||
+            cloudRunBaseUrl.includes("your-actual-cloud-run-url")) {
+            const warningMessage = "CRITICAL: User Page Cloud Run URL (BASE_API_URL) is a placeholder! API calls will likely fail. Please update 'cloudRunBaseUrl' in the userpage.html script.";
+            console.error(warningMessage);
+            if (window.showNotification) {
+                window.showNotification(warningMessage, "error", 60000);
+            } else {
+                alert(warningMessage);
+            }
+            if (loadingPlaceholder) {
+                loadingPlaceholder.innerHTML = `<p class="p-4 text-lg text-[var(--text-red-accent)]">${warningMessage}</p>`;
+                loadingPlaceholder.style.display = "flex";
+            }
+        }
     }
     // ================================================================
 
     // --- Authentication & Authorization ---
-    if (firebaseAuth) { // Check if Firebase Auth was initialized
-      firebaseAuth.onAuthStateChanged(async (user) => {
-        if (user) {
-          console.log("User Page: User is signed in.", user.email);
-          if (userDisplayNameSpan)
-            userDisplayNameSpan.textContent =
-              user.displayName || user.email.split("@")[0];
-          if (dropdownUserName)
-            dropdownUserName.textContent = user.displayName || "N/A";
-          if (dropdownUserEmail) dropdownUserEmail.textContent = user.email;
-          
-          // Check if BASE_API_URL is properly configured before loading data
-          if (BASE_API_URL && (!BASE_API_URL.includes("your-userpage-backend-url") && !BASE_API_URL.includes("your-actual-cloud-run-url"))) {
-            await loadInitialDataConcurrently();
-          } else {
-            console.error("User Page: Backend API URL is not properly configured. Halting data load.");
-            if (loadingPlaceholder) {
-                loadingPlaceholder.innerHTML = `<p class="p-4 text-lg text-[var(--text-red-accent)]">Application error: Backend service URL is not configured. Please contact support.</p>`;
-                loadingPlaceholder.style.display = "flex";
+    if (firebaseAuth) {
+        firebaseAuth.onAuthStateChanged(async (user) => {
+            if (user) {
+                console.log("User Page: User is signed in.", user.email);
+                if (userDisplayNameSpan)
+                    userDisplayNameSpan.textContent =
+                        user.displayName || user.email.split("@")[0];
+                if (dropdownUserName)
+                    dropdownUserName.textContent = user.displayName || "N/A";
+                if (dropdownUserEmail) dropdownUserEmail.textContent = user.email;
+
+                if (BASE_API_URL && (!BASE_API_URL.includes("your-userpage-backend-url") && !BASE_API_URL.includes("your-actual-cloud-run-url"))) {
+                    await loadInitialDataConcurrently();
+                } else {
+                    console.error("User Page: Backend API URL is not properly configured. Halting data load.");
+                    if (loadingPlaceholder) {
+                        loadingPlaceholder.innerHTML = `<p class="p-4 text-lg text-[var(--text-red-accent)]">Application error: Backend service URL is not configured. Please contact support.</p>`;
+                        loadingPlaceholder.style.display = "flex";
+                    }
+                    if (firebaseAuth) await firebaseAuth.signOut().catch(e => console.error("Error signing out due to config issue:", e));
+                }
+            } else {
+                console.log("User Page: No user signed in. Redirecting to user_login.html.");
+                sessionStorage.removeItem("userToken");
+                currentUserRoles = [];
+                fullTreeData = [];
+                if (!window.location.pathname.endsWith("user_login.html")) {
+                    window.location.href = "user_login.html";
+                }
             }
-             // Optionally sign out user as they can't proceed
-            if(firebaseAuth) await firebaseAuth.signOut().catch(e => console.error("Error signing out due to config issue:", e));
-            // Redirecting here might be too aggressive if onAuthStateChanged handles it below.
-          }
-        } else {
-          console.log("User Page: No user signed in. Redirecting to user_login.html.");
-          sessionStorage.removeItem("userToken"); // Use "userToken" for consistency
-          currentUserRoles = [];
-          fullTreeData = [];
-          if (!window.location.pathname.endsWith("user_login.html")) {
-            window.location.href = "user_login.html";
-          }
-        }
-      });
+        });
     } else {
-        // This block executes if Firebase Auth itself failed to initialize (e.g. bad config)
         console.error("User Page: Firebase Auth service is not available. Cannot proceed.");
         if (!window.location.pathname.endsWith("user_login.html")) {
-            if (loadingPlaceholder) { // Check if element exists
+            if (loadingPlaceholder) {
                 loadingPlaceholder.innerHTML =
-                '<p class="p-4 text-lg text-[var(--text-red-accent)]">Authentication service failed to initialize. Please check configuration or contact support. You may need to <a href="user_login.html" class="text-[var(--text-link)]">login again</a>.</p>';
+                    '<p class="p-4 text-lg text-[var(--text-red-accent)]">Authentication service failed to initialize. Please check configuration or contact support. You may need to <a href="user_login.html" class="text-[var(--text-link)]">login again</a>.</p>';
                 loadingPlaceholder.style.display = "flex";
             }
-            // Fallback redirect if UI cannot be updated
             setTimeout(() => {
                 if (!window.location.pathname.endsWith("user_login.html")) {
-                     window.location.href = "user_login.html";
+                    window.location.href = "user_login.html";
                 }
             }, 3000);
         }
     }
 
     async function getAuthToken() {
-      if (!firebaseAuth || !firebaseAuth.currentUser) {
-        console.warn("User Page: No Firebase current user for token request. Redirecting to login.");
-        if (!window.location.pathname.endsWith("user_login.html")) {
-            window.location.href = "user_login.html"; // Ensure redirect if no user
+        if (!firebaseAuth || !firebaseAuth.currentUser) {
+            console.warn("User Page: No Firebase current user for token request. Redirecting to login.");
+            if (!window.location.pathname.endsWith("user_login.html")) {
+                window.location.href = "user_login.html";
+            }
+            return null;
         }
-        return null;
-      }
-      try {
-        const token = await firebaseAuth.currentUser.getIdToken(true); // Force refresh
-        sessionStorage.setItem("userToken", token); // Using "userToken" for consistency
-        return token;
-      } catch (error) {
-        console.error("User Page: Error getting ID token:", error);
-        window.showNotification(
-          "Your session may have expired. Please try logging in again.",
-          "error",
-          5000
-        );
-        if (firebaseAuth) {
-          await firebaseAuth.signOut().catch((e) => console.error("User Page: Signout failed after token error", e));
-          // onAuthStateChanged will handle the redirect
-        } else if (!window.location.pathname.endsWith("user_login.html")) {
-            window.location.href = "user_login.html"; // Fallback redirect
+        try {
+            const token = await firebaseAuth.currentUser.getIdToken(true);
+            sessionStorage.setItem("userToken", token);
+            return token;
+        } catch (error) {
+            console.error("User Page: Error getting ID token:", error);
+            window.showNotification(
+                "Your session may have expired. Please try logging in again.",
+                "error",
+                5000
+            );
+            if (firebaseAuth) {
+                await firebaseAuth.signOut().catch((e) => console.error("User Page: Signout failed after token error", e));
+            } else if (!window.location.pathname.endsWith("user_login.html")) {
+                window.location.href = "user_login.html";
+            }
+            return null;
         }
-        return null;
-      }
     }
 
     async function secureFetch(url, options = {}) {
-      const token = await getAuthToken();
-      if (!token) {
-        // getAuthToken handles redirection if token cannot be obtained.
-        // Throw an error to ensure promise chains are rejected and calling function can handle it.
-        throw new Error("Authentication token unavailable. User might be logged out or session expired.");
-      }
-      
-      const headers = { ...options.headers };
-      headers["Authorization"] = `Bearer ${token}`;
-
-      if (options.body && !(options.body instanceof FormData) && (options.method === 'POST' || options.method === 'PUT' || options.method === 'PATCH')) {
-        headers["Content-Type"] = "application/json";
-      }
-
-      try {
-        const response = await fetch(url, { ...options, headers });
-        if (response.status === 401 || response.status === 403) {
-            console.error(`User Page: Authorization error (${response.status}) for ${url}.`);
-            window.showNotification("Authorization error. Your session may have expired. Please log in again.", "error", 5000);
-            if (firebaseAuth) await firebaseAuth.signOut().catch(e => console.error("Sign out after auth error failed", e));
-            // onAuthStateChanged will handle redirect eventually
-            throw new Error(`Authorization failed (${response.status})`); // Propagate error
+        const token = await getAuthToken();
+        if (!token) {
+            throw new Error("Authentication token unavailable. User might be logged out or session expired.");
         }
-        return response; // Return the whole response object
-      } catch (networkError) {
-          // This catches actual network failures (e.g., server down, DNS issues, CORS if not preflighted)
-          // And also errors thrown from the 401/403 block above
-          console.error("User Page: Network or Auth error during secureFetch:", networkError);
-          if (!networkError.message.includes("Authorization failed")) { // Avoid double notification for auth errors
-            window.showNotification(`Network Error: ${networkError.message}. Check connection or server status.`, "error", 7000);
-          }
-          throw networkError; // Re-throw to be caught by calling function
-      }
+
+        const headers = { ...options.headers };
+        headers["Authorization"] = `Bearer ${token}`;
+
+        if (options.body && !(options.body instanceof FormData) && (options.method === 'POST' || options.method === 'PUT' || options.method === 'PATCH')) {
+            headers["Content-Type"] = "application/json";
+        }
+
+        try {
+            const response = await fetch(url, { ...options, headers });
+            if (response.status === 401 || response.status === 403) {
+                console.error(`User Page: Authorization error (${response.status}) for ${url}.`);
+                window.showNotification("Authorization error. Your session may have expired. Please log in again.", "error", 5000);
+                if (firebaseAuth) await firebaseAuth.signOut().catch(e => console.error("Sign out after auth error failed", e));
+                throw new Error(`Authorization failed (${response.status})`);
+            }
+            return response;
+        } catch (networkError) {
+            console.error("User Page: Network or Auth error during secureFetch:", networkError);
+            if (!networkError.message.includes("Authorization failed")) {
+                window.showNotification(`Network Error: ${networkError.message}. Check connection or server status.`, "error", 7000);
+            }
+            throw networkError;
+        }
     }
     // --- End Authentication & Authorization ---
 
     // --- Initial Data Loading (Parallel) ---
     async function fetchRoles() {
-      try {
-        const response = await secureFetch(`${BASE_API_URL}/api/auth`, { // USE DYNAMIC URL
-          method: "POST", 
-        });
-        if (!response.ok) {
-          const errorData = await response.json().catch(() => ({
-            detail: `Roles/Auth verification failed (Status: ${response.status})`,
-          }));
-          throw new Error(errorData.detail);
+        try {
+            const response = await secureFetch(`${BASE_API_URL}/api/auth`, {
+                method: "POST",
+            });
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({
+                    detail: `Roles/Auth verification failed (Status: ${response.status})`,
+                }));
+                throw new Error(errorData.detail);
+            }
+            const userData = await response.json();
+            if (!userData || (userData.isUser !== true && userData.isAdmin !== true)) {
+                console.warn("User Page: User does not have sufficient privileges according to backend verification. Signing out.");
+                window.showNotification("Access Denied. You do not have sufficient privileges for this portal.", "error", 7000);
+                if (firebaseAuth) await firebaseAuth.signOut().catch(e => console.error("Sign out after privilege check failed", e));
+                throw new Error("Insufficient privileges determined by backend.");
+            }
+            currentUserRoles = userData.roles || [];
+            console.log("User Page: User roles fetched/verified:", currentUserRoles);
+            return userData;
+        } catch (error) {
+            console.error("User Page: Error in fetchRoles:", error.message);
+            if (firebaseAuth) await firebaseAuth.signOut().catch(e => console.error("Sign out after fetchRoles error failed", e));
+            throw error;
         }
-        const userData = await response.json();
-        // IMPORTANT: Ensure your backend's POST /api/auth (when called by an already Firebase-authed user)
-        // returns `isUser: true` or `isAdmin: true` if they should access this page.
-        if (!userData || (userData.isUser !== true && userData.isAdmin !== true)) {
-            console.warn("User Page: User does not have sufficient privileges according to backend verification. Signing out.");
-            window.showNotification("Access Denied. You do not have sufficient privileges for this portal.", "error", 7000);
-            if (firebaseAuth) await firebaseAuth.signOut().catch(e => console.error("Sign out after privilege check failed", e));
-            // onAuthStateChanged will redirect
-            throw new Error("Insufficient privileges determined by backend.");
-        }
-        currentUserRoles = userData.roles || []; 
-        console.log("User Page: User roles fetched/verified:", currentUserRoles);
-        return userData; // Return userData for further checks if needed
-      } catch (error) {
-        console.error("User Page: Error in fetchRoles:", error.message);
-        // If fetchRoles fails (e.g. token invalid, user not authorized by backend), sign out.
-        if (firebaseAuth) await firebaseAuth.signOut().catch(e => console.error("Sign out after fetchRoles error failed", e));
-        throw error; // Re-throw to be caught by loadInitialDataConcurrently
-      }
     }
 
     async function fetchTreeDataOnly() {
-      if (loadingPlaceholder && !isSearchViewActive) {
-        loadingPlaceholder.innerHTML =
-          '<p class="p-4 text-lg text-[var(--text-secondary)]">Loading knowledge base structure...</p>';
-        loadingPlaceholder.style.display = "flex";
-      }
+        if (loadingPlaceholder && !isSearchViewActive) {
+            loadingPlaceholder.innerHTML =
+                '<p class="p-4 text-lg text-[var(--text-secondary)]">Loading knowledge base structure...</p>';
+            loadingPlaceholder.style.display = "flex";
+        }
 
-      try {
-        const res = await secureFetch(`${BASE_API_URL}/api/tree`); // USE DYNAMIC URL
-        if (!res.ok) {
-            const errorText = await res.text();
-            throw new Error(`Failed to load knowledge base (HTTP ${res.status}): ${errorText || 'Server error'}`);
+        try {
+            const res = await secureFetch(`${BASE_API_URL}/api/tree`);
+            if (!res.ok) {
+                const errorText = await res.text();
+                throw new Error(`Failed to load knowledge base (HTTP ${res.status}): ${errorText || 'Server error'}`);
+            }
+            const data = await res.json();
+            if (!Array.isArray(data)) {
+                console.error("User Page: Fetched tree data is not an array:", data);
+                throw new Error("Received invalid tree structure from server.");
+            }
+            fullTreeData = data;
+            console.log("User Page: Full tree data fetched:", fullTreeData);
+        } catch (error) {
+            console.error("User Page: Failed to fetch full tree:", error);
+            fullTreeData = [];
+            throw error;
         }
-        const data = await res.json();
-        if (!Array.isArray(data)) {
-          console.error("User Page: Fetched tree data is not an array:", data);
-          throw new Error("Received invalid tree structure from server.");
-        }
-        fullTreeData = data;
-        console.log("User Page: Full tree data fetched:", fullTreeData);
-      } catch (error) {
-        console.error("User Page: Failed to fetch full tree:", error);
-        fullTreeData = [];
-        throw error; 
-      }
     }
 
     async function loadInitialDataConcurrently() {
-      if (loadingPlaceholder) {
-        loadingPlaceholder.innerHTML =
-          '<p class="p-4 text-lg text-[var(--text-secondary)]">Initializing knowledge base...</p>';
-        loadingPlaceholder.style.display = "flex";
-      }
-      isSearchViewActive = false;
-
-      try {
-        // Fetch roles first to ensure user is authorized for the app before fetching tree
-        await fetchRoles(); 
-        await fetchTreeDataOnly();
-        navigateToFolder(null); 
-      } catch (error) {
-        console.error("User Page: Error during initial data load sequence:", error);
-        if(window.showNotification) window.showNotification( // Check if showNotification is defined
-            `Could not load page data: ${error.message || "Unknown error"}. Please try logging in again.`,
-            "error",
-            10000 // Longer duration for critical errors
-        );
-        if (folderContentContainer) { // Check if element exists
-            folderContentContainer.innerHTML = `<p class="text-[var(--text-red-accent)] p-4 text-center">Critical error loading page data. <br>Details: ${error.message}. <br>Please try refreshing. If the issue persists, you might need to log in again or contact support.</p>`;
+        if (loadingPlaceholder) {
+            loadingPlaceholder.innerHTML =
+                '<p class="p-4 text-lg text-[var(--text-secondary)]">Initializing knowledge base...</p>';
+            loadingPlaceholder.style.display = "flex";
         }
-        // If fetchRoles failed due to auth, user would have been signed out and redirected by onAuthStateChanged eventually.
-      } finally {
-        if (loadingPlaceholder) loadingPlaceholder.style.display = "none";
-      }
+        isSearchViewActive = false;
+
+        try {
+            await fetchRoles();
+            await fetchTreeDataOnly();
+            navigateToFolder(null);
+        } catch (error) {
+            console.error("User Page: Error during initial data load sequence:", error);
+            if (window.showNotification) window.showNotification(
+                `Could not load page data: ${error.message || "Unknown error"}. Please try logging in again.`,
+                "error",
+                10000
+            );
+            if (folderContentContainer) {
+                folderContentContainer.innerHTML = `<p class="text-[var(--text-red-accent)] p-4 text-center">Critical error loading page data. <br>Details: ${error.message}. <br>Please try refreshing. If the issue persists, you might need to log in again or contact support.</p>`;
+            }
+        } finally {
+            if (loadingPlaceholder) loadingPlaceholder.style.display = "none";
+        }
     }
     // --- End Initial Data Loading ---
 
     // --- Permissions ---
-    // (Your canPerformAction, canAddContentToNode, canDeleteNode, canEditArtifactsInNode functions)
-    // These should be mostly fine if currentUserRoles is populated correctly.
     function canPerformAction(nodeId, allowedRoles) {
-      if (nodeId === null || typeof nodeId === "undefined") {
-         // Example: Allow if user has a global ADMIN role for root actions
-         // const isGlobalAdmin = currentUserRoles.some(r => r.nodeId === null && r.role === 'ADMIN');
-         // return isGlobalAdmin && allowedRoles.includes('ADMIN');
-         return false; // For now, explicit node roles needed for actions via this func
-      }
-      const roleEntry = currentUserRoles.find(
-        (r) => String(r.nodeId) === String(nodeId)
-      );
-      return !!(roleEntry && allowedRoles.includes(roleEntry.role));
+        if (nodeId === null || typeof nodeId === "undefined") {
+            return false;
+        }
+        const roleEntry = currentUserRoles.find(
+            (r) => String(r.nodeId) === String(nodeId)
+        );
+        return !!(roleEntry && allowedRoles.includes(roleEntry.role));
     }
     function canAddContentToNode(nodeId) {
-      return canPerformAction(String(nodeId), ["ADMIN", "EDITOR"]);
+        return canPerformAction(String(nodeId), ["ADMIN", "EDITOR"]);
     }
     function canDeleteNode(nodeId) {
-      return canPerformAction(String(nodeId), ["ADMIN"]);
+        return canPerformAction(String(nodeId), ["ADMIN"]);
     }
     function canEditArtifactsInNode(parentNodeId) {
-      return canPerformAction(String(parentNodeId), ["ADMIN", "EDITOR"]);
+        return canPerformAction(String(parentNodeId), ["ADMIN", "EDITOR"]);
     }
     // --- End Permissions ---
 
     // --- Navigation and Rendering ---
-    // (Your findNodeInTree, buildPathSegmentsRecursive, renderBreadcrumbs, 
-    //  navigateToFolder, renderFolderContents functions)
-    // Ensure they use global fullTreeData and currentUserRoles, and BASE_API_URL where needed.
-    // (Keeping your existing functions as they were mostly UI logic)
     function findNodeInTree(nodeId, nodesToSearch = fullTreeData) {
-      if (nodeId === null || typeof nodeId === "undefined" || nodeId === "null") { // Handle string "null" too
-        return {
-          id: null, name: "Knowledge Base", children: nodesToSearch, artifacts: [], type: "ROOT",
-        };
-      }
-      for (const node of nodesToSearch) {
-        if (String(node.id) === String(nodeId)) return node;
-        if (node.children && Array.isArray(node.children)) {
-          const found = findNodeInTree(nodeId, node.children);
-          if (found) return found;
+        if (nodeId === null || typeof nodeId === "undefined" || nodeId === "null") {
+            return {
+                id: null, name: "Knowledge Base", children: nodesToSearch, artifacts: [], type: "ROOT",
+            };
         }
-      }
-      return null;
+        for (const node of nodesToSearch) {
+            if (String(node.id) === String(nodeId)) return node;
+            if (node.children && Array.isArray(node.children)) {
+                const found = findNodeInTree(nodeId, node.children);
+                if (found) return found;
+            }
+        }
+        return null;
     }
 
     function buildPathSegmentsRecursive(targetNodeId, nodesToSearch, currentStack) {
-      for (const node of nodesToSearch) {
-        const nodePathSegment = { id: node.id, name: node.name };
-        if (String(node.id) === String(targetNodeId)) {
-          return [...currentStack, nodePathSegment];
+        for (const node of nodesToSearch) {
+            const nodePathSegment = { id: node.id, name: node.name };
+            if (String(node.id) === String(targetNodeId)) {
+                return [...currentStack, nodePathSegment];
+            }
+            if (node.children && Array.isArray(node.children)) {
+                const foundPath = buildPathSegmentsRecursive(targetNodeId, node.children, [...currentStack, nodePathSegment]);
+                if (foundPath) return foundPath;
+            }
         }
-        if (node.children && Array.isArray(node.children)) {
-          const foundPath = buildPathSegmentsRecursive(targetNodeId, node.children, [...currentStack, nodePathSegment]);
-          if (foundPath) return foundPath;
-        }
-      }
-      return null;
+        return null;
     }
 
     function renderBreadcrumbs() {
-      if(!breadcrumbContainer) return;
-      breadcrumbContainer.innerHTML = "";
-      if (!currentPath || currentPath.length === 0) {
-        currentPath = [{ id: null, name: "Knowledge Base" }];
-      }
-      currentPath.forEach((segment, index) => {
-        const segEl = document.createElement("span");
-        if (index < currentPath.length - 1) {
-          const link = document.createElement("a");
-          link.textContent = segment.name;
-          link.href = "#";
-          link.classList.add("breadcrumb-item");
-          link.onclick = (e) => {
-            e.preventDefault();
-            if (!isSearchViewActive) navigateToFolder(segment.id);
-            else {
-              isSearchViewActive = false;
-              if(searchInputElement) searchInputElement.value = "";
-              navigateToFolder(segment.id);
-            }
-          };
-          segEl.appendChild(link);
-          breadcrumbContainer.appendChild(segEl);
-
-          const separator = document.createElement("span");
-          separator.classList.add("breadcrumb-separator");
-          separator.innerHTML = "&gt;";
-          breadcrumbContainer.appendChild(separator);
-        } else {
-          segEl.textContent = segment.name;
-          segEl.classList.add("breadcrumb-current");
-          breadcrumbContainer.appendChild(segEl);
+        if (!breadcrumbContainer) return;
+        breadcrumbContainer.innerHTML = "";
+        if (!currentPath || currentPath.length === 0) {
+            currentPath = [{ id: null, name: "Knowledge Base" }];
         }
-      });
+        currentPath.forEach((segment, index) => {
+            const segEl = document.createElement("span");
+            if (index < currentPath.length - 1) {
+                const link = document.createElement("a");
+                link.textContent = segment.name;
+                link.href = "#";
+                link.classList.add("breadcrumb-item");
+                link.onclick = (e) => {
+                    e.preventDefault();
+                    if (!isSearchViewActive) navigateToFolder(segment.id);
+                    else {
+                        isSearchViewActive = false;
+                        if (searchInputElement) searchInputElement.value = "";
+                        navigateToFolder(segment.id);
+                    }
+                };
+                segEl.appendChild(link);
+                breadcrumbContainer.appendChild(segEl);
+
+                const separator = document.createElement("span");
+                separator.classList.add("breadcrumb-separator");
+                separator.innerHTML = "&gt;";
+                breadcrumbContainer.appendChild(separator);
+            } else {
+                segEl.textContent = segment.name;
+                segEl.classList.add("breadcrumb-current");
+                breadcrumbContainer.appendChild(segEl);
+            }
+        });
     }
-    
+
     function navigateToFolder(nodeId) {
+        displayPartnerBuReadme(false); 
+
         currentViewNodeId = (nodeId === undefined || nodeId === null || nodeId === "null") ? null : String(nodeId);
 
         if (!isSearchViewActive && searchInputElement) searchInputElement.value = "";
@@ -1702,29 +1593,35 @@ function navigateToFolder(nodeId) {
             newPath = [{ id: null, name: "Knowledge Base" }];
         } else {
             const pathSegments = buildPathSegmentsRecursive(currentViewNodeId, fullTreeData, []);
-            if (pathSegments && pathSegments.length > 0) { // Ensure pathSegments are found
+            if (pathSegments && pathSegments.length > 0) {
                 newPath = [{ id: null, name: "Knowledge Base" }, ...pathSegments];
             } else {
                 console.warn(`User Page: Node ID ${currentViewNodeId} not found for path. Navigating to root.`);
                 newPath = [{ id: null, name: "Knowledge Base" }];
-                currentViewNodeId = null; 
+                currentViewNodeId = null;
             }
         }
         currentPath = newPath;
+
+        const currentFolderObject = findNodeInTree(currentViewNodeId, fullTreeData);
+
+        if (currentFolderObject && currentFolderObject.name === PARTNERBU_FOLDER_NAME && !isSearchViewActive) {
+            // IMPORTANT: Replace "YOUR_IMAGE_PATH_HERE.png" with the actual path to your image
+            displayPartnerBuReadme(true, "YOUR_IMAGE_PATH_HERE.png");
+        }
 
         renderBreadcrumbs();
         if (!isSearchViewActive) {
             renderFolderContents();
         }
 
-        const currentFolderObject = currentPath[currentPath.length - 1];
-        if(currentFolderNameEl) currentFolderNameEl.textContent = currentFolderObject ? currentFolderObject.name : "Knowledge Base";
-        
+        if (currentFolderNameEl) currentFolderNameEl.textContent = currentFolderObject ? currentFolderObject.name : "Knowledge Base";
+
         if (backButton) {
-            if (currentPath.length > 1 && !isSearchViewActive) { 
-                backButton.style.display = "inline-flex"; 
+            if (currentPath.length > 1 && !isSearchViewActive) {
+                backButton.style.display = "inline-flex";
                 backButton.onclick = () => {
-                    if (currentPath.length > 1) { 
+                    if (currentPath.length > 1) {
                         const parentSegment = currentPath[currentPath.length - 2];
                         navigateToFolder(parentSegment.id);
                     }
@@ -1735,160 +1632,156 @@ function navigateToFolder(nodeId) {
         }
 
         if (addItemToFolderBtn) {
-            // Ensure currentViewNodeId is treated as a string for canAddContentToNode if it expects string
             const nodeIdForPermissionCheck = currentViewNodeId === null ? null : String(currentViewNodeId);
             if (nodeIdForPermissionCheck !== null && canAddContentToNode(nodeIdForPermissionCheck) && !isSearchViewActive) {
                 addItemToFolderBtn.style.display = "inline-flex";
                 addItemToFolderBtn.onclick = () => toggleAddItemForm(true);
             } else {
                 addItemToFolderBtn.style.display = "none";
-                toggleAddItemForm(false); 
+                toggleAddItemForm(false);
             }
         }
     }
 
     function renderFolderContents() {
-    if (!folderContentContainer) return;
-    folderContentContainer.innerHTML = "";
-    // PartnerBU readme is handled by navigateToFolder now
+        if (!folderContentContainer) return;
+        folderContentContainer.innerHTML = "";
 
-    const nodeToDisplay = findNodeInTree(currentViewNodeId, fullTreeData);
+        const nodeToDisplay = findNodeInTree(currentViewNodeId, fullTreeData);
 
-    if (loadingPlaceholder) loadingPlaceholder.style.display = 'flex';
+        if (loadingPlaceholder) loadingPlaceholder.style.display = 'flex';
 
-    if (!nodeToDisplay) {
-        folderContentContainer.innerHTML =
-            '<p class="p-4 text-[var(--text-tertiary)] text-center">Folder not found or you may not have access to it.</p>';
+        if (!nodeToDisplay) {
+            folderContentContainer.innerHTML =
+                '<p class="p-4 text-[var(--text-tertiary)] text-center">Folder not found or you may not have access to it.</p>';
+            if (loadingPlaceholder) loadingPlaceholder.style.display = 'none';
+            return;
+        }
+
+        const itemsToShow = [];
+        if (nodeToDisplay.children && Array.isArray(nodeToDisplay.children)) {
+            itemsToShow.push(...nodeToDisplay.children.map(c => ({ ...c, itemType: 'folder', parentIdActual: String(nodeToDisplay.id === null ? 'null' : nodeToDisplay.id) })));
+        }
+        if (nodeToDisplay.artifacts && Array.isArray(nodeToDisplay.artifacts)) {
+            itemsToShow.push(...nodeToDisplay.artifacts.map(a => ({ ...a, itemType: 'artifact', parentIdActual: String(nodeToDisplay.id === null ? 'null' : nodeToDisplay.id) })));
+        }
+
+        itemsToShow.sort(customSortItems);
+
+        const allArtifacts = itemsToShow.length > 0 && itemsToShow.every(item => item.itemType === 'artifact');
+        if (allArtifacts) {
+            folderContentContainer.classList.add('list-view-only');
+            folderContentContainer.style.display = "block";
+        } else {
+            folderContentContainer.classList.remove('list-view-only');
+            folderContentContainer.style.display = "grid";
+        }
+
+        if (itemsToShow.length === 0) {
+            folderContentContainer.innerHTML =
+                '<p class="p-4 text-lg text-[var(--text-tertiary)] text-center">This folder is empty.</p>';
+        } else {
+            itemsToShow.forEach(item => {
+                const itemName = escapeJSString(item.name || item.title);
+                const parentIdForPerms = String(item.parentIdActual === null || item.parentIdActual === 'null' ? null : item.parentIdActual);
+
+                if (item.itemType === 'folder') {
+                    const card = document.createElement("div");
+                    card.classList.add("item-card");
+                    card.dataset.itemId = item.id;
+                    card.dataset.itemType = item.itemType;
+
+                    const iconSVG = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 0 1 4.5 9.75h15A2.25 2.25 0 0 1 21.75 12v.75m-8.69-6.44-2.12-2.12a1.5 1.5 0 0 0-1.061-.44H4.5A2.25 2.25 0 0 0 2.25 6v12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9a2.25 2.25 0 0 0-2.25-2.25h-5.379a1.5 1.5 0 0 1-1.06-.44Z" /></svg>`;
+                    let actionsDivContent = "";
+                    if (canDeleteNode(String(item.id)) && String(item.id) !== "null" && parentIdForPerms !== "null") {
+                        actionsDivContent += `<button title="Delete folder" class="action-icon-btn delete" onclick="event.stopPropagation(); deleteNode('${String(item.id)}')"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></button>`;
+                    }
+
+                    card.innerHTML = `
+                        <div>
+                            <div class="item-card-icon-wrapper">
+                                <span class="item-card-icon text-[var(--text-yellow-accent)]">${iconSVG}</span>
+                            </div>
+                            <h3 class="item-card-name">${itemName}</h3>
+                            <p class="item-card-type">Folder</p>
+                        </div>
+                        ${actionsDivContent ? `<div class="item-card-actions">${actionsDivContent}</div>` : ""}
+                    `;
+                    card.onclick = () => navigateToFolder(item.id);
+                    folderContentContainer.appendChild(card);
+
+                } else { // item.itemType === 'artifact'
+                    const listItem = document.createElement("div");
+                    listItem.classList.add("artifact-list-item");
+                    listItem.dataset.itemId = String(item.id);
+
+                    const fileIconSVG = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>`;
+                    let artifactActionsHtml = "";
+                    if (canEditArtifactsInNode(parentIdForPerms)) {
+                        artifactActionsHtml += `<button title="Delete file" class="action-icon-btn delete" onclick="event.stopPropagation(); deleteArtifact('${String(item.id)}', '${parentIdForPerms}')"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></button>`;
+                    }
+                    artifactActionsHtml += `<button title="View details in modal" class="action-icon-btn" onclick="event.stopPropagation(); showArtifactDetailsModal('${escapeJSString(item.title)}', '${escapeJSString(item.description)}', '${escapeJSString(item.link)}')"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" /></svg></button>`;
+
+                    let processedLink = item.link || "#";
+                    if (processedLink && !processedLink.startsWith("http://") && !processedLink.startsWith("https://") && processedLink !== "#") {
+                        processedLink = `https://${processedLink}`;
+                    }
+                    const linkTarget = (processedLink === "#" || !item.link) ? "" : "target='_blank'";
+                    const linkRel = (processedLink === "#" || !item.link) ? "" : "rel='noopener noreferrer'";
+
+                    listItem.innerHTML = `
+                        <div class="artifact-header">
+                            <span class="artifact-icon">${fileIconSVG}</span>
+                            <span class="artifact-title">${itemName}</span>
+                            <div class="artifact-actions">${artifactActionsHtml}</div>
+                            <span class="artifact-dropdown-arrow">▼</span>
+                        </div>
+                        <div class="artifact-description" style="display: none;">
+                            <p>${item.description ? escapeJSString(item.description).replace(/\n/g, '<br>') : '<em>No description provided.</em>'}</p>
+                            ${(item.link && item.link !== "#") ? `<a href="${processedLink}" ${linkTarget} ${linkRel} class="artifact-link submit-button primary" onclick="event.stopPropagation();">Go to Resource <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 inline-block ml-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg></a>` : ''}
+                        </div>
+                    `;
+
+                    const header = listItem.querySelector('.artifact-header');
+                    const descriptionDiv = listItem.querySelector('.artifact-description');
+                    const arrow = listItem.querySelector('.artifact-dropdown-arrow');
+
+                    header.addEventListener('click', (e) => {
+                        if (e.target.closest('.action-icon-btn') || e.target.closest('a.artifact-link')) {
+                            return;
+                        }
+                        const isHidden = descriptionDiv.style.display === 'none';
+                        descriptionDiv.style.display = isHidden ? 'block' : 'none';
+                        arrow.classList.toggle('expanded', isHidden);
+                    });
+                    folderContentContainer.appendChild(listItem);
+                }
+            });
+        }
         if (loadingPlaceholder) loadingPlaceholder.style.display = 'none';
-        return;
     }
-
-    const itemsToShow = [];
-    if (nodeToDisplay.children && Array.isArray(nodeToDisplay.children)) {
-        itemsToShow.push(...nodeToDisplay.children.map(c => ({ ...c, itemType: 'folder', parentIdActual: String(nodeToDisplay.id === null ? 'null' : nodeToDisplay.id) })));
-    }
-    if (nodeToDisplay.artifacts && Array.isArray(nodeToDisplay.artifacts)) {
-        itemsToShow.push(...nodeToDisplay.artifacts.map(a => ({ ...a, itemType: 'artifact', parentIdActual: String(nodeToDisplay.id === null ? 'null' : nodeToDisplay.id) })));
-    }
-
-    itemsToShow.sort(customSortItems); // APPLY THE NEW SORTING FUNCTION
-
-    const allArtifacts = itemsToShow.length > 0 && itemsToShow.every(item => item.itemType === 'artifact');
-    if (allArtifacts) {
-        folderContentContainer.classList.add('list-view-only'); // Use this class for CSS to set display: block;
-        folderContentContainer.style.display = "block"; // Or force here
-    } else {
-        folderContentContainer.classList.remove('list-view-only');
-        folderContentContainer.style.display = "grid"; // Reset to grid if folders are present
-    }
-
-    if (itemsToShow.length === 0) {
-        folderContentContainer.innerHTML = // No += needed here, it's the only content
-            '<p class="p-4 text-lg text-[var(--text-tertiary)] text-center">This folder is empty.</p>';
-    } else {
-        itemsToShow.forEach(item => {
-            const itemName = escapeJSString(item.name || item.title);
-            const parentIdForPerms = String(item.parentIdActual === null || item.parentIdActual === 'null' ? null : item.parentIdActual);
-
-            if (item.itemType === 'folder') {
-                const card = document.createElement("div");
-                card.classList.add("item-card"); // Folders remain as cards
-                card.dataset.itemId = item.id;
-                card.dataset.itemType = item.itemType;
-
-                const iconSVG = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 0 1 4.5 9.75h15A2.25 2.25 0 0 1 21.75 12v.75m-8.69-6.44-2.12-2.12a1.5 1.5 0 0 0-1.061-.44H4.5A2.25 2.25 0 0 0 2.25 6v12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9a2.25 2.25 0 0 0-2.25-2.25h-5.379a1.5 1.5 0 0 1-1.06-.44Z" /></svg>`;
-                let actionsDivContent = "";
-                if (canDeleteNode(String(item.id)) && String(item.id) !== "null" && parentIdForPerms !== "null") {
-                    actionsDivContent += `<button title="Delete folder" class="action-icon-btn delete" onclick="event.stopPropagation(); deleteNode('${String(item.id)}')"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></button>`;
-                }
-
-                card.innerHTML = `
-    <div>
-        <div class="item-card-icon-wrapper">
-            <span class="item-card-icon text-[var(--text-yellow-accent)]">${iconSVG}</span>
-        </div>
-        <h3 class="item-card-name">${itemName}</h3>
-        <p class="item-card-type">Folder</p>
-    </div>
-    ${actionsDivContent ? `<div class="item-card-actions">${actionsDivContent}</div>` : ""}
-`;
-card.onclick = () => navigateToFolder(item.id);
-folderContentContainer.appendChild(card);
-} else { // item.itemType === 'artifact' - RENDER AS LIST ITEM
-                const listItem = document.createElement("div");
-                listItem.classList.add("artifact-list-item");
-                listItem.dataset.itemId = String(item.id);
-
-                const fileIconSVG = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>`;
-                let artifactActionsHtml = "";
-                if (canEditArtifactsInNode(parentIdForPerms)) {
-                    artifactActionsHtml += `<button title="Delete file" class="action-icon-btn delete" onclick="event.stopPropagation(); deleteArtifact('<span class="math-inline">\{String\(item\.id\)\}', '</span>{parentIdForPerms}')"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></button>`;
-                }
-                // Button to open the modal
-                artifactActionsHtml += `<button title="View details in modal" class="action-icon-btn" onclick="event.stopPropagation(); showArtifactDetailsModal('<span class="math-inline">\{escapeJSString\(item\.title\)\}', '</span>{escapeJSString(item.description)}', '${escapeJSString(item.link)}')"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" /></svg></button>`;
-
-                let processedLink = item.link || "#";
-                if (processedLink && !processedLink.startsWith("http://") && !processedLink.startsWith("https://") && processedLink !== "#") {
-                    processedLink = `https://${processedLink}`;
-                }
-                const linkTarget = (processedLink === "#" || !item.link) ? "" : "target='_blank'";
-                const linkRel = (processedLink === "#" || !item.link) ? "" : "rel='noopener noreferrer'";
-
-
-                listItem.innerHTML = `
-    <div class="artifact-header">
-        <span class="artifact-icon">${fileIconSVG}</span>   النسخة المصححة: Removed extra span and corrected variable
-        <span class="artifact-title">${itemName}</span> النسخة المصححة: Added $
-        <div class="artifact-actions">${artifactActionsHtml}</div> <span class="artifact-dropdown-arrow">▼</span> النسخة المصححة: Added $, ensured space
-    </div>
-    <div class="artifact-description" style="display:none;"> النسخة المصححة: Ensured space
-        <p>${item.description ? escapeJSString(item.description).replace(/\n/g, '<br>') : '<em>No description provided.</em>'}</p> النسخة المصححة: Added $
-        ${(item.link && item.link !== "#") ? `<a href="${processedLink}" ${linkTarget} ${linkRel} class="artifact-link submit-button primary" onclick="event.stopPropagation();">Go to Resource <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 inline-block ml-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg></a>` : ''}
-    </div>
-`;
-                          const header = listItem.querySelector('.artifact-header');
-                                          const descriptionDiv = listItem.querySelector('.artifact-description');
-                                          const arrow = listItem.querySelector('.artifact-dropdown-arrow');
-
-                                          header.addEventListener('click', (e) => {
-                                              // Prevent toggle if a button within actions was clicked OR the link itself
-                                              if (e.target.closest('.action-icon-btn') || e.target.closest('a.artifact-link')) {
-                                                  return;
-                                              }
-                                              const isHidden = descriptionDiv.style.display === 'none';
-                                              descriptionDiv.style.display = isHidden ? 'block' : 'none';
-                                              arrow.classList.toggle('expanded', isHidden);
-                                          });
-                                          folderContentContainer.appendChild(listItem);
-                                      }
-                                  });
-                              }
-                              if (loadingPlaceholder) loadingPlaceholder.style.display = 'none';
-                          }
     // --- End Navigation and Rendering ---
 
     // --- Inline Add Item Form Logic ---
-    // (Your toggleAddItemForm, populateAddItemForm, toggleAddItemFileOptions, toggleAddItemLinkOrUpload functions)
-    // Ensure submitAddItemForm uses BASE_API_URL for its fetch calls.
     function toggleAddItemForm(show) {
-      if (show && currentViewNodeId !== null && String(currentViewNodeId) !== "null") { // Prevent adding to root "null" node
-        populateAddItemForm();
-        if(addItemFormContainer) addItemFormContainer.style.display = "block";
-        if(document.getElementById("addItemName")) document.getElementById("addItemName").focus();
-      } else {
-        if(addItemFormContainer) addItemFormContainer.style.display = "none";
-      }
+        if (show && currentViewNodeId !== null && String(currentViewNodeId) !== "null") {
+            populateAddItemForm();
+            if (addItemFormContainer) addItemFormContainer.style.display = "block";
+            if (document.getElementById("addItemName")) document.getElementById("addItemName").focus();
+        } else {
+            if (addItemFormContainer) addItemFormContainer.style.display = "none";
+        }
     }
     function populateAddItemForm() {
-      const parentId = currentViewNodeId; 
-      if (parentId === null || String(parentId) === "null") { // Explicitly check for null or string "null"
-        if(addItemFormContainer) addItemFormContainer.innerHTML = '<p class="text-[var(--text-tertiary)]">Adding items to the main Knowledge Base root is not supported here. Please select or create a folder.</p>';
-        return;
-      }
-      const currentFolder = findNodeInTree(String(parentId), fullTreeData); // Ensure parentId is string for findNode
-      const currentFolderName = currentFolder ? currentFolder.name : "Selected Folder";
+        const parentId = currentViewNodeId;
+        if (parentId === null || String(parentId) === "null") {
+            if (addItemFormContainer) addItemFormContainer.innerHTML = '<p class="text-[var(--text-tertiary)]">Adding items to the main Knowledge Base root is not supported here. Please select or create a folder.</p>';
+            return;
+        }
+        const currentFolder = findNodeInTree(String(parentId), fullTreeData);
+        const currentFolderName = currentFolder ? currentFolder.name : "Selected Folder";
 
-      if(addItemFormContainer) addItemFormContainer.innerHTML = `
+        if (addItemFormContainer) addItemFormContainer.innerHTML = `
             <h3 class="text-xl font-semibold mb-4 text-[var(--text-primary)]">Add to '${escapeJSString(currentFolderName)}'</h3>
             <form onsubmit="event.preventDefault(); submitAddItemForm(this.querySelector('button[type=submit]'))">
                 <input type="hidden" id="addItemParentId" value="${parentId}">
@@ -1909,158 +1802,155 @@ folderContentContainer.appendChild(card);
                     </button>
                 </div>
             </form>`;
-      toggleAddItemFileOptions();
+        toggleAddItemFileOptions();
     }
     function toggleAddItemFileOptions() {
-      const typeSelect = document.getElementById("addItemType");
-      const fileMethodOptionsDiv = document.getElementById("addItemFileMethodOptions");
-      if (!typeSelect || !fileMethodOptionsDiv) return;
+        const typeSelect = document.getElementById("addItemType");
+        const fileMethodOptionsDiv = document.getElementById("addItemFileMethodOptions");
+        if (!typeSelect || !fileMethodOptionsDiv) return;
 
-      if (typeSelect.value === "FILE") {
-        fileMethodOptionsDiv.style.display = "block";
-        const fileSourceSelect = document.getElementById("addItemFileSource");
-        if(fileSourceSelect) fileSourceSelect.value = "link";
-        toggleAddItemLinkOrUpload();
-      } else {
-        fileMethodOptionsDiv.style.display = "none";
-      }
+        if (typeSelect.value === "FILE") {
+            fileMethodOptionsDiv.style.display = "block";
+            const fileSourceSelect = document.getElementById("addItemFileSource");
+            if (fileSourceSelect) fileSourceSelect.value = "link";
+            toggleAddItemLinkOrUpload();
+        } else {
+            fileMethodOptionsDiv.style.display = "none";
+        }
     }
     function toggleAddItemLinkOrUpload() {
-      const fileSourceSelect = document.getElementById("addItemFileSource");
-      const linkContainer = document.getElementById("addItemLinkInputContainer");
-      const uploadContainer = document.getElementById("addItemUploadInputContainer");
-      if (!fileSourceSelect || !linkContainer || !uploadContainer) return;
-      
-      const fileSource = fileSourceSelect.value;
-      linkContainer.style.display = fileSource === "link" ? "block" : "none";
-      uploadContainer.style.display = fileSource === "upload" ? "block" : "none";
-      if (fileSource === 'link' && document.getElementById('addItemFileUpload')) document.getElementById('addItemFileUpload').value = '';
-      if (fileSource === 'upload' && document.getElementById('addItemLink')) document.getElementById('addItemLink').value = '';
+        const fileSourceSelect = document.getElementById("addItemFileSource");
+        const linkContainer = document.getElementById("addItemLinkInputContainer");
+        const uploadContainer = document.getElementById("addItemUploadInputContainer");
+        if (!fileSourceSelect || !linkContainer || !uploadContainer) return;
+
+        const fileSource = fileSourceSelect.value;
+        linkContainer.style.display = fileSource === "link" ? "block" : "none";
+        uploadContainer.style.display = fileSource === "upload" ? "block" : "none";
+        if (fileSource === 'link' && document.getElementById('addItemFileUpload')) document.getElementById('addItemFileUpload').value = '';
+        if (fileSource === 'upload' && document.getElementById('addItemLink')) document.getElementById('addItemLink').value = '';
     }
 
     async function submitAddItemForm(buttonElement) {
-      const parentIdValue = document.getElementById("addItemParentId").value;
-      const parentId = (parentIdValue === "null" || parentIdValue === null || parentIdValue === "") ? null : parseInt(parentIdValue); // Ensure parentId is null if it's the root or empty string
+        const parentIdValue = document.getElementById("addItemParentId").value;
+        const parentId = (parentIdValue === "null" || parentIdValue === null || parentIdValue === "") ? null : parseInt(parentIdValue);
 
-      const name = document.getElementById("addItemName").value.trim();
-      const type = document.getElementById("addItemType").value; // SUBFOLDER or FILE
-      const description = document.getElementById("addItemDescription").value.trim();
+        const name = document.getElementById("addItemName").value.trim();
+        const type = document.getElementById("addItemType").value;
+        const description = document.getElementById("addItemDescription").value.trim();
 
-      const originalButtonText = buttonElement.querySelector(".button-text")?.textContent || buttonElement.textContent;
-      window.setButtonLoading(buttonElement, true, originalButtonText);
+        const originalButtonText = buttonElement.querySelector(".button-text")?.textContent || buttonElement.textContent;
+        window.setButtonLoading(buttonElement, true, originalButtonText);
 
-      if (!name) {
-        window.showNotification("Name is required.", "error");
-        window.setButtonLoading(buttonElement, false, originalButtonText);
-        document.getElementById("addItemName")?.focus();
-        return;
-      }
-      if (parentId === null) { 
-          window.showNotification("Cannot add item: A valid parent folder must be selected.", "error");
-          window.setButtonLoading(buttonElement, false, originalButtonText);
-          return;
-      }
-
-      try {
-        let response;
-        let endpoint;
-        let options = { method: "POST" };
-        let bodyPayload;
-
-        if (type === "FILE") {
-          const fileSource = document.getElementById("addItemFileSource").value;
-          let commonPayload = { title: name, description, nodeId: parentId };
-
-          if (fileSource === "link") {
-            const link = document.getElementById("addItemLink").value.trim();
-            if (!link || !link.startsWith("http")) throw new Error("A valid Link (starting with http/https) is required for file type 'link'.");
-            commonPayload.link = link;
-            endpoint = `${BASE_API_URL}/api/artifacts`; // USE DYNAMIC URL
-            bodyPayload = JSON.stringify(commonPayload);
-            options.body = bodyPayload;
-          } else { // upload
-            const fileInput = document.getElementById("addItemFileUpload");
-            const file = fileInput.files[0];
-            if (!file) throw new Error("Please select a file to upload.");
-            const formData = new FormData();
-            formData.append("file", file);
-            formData.append("title", name);
-            formData.append("description", description);
-            formData.append("nodeId", String(parentId));
-            endpoint = `${BASE_API_URL}/api/upload`; // USE DYNAMIC URL
-            options.body = formData; // No Content-Type needed for FormData
-          }
-        } else { // SUBFOLDER (backend treats as FOLDER)
-          bodyPayload = JSON.stringify({ name, type: "FOLDER", parentId: parentId, description });
-          endpoint = `${BASE_API_URL}/api/nodes`; // USE DYNAMIC URL
-          options.body = bodyPayload;
+        if (!name) {
+            window.showNotification("Name is required.", "error");
+            window.setButtonLoading(buttonElement, false, originalButtonText);
+            document.getElementById("addItemName")?.focus();
+            return;
         }
-        
-        response = await secureFetch(endpoint, options);
-
-        if (!response.ok) {
-          const errorData = await response.json().catch(() => ({ detail: `Request failed with status ${response.status}. ${response.statusText}` }));
-          throw new Error(errorData.detail || `Failed to add item (Status: ${response.status})`);
+        if (parentId === null) {
+            window.showNotification("Cannot add item: A valid parent folder must be selected.", "error");
+            window.setButtonLoading(buttonElement, false, originalButtonText);
+            return;
         }
-        window.showNotification("Item added successfully! ✅", "success");
-        toggleAddItemForm(false); 
-        const formElement = document.getElementById("addItemName")?.form;
-        if(formElement) formElement.reset();
-        toggleAddItemFileOptions(); // Reset file options after form reset
-        await fetchTreeDataOnly(); 
-        navigateToFolder(currentViewNodeId); 
-      } catch (error) {
-        console.error("User Page: Error submitting add item form:", error);
-        window.showNotification(`Error: ${error.message}`, "error", 5000); // Longer display for submission errors
-      } finally {
-        window.setButtonLoading(buttonElement, false, originalButtonText);
-      }
+
+        try {
+            let response;
+            let endpoint;
+            let options = { method: "POST" };
+            let bodyPayload;
+
+            if (type === "FILE") {
+                const fileSource = document.getElementById("addItemFileSource").value;
+                let commonPayload = { title: name, description, nodeId: parentId };
+
+                if (fileSource === "link") {
+                    const link = document.getElementById("addItemLink").value.trim();
+                    if (!link || !link.startsWith("http")) throw new Error("A valid Link (starting with http/https) is required for file type 'link'.");
+                    commonPayload.link = link;
+                    endpoint = `${BASE_API_URL}/api/artifacts`;
+                    bodyPayload = JSON.stringify(commonPayload);
+                    options.body = bodyPayload;
+                } else { // upload
+                    const fileInput = document.getElementById("addItemFileUpload");
+                    const file = fileInput.files[0];
+                    if (!file) throw new Error("Please select a file to upload.");
+                    const formData = new FormData();
+                    formData.append("file", file);
+                    formData.append("title", name);
+                    formData.append("description", description);
+                    formData.append("nodeId", String(parentId));
+                    endpoint = `${BASE_API_URL}/api/upload`;
+                    options.body = formData;
+                }
+            } else { // SUBFOLDER
+                bodyPayload = JSON.stringify({ name, type: "FOLDER", parentId: parentId, description });
+                endpoint = `${BASE_API_URL}/api/nodes`;
+                options.body = bodyPayload;
+            }
+
+            response = await secureFetch(endpoint, options);
+
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({ detail: `Request failed with status ${response.status}. ${response.statusText}` }));
+                throw new Error(errorData.detail || `Failed to add item (Status: ${response.status})`);
+            }
+            window.showNotification("Item added successfully! ✅", "success");
+            toggleAddItemForm(false);
+            const formElement = document.getElementById("addItemName")?.form;
+            if (formElement) formElement.reset();
+            toggleAddItemFileOptions();
+            await fetchTreeDataOnly();
+            navigateToFolder(currentViewNodeId);
+        } catch (error) {
+            console.error("User Page: Error submitting add item form:", error);
+            window.showNotification(`Error: ${error.message}`, "error", 5000);
+        } finally {
+            window.setButtonLoading(buttonElement, false, originalButtonText);
+        }
     }
     // --- End Inline Add Item Form Logic ---
 
     // --- CRUD Operations (Delete) ---
-    // (Your deleteNode and deleteArtifact functions - ensure they use BASE_API_URL)
-     async function deleteNode(nodeId) {
+    async function deleteNode(nodeId) {
         if (!confirm("Are you sure you want to delete this folder and all its contents? This action cannot be undone.")) return;
         try {
             const response = await secureFetch(`${BASE_API_URL}/api/nodes/${nodeId}`, { method: "DELETE" });
             if (!response.ok) {
-            const errorData = await response.json().catch(() => ({ detail: response.statusText }));
-            throw new Error(errorData.detail || "Failed to delete folder.");
+                const errorData = await response.json().catch(() => ({ detail: response.statusText }));
+                throw new Error(errorData.detail || "Failed to delete folder.");
             }
             window.showNotification("Folder deleted successfully. ✅", "success");
-            
-            let parentToNavigateTo = null; // Default to root if path logic fails
-            // Find the parent of the deleted node in the current path
+
+            let parentToNavigateTo = null;
             const pathIndex = currentPath.findIndex(p => String(p.id) === String(nodeId));
-            if (pathIndex > 0) { // If deleted node was in path and not the root "Knowledge Base" segment
+            if (pathIndex > 0) {
                 parentToNavigateTo = currentPath[pathIndex - 1].id;
-            } else if (String(currentViewNodeId) === String(nodeId)) { // If deleting the folder currently being viewed
-                 parentToNavigateTo = currentPath.length > 1 ? currentPath[currentPath.length - 2].id : null;
-            } else { // If deleted node was a child of currentViewNodeId but not in path (e.g. deeper orphan)
+            } else if (String(currentViewNodeId) === String(nodeId)) {
+                parentToNavigateTo = currentPath.length > 1 ? currentPath[currentPath.length - 2].id : null;
+            } else {
                 parentToNavigateTo = currentViewNodeId;
             }
 
-            await fetchTreeDataOnly(); // Refresh tree data first
-            navigateToFolder(parentToNavigateTo); // Then navigate
+            await fetchTreeDataOnly();
+            navigateToFolder(parentToNavigateTo);
 
         } catch (error) {
             console.error("User Page: Error deleting node:", error);
             window.showNotification(`Error: ${error.message}`, "error");
         }
     }
-    async function deleteArtifact(artifactId, parentNodeIdString) { // parentNodeIdString is string
+    async function deleteArtifact(artifactId, parentNodeIdString) {
         if (!confirm("Are you sure you want to delete this file? This action cannot be undone.")) return;
         try {
             const response = await secureFetch(`${BASE_API_URL}/api/artifacts/${artifactId}`, { method: "DELETE" });
             if (!response.ok) {
-            const errorData = await response.json().catch(() => ({ detail: response.statusText }));
-            throw new Error(errorData.detail || "Failed to delete file.");
+                const errorData = await response.json().catch(() => ({ detail: response.statusText }));
+                throw new Error(errorData.detail || "Failed to delete file.");
             }
             window.showNotification("File deleted successfully. ✅", "success");
             await fetchTreeDataOnly();
-            // currentViewNodeId should be the parentNodeId if we are deleting an artifact from the current view
-            navigateToFolder(currentViewNodeId); 
+            navigateToFolder(currentViewNodeId);
         } catch (error) {
             console.error("User Page: Error deleting artifact:", error);
             window.showNotification(`Error: ${error.message}`, "error");
@@ -2069,78 +1959,72 @@ folderContentContainer.appendChild(card);
     // --- End CRUD Operations ---
 
     // --- Modals & UI Toggles ---
-    // (Your showArtifactDetailsModal, closeArtifactDetailsModal, Theme Toggle, User Menu Dropdown logic)
-    // Make sure these are generally fine and don't have hardcoded URLs if any.
-     function showArtifactDetailsModal(title, description, link) {
-      const modal = document.getElementById("artifact-details-modal");
-      if (!modal) return;
-      const titleEl = document.getElementById("artifact-modal-title");
-      const descEl = document.getElementById("artifact-details-modal-description");
-      const linkEl = document.getElementById("artifact-modal-link");
+    function showArtifactDetailsModal(title, description, link) {
+        const modal = document.getElementById("artifact-details-modal");
+        if (!modal) return;
+        const titleEl = document.getElementById("artifact-modal-title");
+        const descEl = document.getElementById("artifact-details-modal-description");
+        const linkEl = document.getElementById("artifact-modal-link");
 
-      if(titleEl) titleEl.textContent = title || "Artifact Details";
-      if(descEl) descEl.innerHTML = description ? escapeJSString(description).replace(/\n/g, '<br>') : "<em>No description provided.</em>";
-      
-      let processedLink = link || "#";
-      if (processedLink && !processedLink.startsWith("http://") && !processedLink.startsWith("https://") && processedLink !== "#") {
-        processedLink = `https://${processedLink}`;
-      }
-      if(linkEl) linkEl.href = processedLink;
+        if (titleEl) titleEl.textContent = title || "Artifact Details";
+        if (descEl) descEl.innerHTML = description ? escapeJSString(description).replace(/\n/g, '<br>') : "<em>No description provided.</em>";
 
-      if (linkEl) {
-        if (!link || link === "#") {
-            linkEl.classList.add("opacity-50", "cursor-not-allowed");
-            linkEl.removeAttribute("target");
-            linkEl.onclick = (e) => e.preventDefault();
-            linkEl.title = "No link provided";
-        } else {
-            linkEl.classList.remove("opacity-50", "cursor-not-allowed");
-            linkEl.setAttribute("target", "_blank");
-            linkEl.onclick = null; 
-            linkEl.title = `Go to: ${processedLink}`;
+        let processedLink = link || "#";
+        if (processedLink && !processedLink.startsWith("http://") && !processedLink.startsWith("https://") && processedLink !== "#") {
+            processedLink = `https://${processedLink}`;
         }
-      }
-      modal.classList.add("active");
+        if (linkEl) linkEl.href = processedLink;
+
+        if (linkEl) {
+            if (!link || link === "#") {
+                linkEl.classList.add("opacity-50", "cursor-not-allowed");
+                linkEl.removeAttribute("target");
+                linkEl.onclick = (e) => e.preventDefault();
+                linkEl.title = "No link provided";
+            } else {
+                linkEl.classList.remove("opacity-50", "cursor-not-allowed");
+                linkEl.setAttribute("target", "_blank");
+                linkEl.onclick = null;
+                linkEl.title = `Go to: ${processedLink}`;
+            }
+        }
+        modal.classList.add("active");
     }
     function closeArtifactDetailsModal() {
-      const modal = document.getElementById("artifact-details-modal");
-      if (modal) modal.classList.remove("active");
+        const modal = document.getElementById("artifact-details-modal");
+        if (modal) modal.classList.remove("active");
     }
 
-    // Theme Toggle
     const themeToggleButton = document.getElementById("theme-toggle-button");
     const sunIconHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>`;
     const moonIconHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>`;
-    
-    const USER_PAGE_LIGHT_MODE_LOGO = "https://niveussolutions.com/wp-content/uploads/2025/02/Niveus-ntt-data.png"; // Your black text logo
-    const USER_PAGE_DARK_MODE_LOGO = "https://gitlab.niveussolutions.com/uploads/-/system/appearance/header_logo/1/Nivues_log.png"; // Your white text logo
 
-    // Get a reference to the logo image element
+    const USER_PAGE_LIGHT_MODE_LOGO = "https://niveussolutions.com/wp-content/uploads/2025/02/Niveus-ntt-data.png";
+    const USER_PAGE_DARK_MODE_LOGO = "https://gitlab.niveussolutions.com/uploads/-/system/appearance/header_logo/1/Nivues_log.png";
     const userPageLogoElement = document.getElementById('user-page-logo');
 
     function applyTheme(theme) {
-    if (!userPageLogoElement) return; // Add a check to ensure the logo element exists
+        if (!userPageLogoElement) return;
 
-    if (theme === "light") {
-        document.body.classList.add("light-theme");
-        if(themeToggleButton) themeToggleButton.innerHTML = moonIconHTML;
-        userPageLogoElement.src = USER_PAGE_LIGHT_MODE_LOGO; // Set light mode logo
-        localStorage.setItem("userPageTheme", "light"); // Use distinct localStorage key
-    } else {
-        document.body.classList.remove("light-theme");
-        if(themeToggleButton) themeToggleButton.innerHTML = sunIconHTML;
-        userPageLogoElement.src = USER_PAGE_DARK_MODE_LOGO; // Set dark mode logo
-        localStorage.setItem("userPageTheme", "dark"); // Use distinct localStorage key
+        if (theme === "light") {
+            document.body.classList.add("light-theme");
+            if (themeToggleButton) themeToggleButton.innerHTML = moonIconHTML;
+            userPageLogoElement.src = USER_PAGE_LIGHT_MODE_LOGO;
+            localStorage.setItem("userPageTheme", "light");
+        } else {
+            document.body.classList.remove("light-theme");
+            if (themeToggleButton) themeToggleButton.innerHTML = sunIconHTML;
+            userPageLogoElement.src = USER_PAGE_DARK_MODE_LOGO;
+            localStorage.setItem("userPageTheme", "dark");
+        }
     }
-}
-    if(themeToggleButton) {
+    if (themeToggleButton) {
         themeToggleButton.addEventListener("click", () => {
             applyTheme(document.body.classList.contains("light-theme") ? "dark" : "light");
         });
         applyTheme(localStorage.getItem("userPageTheme") || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "dark"));
     }
 
-    // User Menu Dropdown
     if (userMenuButton && userDropdownMenu) {
         userMenuButton.addEventListener("click", (event) => {
             event.stopPropagation();
@@ -2150,20 +2034,19 @@ folderContentContainer.appendChild(card);
         });
         document.addEventListener("click", (event) => {
             if (userDropdownMenu && !userDropdownMenu.classList.contains("hidden") &&
-                userMenuButton && !userMenuButton.contains(event.target) && 
+                userMenuButton && !userMenuButton.contains(event.target) &&
                 !userDropdownMenu.contains(event.target)) {
                 userDropdownMenu.classList.add("hidden");
                 userMenuButton.setAttribute("aria-expanded", "false");
             }
         });
     }
-    if (logoutButtonDropdown && firebaseAuth) { 
+    if (logoutButtonDropdown && firebaseAuth) {
         logoutButtonDropdown.addEventListener("click", async () => {
             try {
                 await firebaseAuth.signOut();
-                sessionStorage.removeItem("userToken"); // Consistent token name
+                sessionStorage.removeItem("userToken");
                 window.showNotification("Logged out successfully.", "success");
-                // onAuthStateChanged will redirect
             } catch (error) {
                 console.error("User Page: Error signing out:", error);
                 window.showNotification("Logout failed. Please try again.", "error");
@@ -2173,8 +2056,6 @@ folderContentContainer.appendChild(card);
     // --- End Modals & UI Toggles ---
 
     // --- Search Functionality ---
-    // (Your highlightText, debouncedPerformGlobalSearch, performGlobalSearch, renderSearchResults functions)
-    // Ensure they use global fullTreeData and escapeJSString.
     let searchResults = [];
 
     function highlightText(text, query) {
@@ -2186,7 +2067,7 @@ folderContentContainer.appendChild(card);
 
     const debouncedPerformGlobalSearch = debounce(performGlobalSearch, 350);
 
-    if(searchInputElement) {
+    if (searchInputElement) {
         searchInputElement.addEventListener("input", (e) => {
             debouncedPerformGlobalSearch(e.target.value);
         });
@@ -2197,14 +2078,14 @@ folderContentContainer.appendChild(card);
         const searchTerm = term.trim().toLowerCase();
         if (!searchTerm) {
             isSearchViewActive = false;
-            navigateToFolder(currentViewNodeId); 
+            navigateToFolder(currentViewNodeId);
             return;
         }
         isSearchViewActive = true;
 
         function recurseSearch(nodes, pathStack) {
             for (const node of nodes) {
-                if (!node) continue; 
+                if (!node) continue;
                 const currentItemPath = [...pathStack, { id: node.id, name: node.name }];
 
                 if (node.name && node.name.toLowerCase().includes(searchTerm)) {
@@ -2215,10 +2096,10 @@ folderContentContainer.appendChild(card);
                     for (const artifact of node.artifacts) {
                         if (!artifact) continue;
                         let artifactAlreadyAdded = searchResults.some(sr => sr.item.id === artifact.id && sr.itemType === 'artifact');
-                        
+
                         if (artifact.title && artifact.title.toLowerCase().includes(searchTerm) && !artifactAlreadyAdded) {
                             searchResults.push({ item: artifact, path: currentItemPath, itemType: "artifact", matchSource: "title" });
-                            artifactAlreadyAdded = true; 
+                            artifactAlreadyAdded = true;
                         }
                         if (artifact.description && artifact.description.toLowerCase().includes(searchTerm) && !artifactAlreadyAdded) {
                             searchResults.push({ item: artifact, path: currentItemPath, itemType: "artifact", matchSource: "description" });
@@ -2230,21 +2111,21 @@ folderContentContainer.appendChild(card);
                 }
             }
         }
-        recurseSearch(fullTreeData, [{ id: null, name: "Knowledge Base" }]); 
+        recurseSearch(fullTreeData, [{ id: null, name: "Knowledge Base" }]);
         renderSearchResults(searchResults, searchTerm);
     }
 
     function renderSearchResults(results, searchTerm = "") {
-        if(!folderContentContainer) return;
-        displayPartnerBuReadme(false);
+        if (!folderContentContainer) return;
+        displayPartnerBuReadme(false); // Clear PartnerBU readme in search view
         folderContentContainer.innerHTML = "";
-        toggleAddItemForm(false); 
-        if(backButton) backButton.style.display = 'none';
-        if(addItemToFolderBtn) addItemToFolderBtn.style.display = 'none';
+        toggleAddItemForm(false);
+        if (backButton) backButton.style.display = 'none';
+        if (addItemToFolderBtn) addItemToFolderBtn.style.display = 'none';
 
         const resultsTitle = results.length > 0 ? `Search Results for "${escapeJSString(searchTerm)}"` : `No Results for "${escapeJSString(searchTerm)}"`;
-        if(currentFolderNameEl) currentFolderNameEl.textContent = resultsTitle;
-        if(breadcrumbContainer) breadcrumbContainer.innerHTML = `<span class="breadcrumb-current">Search Results</span>`;
+        if (currentFolderNameEl) currentFolderNameEl.textContent = resultsTitle;
+        if (breadcrumbContainer) breadcrumbContainer.innerHTML = `<span class="breadcrumb-current">Search Results</span>`;
 
         if (results.length === 0) {
             folderContentContainer.innerHTML = `<p class="p-4 text-lg text-[var(--text-tertiary)] text-center">No items found matching your search.</p>`;
@@ -2253,7 +2134,7 @@ folderContentContainer.appendChild(card);
 
         results.forEach(result => {
             const card = document.createElement("div");
-            card.classList.add("search-result-card"); 
+            card.classList.add("search-result-card");
 
             const itemName = result.item.name || result.item.title;
             const itemTypeDisplay = result.itemType.charAt(0).toUpperCase() + result.itemType.slice(1);
@@ -2270,27 +2151,27 @@ folderContentContainer.appendChild(card);
             } else if (result.itemType === "artifact" && !result.item.description) {
                 descriptionHTML = `<p class="search-result-description"><em>No description provided.</em></p>`;
             }
-            
+
             card.innerHTML = `
-                <div> 
+                <div>
                     <div class="item-card-icon-wrapper"><span class="search-result-icon ${iconClass}">${iconSVG}</span></div>
                     <h3 class="search-result-name">${highlightText(itemName, searchTerm)}</h3>
                     <p class="search-result-type">${itemTypeDisplay}</p>
-                    ${descriptionHTML} 
+                    ${descriptionHTML}
                     <p class="search-result-path">In: ${escapeJSString(displayPathString)}</p>
                 </div>
             `;
             card.onclick = () => {
-                isSearchViewActive = false; 
-                if(searchInputElement) searchInputElement.value = ""; 
+                isSearchViewActive = false;
+                if (searchInputElement) searchInputElement.value = "";
                 if (result.itemType === "folder") {
                     navigateToFolder(result.item.id);
-                } else { 
+                } else {
                     const parentFolderId = result.path.length > 1 ? result.path[result.path.length - 1].id : null;
-                    navigateToFolder(parentFolderId); 
+                    navigateToFolder(parentFolderId);
                     setTimeout(() => {
                         showArtifactDetailsModal(result.item.title, result.item.description, result.item.link);
-                    }, 100); 
+                    }, 100);
                 }
             };
             folderContentContainer.appendChild(card);
@@ -2302,19 +2183,17 @@ folderContentContainer.appendChild(card);
     document.addEventListener("keydown", (event) => {
         if (event.key === "Escape") {
             const artifactModal = document.getElementById("artifact-details-modal");
-            if (artifactModal?.classList.contains("active")) { // Optional chaining
+            if (artifactModal?.classList.contains("active")) {
                 closeArtifactDetailsModal();
             }
-            if (addItemFormContainer?.style.display === "block") { // Optional chaining
+            if (addItemFormContainer?.style.display === "block") {
                 toggleAddItemForm(false);
             }
             if (userDropdownMenu && !userDropdownMenu.classList.contains("hidden")) {
                 userDropdownMenu.classList.add("hidden");
-                if(userMenuButton) userMenuButton.setAttribute("aria-expanded", "false");
+                if (userMenuButton) userMenuButton.setAttribute("aria-expanded", "false");
             }
         }
     });
     // --- End Global Event Listeners ---
-  </script>
-</body>
-</html>
+</script>
