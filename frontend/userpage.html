@@ -1817,18 +1817,16 @@
               const snippetSpan = listItem.querySelector('.artifact-description-snippet');
 
               header.addEventListener('click', (e) => {
-                  if (e.target.closest('.action-icon-btn') || e.target.closest('a.artifact-link')) {
-                      return;
-                  }
-                  const isCurrentlyHidden = descriptionDiv.style.display === 'none';
-                  descriptionDiv.style.display = isCurrentlyHidden ? 'block' : 'none';
-                  if (snippetSpan) {
-                      // When full description is shown (isCurrentlyHidden = true), hide snippet.
-                      // When full description is hidden (isCurrentlyHidden = false), show snippet.
-                      snippetSpan.style.display = isCurrentlyHidden ? 'none' : 'flex'; // or 'inline-block' or 'block'
-                  }
-                  arrow.classList.toggle('expanded', isCurrentlyHidden);
-              });
+                    if (e.target.closest('.action-icon-btn') || e.target.closest('a.artifact-link')) {
+                        return;
+                    }
+                    const isCurrentlyHidden = descriptionDiv.style.display === 'none';
+                    descriptionDiv.style.display = isCurrentlyHidden ? 'block' : 'none';
+                    if (snippetSpan) {
+                        snippetSpan.style.display = isCurrentlyHidden ? 'none' : 'flex';
+                    }
+                    arrow.classList.toggle('expanded', isCurrentlyHidden);
+                });
               folderContentContainer.appendChild(listItem);
           }
             });
