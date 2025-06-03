@@ -1823,7 +1823,7 @@
                     const isCurrentlyHidden = descriptionDiv.style.display === 'none';
                     descriptionDiv.style.display = isCurrentlyHidden ? 'block' : 'none';
                     if (snippetSpan) {
-                        snippetSpan.style.display = isCurrentlyHidden ? 'none' : 'flex';
+                        snippetSpan.style.display = isCurrentlyHidden ? 'none' : 'inline-block';
                     }
                     arrow.classList.toggle('expanded', isCurrentlyHidden);
                 });
