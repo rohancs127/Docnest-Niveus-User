@@ -1211,7 +1211,7 @@
     // --- End Global State ---
 
     // --- Helper function for PartnerBU Readme ---
-    function displayPartnerBuReadme(show, imageUrl = "PLEASE_REPLACE_WITH_YOUR_IMAGE_PATH.png") {
+    function displayPartnerBuReadme(show, imageUrl = "./demo_image.png") {
         const existingReadme = document.getElementById(PARTNERBU_README_ID);
         if (existingReadme) {
             existingReadme.remove();
@@ -1607,7 +1607,7 @@
 
         if (currentFolderObject && currentFolderObject.name === PARTNERBU_FOLDER_NAME && !isSearchViewActive) {
             // IMPORTANT: Replace "YOUR_IMAGE_PATH_HERE.png" with the actual path to your image
-            displayPartnerBuReadme(true, "YOUR_IMAGE_PATH_HERE.png");
+            displayPartnerBuReadme(true, "demo_image.png");
         }
 
         renderBreadcrumbs();
