@@ -1850,13 +1850,16 @@
         }
       }
 
-      function renderFolderContents() {
+     // --- Navigation and Rendering ---
+// ... (findNodeInTree, buildPathSegmentsRecursive, renderBreadcrumbs, navigateToFolder remain the same) ...
+
+function renderFolderContents() {
     if (!folderContentContainer) return;
-    folderContentContainer.innerHTML = ""; // Clear previous contents
+    folderContentContainer.innerHTML = "";
 
     const nodeToDisplay = findNodeInTree(currentViewNodeId, fullTreeData);
 
-    if (loadingPlaceholder) loadingPlaceholder.style.display = "flex"; // Show loading temporarily
+    if (loadingPlaceholder) loadingPlaceholder.style.display = "flex";
 
     if (!nodeToDisplay) {
         folderContentContainer.innerHTML =
@@ -1871,10 +1874,7 @@
             ...nodeToDisplay.children.map((c) => ({
                 ...c,
                 itemType: "folder",
-                // Store actual parent ID for permissions, handling root (null) correctly
-                parentIdActual: String(
-                    nodeToDisplay.id === null ? "null" : nodeToDisplay.id
-                ),
+                parentIdActual: String(nodeToDisplay.id === null ? "null" : nodeToDisplay.id),
             }))
         );
     }
@@ -1883,25 +1883,20 @@
             ...nodeToDisplay.artifacts.map((a) => ({
                 ...a,
                 itemType: "artifact",
-                parentIdActual: String(
-                    nodeToDisplay.id === null ? "null" : nodeToDisplay.id
-                ),
+                parentIdActual: String(nodeToDisplay.id === null ? "null" : nodeToDisplay.id),
             }))
         );
     }
 
-    itemsToShow.sort(customSortItems); // Apply custom sorting
+    itemsToShow.sort(customSortItems);
 
-    // Determine if we should use list view (all artifacts) or grid view
-    const allArtifacts =
-        itemsToShow.length > 0 &&
-        itemsToShow.every((item) => item.itemType === "artifact");
-    if (allArtifacts) {
+    const allArtifacts = itemsToShow.length > 0 && itemsToShow.every((item) => item.itemType === "artifact");
+    if (allArtifacts && itemsToShow.length > 3) { // Apply list view if all artifacts and more than 3 (or your preferred threshold)
         folderContentContainer.classList.add("list-view-only");
-        folderContentContainer.style.display = "block"; // For list view
+        folderContentContainer.style.display = "block";
     } else {
         folderContentContainer.classList.remove("list-view-only");
-        folderContentContainer.style.display = "grid"; // For grid view
+        folderContentContainer.style.display = "grid";
     }
 
     if (itemsToShow.length === 0) {
@@ -1909,45 +1904,35 @@
             '<p class="p-4 text-lg text-[var(--text-tertiary)] text-center">This folder is empty.</p>';
     } else {
         itemsToShow.forEach((item) => {
-            const itemName = escapeJSString(item.name || item.title); // Use name for folder, title for artifact
-            const parentIdForPerms = String(
-                item.parentIdActual === null || item.parentIdActual === "null"
-                    ? null
-                    : item.parentIdActual
-            );
-            // Prepare item data for popover to avoid issues with complex objects from D3 or elsewhere
-            // and to ensure all necessary fields are present and correctly named.
-            const itemDataForPopover = JSON.stringify({
-                id: item.id,
-                name: item.name || item.title,
-                description: item.description,
-                creator: item.creator,
-                createdAt: item.createdAt,
-                updatedAt: item.updatedAt,
-                link: item.link, // Specific to artifacts
-                type: item.type // This should be 'FOLDER' or the artifact's specific type like 'FILE', 'LINK' etc.
-            });
-
+            const itemName = escapeJSString(item.name || item.title);
+            const parentIdForPerms = String(item.parentIdActual === null || item.parentIdActual === "null" ? null : item.parentIdActual);
 
             if (item.itemType === "folder") {
                 const card = document.createElement("div");
                 card.classList.add("item-card");
                 card.dataset.itemId = item.id;
                 card.dataset.itemType = item.itemType;
+                // Set card's main click handler
+                card.onclick = () => navigateToFolder(item.id);
+
 
                 const iconSVG = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 0 1 4.5 9.75h15A2.25 2.25 0 0 1 21.75 12v.75m-8.69-6.44-2.12-2.12a1.5 1.5 0 0 0-1.061-.44H4.5A2.25 2.25 0 0 0 2.25 6v12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9a2.25 2.25 0 0 0-2.25-2.25h-5.379a1.5 1.5 0 0 1-1.06-.44Z" /></svg>`;
-                let actionsDivContent = "";
-
+                
                 const creatorNameFolder = escapeJSString(item.creator || "System");
-                const updatedAtFolder = item.updatedAt ? new Date(item.updatedAt).toLocaleDateString() : "N/A";
-                // Use a generic info icon for better semantics if available, or FontAwesome, or this simple SVG:
-                const infoButtonFolderHTML = `<button title="Show folder info" class="action-icon-btn info" onclick="showItemInfoPopover(event, ${itemDataForPopover}, 'folder', '${String(item.id)}')"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" /></svg></button>`;
+                
+                // Get effective updated At for folder
+                const effectiveFolderUpdateTs = getFolderEffectiveUpdatedAt(item);
+                const updatedAtFolderDisplay = effectiveFolderUpdateTs ? new Date(effectiveFolderUpdateTs).toLocaleDateString() : (item.createdAt ? new Date(item.createdAt).toLocaleDateString() : "N/A");
 
+
+                let actionsDivContent = "";
+                // Info button: Pass item.id and 'folder' type. event.stopPropagation() is called inside showItemInfoPopover.
+                const infoButtonFolderHTML = `<button title="Show folder info" class="action-icon-btn info" onclick="showItemInfoPopover(event, '${String(item.id)}', 'folder')"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" /></svg></button>`;
 
                 if (canDeleteNode(String(item.id)) && String(item.id) !== "null" && parentIdForPerms !== "null") {
                     actionsDivContent += `<button title="Delete folder" class="action-icon-btn delete" onclick="event.stopPropagation(); deleteNode('${String(item.id)}')"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></button>`;
                 }
-                actionsDivContent += infoButtonFolderHTML; // Add info button to actions
+                actionsDivContent += infoButtonFolderHTML;
 
                 let folderDescriptionHTML = "";
                 if (item.description && typeof item.description === "string" && item.description.trim() !== "") {
@@ -1962,39 +1947,56 @@
                             <span class="item-card-icon text-[var(--text-yellow-accent)]">${iconSVG}</span>
                         </div>
                         <h3 class="item-card-name">${itemName}</h3>
-                        <div class="text-xs text-[var(--text-tertiary)] mt-1"> <span>Folder</span>
+                        <div class="text-xs text-[var(--text-tertiary)] mt-1">
+                            <span>Folder</span>
                             <span class="mx-1">&bull;</span>
                             <span>By: ${creatorNameFolder}</span>
                             <br/>
-                            <span>Updated: ${updatedAtFolder}</span>
+                            <span>Updated: ${updatedAtFolderDisplay}</span>
                         </div>
                         ${folderDescriptionHTML}
                     </div>
                     ${actionsDivContent ? `<div class="item-card-actions">${actionsDivContent}</div>` : ""}
                 `;
-                card.onclick = () => navigateToFolder(item.id);
                 folderContentContainer.appendChild(card);
 
-            } else { // Artifact rendering (list item)
+            } else { // Artifact rendering
                 const listItem = document.createElement("div");
-                listItem.classList.add("artifact-list-item");
-                listItem.dataset.itemId = String(item.id); // Ensure artifact ID is string
+                // If in grid view (not list-view-only), artifact should also be a card
+                if (!folderContentContainer.classList.contains("list-view-only")) {
+                    listItem.classList.add("item-card"); // Make it look like a card
+                } else {
+                    listItem.classList.add("artifact-list-item");
+                }
+                listItem.dataset.itemId = String(item.id);
 
                 const fileIconSVG = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>`;
-                let artifactActionsHtml = "";
-
+                
                 const creatorNameArtifact = escapeJSString(item.creator || "System");
-                const updatedAtArtifact = item.updatedAt ? new Date(item.updatedAt).toLocaleDateString() : "N/A";
-                // Use a generic info icon for better semantics if available, or FontAwesome, or this simple SVG:
-                const infoButtonArtifactHTML = `<button title="Show file info" class="action-icon-btn info" onclick="event.stopPropagation(); showItemInfoPopover(event, ${itemDataForPopover}, 'artifact', '${String(item.id)}')"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" /></svg></button>`;
+                const updatedAtArtifactDisplay = item.updatedAt ? new Date(item.updatedAt).toLocaleDateString() : "N/A";
+
+                // Truncate description for the main visible part of the artifact card/item
+                let truncatedDescription = "";
+                if (item.description && typeof item.description === 'string' && item.description.trim() !== "") {
+                    const fullDesc = escapeJSString(item.description);
+                    const maxLength = 80; // Adjust as needed for card layout
+                    truncatedDescription = fullDesc.length > maxLength ? fullDesc.substring(0, maxLength) + "..." : fullDesc;
+                    truncatedDescription = truncatedDescription.replace(/\n/g, " "); // Keep it one-liner
+                } else {
+                    truncatedDescription = "<em>No description.</em>";
+                }
+
+                let artifactActionsHtml = "";
+                 const infoButtonArtifactHTML = `<button title="Show file info" class="action-icon-btn info" onclick="showItemInfoPopover(event, '${String(item.id)}', 'artifact')"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" /></svg></button>`;
 
 
                 if (canEditArtifactsInNode(parentIdForPerms)) {
                     artifactActionsHtml += `<button title="Delete file" class="action-icon-btn delete" onclick="event.stopPropagation(); deleteArtifact('${String(item.id)}', '${parentIdForPerms}')"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></button>`;
                 }
-                // Original modal button can stay if you want two ways to see details, or remove it.
+                // Original modal button is fine to keep for quick full view of description/link
                 artifactActionsHtml += `<button title="View details in modal" class="action-icon-btn" onclick="event.stopPropagation(); showArtifactDetailsModal('${escapeJSString(item.title)}', '${escapeJSString(item.description)}', '${escapeJSString(item.link)}')"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" /></svg></button>`;
-                artifactActionsHtml += infoButtonArtifactHTML; // Add new info button
+                artifactActionsHtml += infoButtonArtifactHTML;
+
 
                 let processedLink = item.link || "#";
                 if (processedLink && !processedLink.startsWith("http://") && !processedLink.startsWith("https://") && processedLink !== "#") {
@@ -2003,52 +2005,111 @@
                 const linkTarget = processedLink === "#" || !item.link ? "" : "target='_blank'";
                 const linkRel = processedLink === "#" || !item.link ? "" : "rel='noopener noreferrer'";
 
-                // Truncate description for card display (inside the dropdown part)
-                let displayDescription = "<em>No description provided.</em>";
-                if (item.description && typeof item.description === 'string' && item.description.trim() !== "") {
-                    const fullDesc = escapeJSString(item.description);
-                    const maxLength = 60; // Max length for description in card's dropdown
-                    displayDescription = fullDesc.length > maxLength ? fullDesc.substring(0, maxLength) + "..." : fullDesc;
-                    displayDescription = displayDescription.replace(/\n/g, " "); // Keep it more or less on one line in card
-                }
-
-                listItem.innerHTML = `
-                    <div class="artifact-header">
-                        <span class="artifact-icon">${fileIconSVG}</span>
-                        <span class="artifact-title">${itemName}</span>
-                        <div class="artifact-actions">${artifactActionsHtml}</div>
-                        <span class="artifact-dropdown-arrow">▼</span>
-                    </div>
-                    <div class="artifact-description" style="display:none;">
-                        <p class="truncate-description">${displayDescription}</p>
-                        <div class="text-xs text-[var(--text-tertiary)] mt-2 pt-2 border-t border-[var(--border-input)]">
-                            <span>Creator: ${creatorNameArtifact}</span>
-                            <span class="mx-1">&bull;</span>
-                            <span>Updated: ${updatedAtArtifact}</span>
+                if (folderContentContainer.classList.contains("list-view-only")) {
+                    // Horizontal List Item Layout
+                    listItem.innerHTML = `
+                        <div class="artifact-header" onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? 'block' : 'none'; this.querySelector('.artifact-dropdown-arrow').classList.toggle('expanded');">
+                            <span class="artifact-icon">${fileIconSVG}</span>
+                            <div class="flex-grow">
+                                <span class="artifact-title">${itemName}</span>
+                                <p class="text-xs text-[var(--text-tertiary)] truncate-description">${truncatedDescription}</p>
+                                <div class="text-xs text-[var(--text-tertiary)] mt-1">
+                                    <span>By: ${creatorNameArtifact}</span>
+                                    <span class="mx-1">&bull;</span>
+                                    <span>Updated: ${updatedAtArtifactDisplay}</span>
+                                </div>
+                            </div>
+                            <div class="artifact-actions">${artifactActionsHtml}</div>
+                            <span class="artifact-dropdown-arrow">▼</span>
                         </div>
-                        ${item.link && item.link !== "#" ? `<a href="${processedLink}" ${linkTarget} ${linkRel} class="artifact-link submit-button primary !text-xs !py-1 !px-2 mt-2" onclick="event.stopPropagation();">Go to Resource <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 inline-block ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg></a>` : ""}
-                    </div>
-                `;
-                const header = listItem.querySelector(".artifact-header");
-                const descriptionDiv = listItem.querySelector(".artifact-description");
-                const arrow = listItem.querySelector(".artifact-dropdown-arrow");
-
-                header.addEventListener("click", (e) => {
-                    // Prevent toggle if an action button inside header was clicked
-                    if (e.target.closest(".action-icon-btn") || e.target.closest("a.artifact-link")) { // Should not be in header, but good check
-                        return;
-                    }
-                    const isHidden = descriptionDiv.style.display === "none";
-                    descriptionDiv.style.display = isHidden ? "block" : "none";
-                    arrow.classList.toggle("expanded", isHidden);
-                });
+                        <div class="artifact-description" style="display:none;">
+                             <p>${escapeJSString(item.description || "No full description.").replace(/\n/g,"<br>")}</p> {/* Full description here */}
+                            ${item.link && item.link !== "#" ? `<a href="${processedLink}" ${linkTarget} ${linkRel} class="artifact-link submit-button primary !text-xs !py-1 !px-2 mt-2" onclick="event.stopPropagation();">Go to Resource <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 inline-block ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg></a>` : ""}
+                        </div>
+                    `;
+                } else {
+                    // Card Layout for Artifacts (when in a mixed grid)
+                     // Add main click handler for the card to open the details modal
+                    listItem.onclick = (e) => {
+                        // Prevent modal if an action button was clicked
+                        if (e.target.closest('.action-icon-btn')) return;
+                        showArtifactDetailsModal(item.title, item.description, item.link);
+                    };
+                    listItem.innerHTML = `
+                        <div>
+                            <div class="item-card-icon-wrapper">
+                                <span class="item-card-icon text-[var(--text-blue-accent)]">${fileIconSVG}</span>
+                            </div>
+                            <h3 class="item-card-name">${itemName}</h3>
+                             <p class="item-card-description truncate-description">${truncatedDescription}</p>
+                            <div class="text-xs text-[var(--text-tertiary)] mt-1">
+                                <span>By: ${creatorNameArtifact}</span>
+                                <span class="mx-1">&bull;</span>
+                                <span>Updated: ${updatedAtArtifactDisplay}</span>
+                            </div>
+                        </div>
+                        <div class="item-card-actions">
+                           ${artifactActionsHtml}
+                        </div>
+                    `;
+                }
                 folderContentContainer.appendChild(listItem);
             }
         });
     }
-    if (loadingPlaceholder) loadingPlaceholder.style.display = "none"; // Hide loading after rendering
+    if (loadingPlaceholder) loadingPlaceholder.style.display = "none";
 }
 
+// --- Helper Function to get effective updatedAt for a folder ---
+function getFolderEffectiveUpdatedAt(folderNode, processedFolderIds = new Set()) {
+    // Prevent infinite loops in case of unexpected data structures (though a tree shouldn't have them)
+    if (!folderNode || (folderNode.id !== null && processedFolderIds.has(folderNode.id))) {
+        // For a re-encountered folder or null node, return null or its own createdAt if no children info.
+        return folderNode && folderNode.createdAt ? new Date(folderNode.createdAt).getTime() : null;
+    }
+    if (folderNode.id !== null) {
+      processedFolderIds.add(folderNode.id);
+    }
+
+    let maxUpdateTime = null;
+
+    // 1. Check artifacts directly under this folder
+    if (folderNode.artifacts && Array.isArray(folderNode.artifacts)) {
+        folderNode.artifacts.forEach(artifact => {
+            if (artifact.updatedAt) {
+                const ts = new Date(artifact.updatedAt).getTime();
+                if (!isNaN(ts) && (maxUpdateTime === null || ts > maxUpdateTime)) {
+                    maxUpdateTime = ts;
+                }
+            }
+        });
+    }
+
+    // 2. Recursively check children folders
+    if (folderNode.children && Array.isArray(folderNode.children)) {
+        folderNode.children.forEach(childFolder => {
+            // We need to ensure childFolder is a complete node object if we expect .id, .artifacts etc.
+            // Assuming childFolder objects in fullTreeData are structured correctly.
+            const childNode = findNodeInTree(childFolder.id, fullTreeData); // Get full child node
+            if (childNode) {
+                const childMaxTime = getFolderEffectiveUpdatedAt(childNode, new Set(processedFolderIds)); // Pass a new Set copy to avoid interference between siblings
+                if (childMaxTime !== null && (maxUpdateTime === null || childMaxTime > maxUpdateTime)) {
+                    maxUpdateTime = childMaxTime;
+                }
+            }
+        });
+    }
+
+    // 3. If no artifact updates found in the entire subtree, fallback to folder's own createdAt
+    if (maxUpdateTime === null && folderNode.createdAt) {
+        const folderCreatedTime = new Date(folderNode.createdAt).getTime();
+        if(!isNaN(folderCreatedTime)) {
+            maxUpdateTime = folderCreatedTime;
+        }
+    }
+    
+    return maxUpdateTime; // Returns a timestamp (number) or null
+}
       // Add this function if escapeJSString is not already defined globally in your script,
 // or ensure it's available in the scope where showItemInfoPopover is called.
 // function escapeJSString(str) {
@@ -2062,8 +2123,41 @@
 //         .replace(/`/g, "&#96;");
 // }
 
-function showItemInfoPopover(event, itemStringified, itemType, itemId) {
-    event.stopPropagation(); // Important to prevent card click or other underlying actions
+// --- Helper function to find item data from fullTreeData ---
+function findItemDataForDisplay(itemIdToFind, itemType) {
+    const idStr = String(itemIdToFind);
+
+    function search(nodes) {
+        for (const node of nodes) {
+            if (itemType === 'folder' && String(node.id) === idStr) {
+                return { ...node }; // Return a copy
+            }
+            if (node.artifacts && Array.isArray(node.artifacts)) {
+                const artifact = node.artifacts.find(art => String(art.id) === idStr);
+                if (artifact && itemType === 'artifact') {
+                    // For artifacts, also include parent folder info for context if needed in popover
+                    return { ...artifact, parentNodeId: node.id, parentNodeName: node.name };
+                }
+            }
+            if (node.children && Array.isArray(node.children)) {
+                const found = search(node.children);
+                if (found) return found;
+            }
+        }
+        return null;
+    }
+    return search(fullTreeData);
+}
+
+
+// --- MODIFIED showItemInfoPopover ---
+function showItemInfoPopover(event, itemId, itemType) {
+    if (event) { // Check if event is passed (it should be)
+      event.stopPropagation(); // CRITICAL: Prevent card navigation
+    } else {
+      console.warn("showItemInfoPopover called without event object");
+    }
+    
 
     // Close any existing info popover
     if (currentInfoDropdown) {
@@ -2071,20 +2165,36 @@ function showItemInfoPopover(event, itemStringified, itemType, itemId) {
         currentInfoDropdown = null;
     }
 
-    const item = JSON.parse(itemStringified); // Parse the stringified item data
+    const item = findItemDataForDisplay(itemId, itemType);
 
+    if (!item) {
+        console.error(`Item with ID ${itemId} and type ${itemType} not found for popover.`);
+        window.showNotification("Error: Could not load item details.", "error");
+        return;
+    }
+    
     const popover = document.createElement('div');
-    popover.className = 'info-popover absolute bg-[var(--bg-card)] border border-[var(--border-primary)] p-4 rounded-lg shadow-xl z-50 w-72'; // Added w-72 for fixed width
+    popover.className = 'info-popover absolute bg-[var(--bg-card)] border border-[var(--border-primary)] p-4 rounded-lg shadow-xl z-50 w-72';
 
     const safeName = escapeJSString(item.name || item.title || "N/A");
-    const fullDescription = item.description && typeof item.description === 'string' && item.description.trim() !== ''
+    const fullDescription = (item.description && typeof item.description === 'string' && item.description.trim() !== '')
         ? escapeJSString(item.description).replace(/\n/g, "<br>")
         : '<em class="text-[var(--text-tertiary)]">Not provided</em>';
 
-    const creatorName = escapeJSString(item.creator || "System"); // Default to "System" if no creator
-    const createdAtDate = item.createdAt ? new Date(item.createdAt).toLocaleString() : "N/A"; // Using toLocaleString for date and time
-    const updatedAtDate = item.updatedAt ? new Date(item.updatedAt).toLocaleString() : "N/A";
-    const displayId = escapeJSString(itemId || item.id || "N/A");
+    const creatorName = escapeJSString(item.creator || "System");
+    const createdAtDate = item.createdAt ? new Date(item.createdAt).toLocaleString() : "N/A";
+    
+    let effectiveUpdatedAt = item.updatedAt; // For artifacts
+    if (itemType === 'folder') {
+        // For folders, calculate effective updatedAt if not directly present or to override
+        const folderNodeForCalc = findNodeInTree(item.id, fullTreeData); // Get the full node for recursive calculation
+        const derivedTs = folderNodeForCalc ? getFolderEffectiveUpdatedAt(folderNodeForCalc) : null;
+        effectiveUpdatedAt = derivedTs ? new Date(derivedTs).toLocaleString() : (item.createdAt ? new Date(item.createdAt).toLocaleString() : "N/A");
+    }
+    const updatedAtDate = effectiveUpdatedAt ? new Date(effectiveUpdatedAt).toLocaleString() : "N/A";
+
+
+    const displayId = escapeJSString(item.id || "N/A");
     const displayType = escapeJSString(itemType.charAt(0).toUpperCase() + itemType.slice(1));
 
     popover.innerHTML = `
@@ -2108,49 +2218,50 @@ function showItemInfoPopover(event, itemStringified, itemType, itemId) {
         </div>
     `;
 
-    const cardElement = event.currentTarget.closest('.item-card, .artifact-list-item, .search-result-card');
-    if (cardElement) {
-        // Ensure card has relative positioning if it's static (it should from CSS but as a fallback)
+    const triggerButton = event ? event.currentTarget : null;
+    const cardElement = triggerButton ? triggerButton.closest('.item-card, .artifact-list-item, .search-result-card') : null;
+
+    if (cardElement && triggerButton) {
         if (getComputedStyle(cardElement).position === 'static') {
              cardElement.style.position = 'relative';
         }
-        cardElement.appendChild(popover); // Append to the card itself
+        cardElement.appendChild(popover);
 
-        const buttonRect = event.currentTarget.getBoundingClientRect(); // Info button
-        const cardRect = cardElement.getBoundingClientRect(); // Parent card
-        const popoverRect = popover.getBoundingClientRect(); // Popover dimensions
+        const buttonRect = triggerButton.getBoundingClientRect();
+        const cardRect = cardElement.getBoundingClientRect();
+        // Get popover dimensions AFTER appending and making it visible (even if briefly)
+        // For robust dimension calculation, ensure it's not display:none when measuring
+        popover.style.visibility = 'hidden'; // Keep in layout flow but invisible for measurement
+        document.body.appendChild(popover); // Temporarily append to body for accurate measurement if card is complex
+        const popoverRect = popover.getBoundingClientRect();
+        cardElement.appendChild(popover); // Move it back
+        popover.style.visibility = 'visible';
 
-        // Default: Position below the button, aligning left edge of button with left edge of popover
-        let top = (buttonRect.top - cardRect.top) + buttonRect.height + 5; // 5px gap
-        let left = (buttonRect.left - cardRect.left);
 
-        // Adjust if popover goes off the right edge of the card
-        if (left + popoverRect.width > cardRect.width - 10) { // 10px safety margin from card edge
+        let top = (buttonRect.top - cardRect.top) + buttonRect.height + 5;
+        let left = (buttonRect.left - cardRect.top);
+
+        if (left + popoverRect.width > cardRect.width - 10) {
             left = cardRect.width - popoverRect.width - 10;
         }
-        // Adjust if popover goes off the left edge of the card
-        if (left < 10) { // 10px safety margin
+        if (left < 10) {
             left = 10;
         }
-        // Adjust if popover goes off the bottom edge (and there's space above button)
         if (top + popoverRect.height > cardRect.height - 10 && (buttonRect.top - cardRect.top) > popoverRect.height + 5) {
-            top = (buttonRect.top - cardRect.top) - popoverRect.height - 5; // Position above button
+            top = (buttonRect.top - cardRect.top) - popoverRect.height - 5;
         }
-         // Ensure it doesn't go above the card's top in case of weird scenarios
         if (top < 0) top = 5;
-
 
         popover.style.top = `${top}px`;
         popover.style.left = `${left}px`;
-
     } else {
-        // Fallback positioning if card element isn't found (should ideally not happen)
         document.body.appendChild(popover);
-        popover.style.position = 'fixed'; // Or 'absolute' if body is reference
-        popover.style.top = `${event.clientY + 10}px`; // Position near cursor
-        popover.style.left = `${event.clientX + 10}px`;
+        popover.style.position = 'fixed';
+        popover.style.top = event ? `${event.clientY + 10}px` : '50%';
+        popover.style.left = event ? `${event.clientX + 10}px` : '50%';
+        if (!event) popover.style.transform = 'translate(-50%, -50%)';
+         console.warn("Popover fallback positioning used.");
     }
-
     currentInfoDropdown = popover;
 }
       // --- End Navigation and Rendering ---
@@ -3045,64 +3156,39 @@ function showItemInfoPopover(event, itemStringified, itemType, itemId) {
       function renderSearchResults(results, searchTerm = "") {
     if (!folderContentContainer) return;
 
-    // Clear current folder overview if it exists, as we are in search view
     const overviewElem = document.getElementById("current-folder-overview-container");
     if (overviewElem) overviewElem.remove();
 
-    folderContentContainer.innerHTML = ""; // Clear previous folder contents/search results
-    toggleAddItemForm(false); // Hide add item form in search view
-    if (backButton) backButton.style.display = "none"; // Hide back button in search view
-    if (addItemToFolderBtn) addItemToFolderBtn.style.display = "none"; // Hide add item button
+    folderContentContainer.innerHTML = "";
+    toggleAddItemForm(false);
+    if (backButton) backButton.style.display = "none";
+    if (addItemToFolderBtn) addItemToFolderBtn.style.display = "none";
 
-    const resultsTitle =
-        results.length > 0
-            ? `Search Results for "${escapeJSString(searchTerm)}"`
-            : `No Results for "${escapeJSString(searchTerm)}"`;
+    const resultsTitle = results.length > 0 ? `Search Results for "${escapeJSString(searchTerm)}"` : `No Results for "${escapeJSString(searchTerm)}"`;
     if (currentFolderNameEl) currentFolderNameEl.textContent = resultsTitle;
-    if (breadcrumbContainer)
-        // Simplified breadcrumb for search
-        breadcrumbContainer.innerHTML = `<span class="breadcrumb-current">Search Results</span>`;
+    if (breadcrumbContainer) breadcrumbContainer.innerHTML = `<span class="breadcrumb-current">Search Results</span>`;
 
     if (results.length === 0) {
         folderContentContainer.innerHTML = `<p class="p-4 text-lg text-[var(--text-tertiary)] text-center">No items found matching your search.</p>`;
         return;
     }
 
-    // Ensure search results also use grid and have item-card for consistency if popover relies on it.
     folderContentContainer.classList.remove("list-view-only");
-    folderContentContainer.style.display = "grid"; // Use grid for search results
+    folderContentContainer.style.display = "grid";
 
 
     results.forEach((result) => {
         const card = document.createElement("div");
-        // Add item-card class for consistent styling and relative positioning for popover
         card.classList.add("search-result-card", "item-card");
 
-        // Prepare item data for popover
-        const itemDataForPopover = JSON.stringify({
-            id: result.item.id,
-            name: result.item.name || result.item.title,
-            description: result.item.description,
-            creator: result.item.creator,
-            createdAt: result.item.createdAt,
-            updatedAt: result.item.updatedAt,
-            link: result.item.link, // For artifacts
-            type: result.itemType // 'folder' or 'artifact' string
-        });
+        const itemName = result.item.name || result.item.title;
+        const itemTypeDisplay = result.itemType.charAt(0).toUpperCase() + result.itemType.slice(1);
+        let displayPathString = result.path.map((p) => p.name).join(" > ");
 
-        const itemName = result.item.name || result.item.title; // Folder name or artifact title
-        const itemTypeDisplay =
-            result.itemType.charAt(0).toUpperCase() + result.itemType.slice(1); // "Folder" or "Artifact"
-        let displayPathString = result.path.map((p) => p.name).join(" > "); // e.g., "KB > Folder A > SubFolder B"
-
-        const iconClass =
-            result.itemType === "folder"
-                ? "text-[var(--text-yellow-accent)]"
-                : "text-[var(--text-blue-accent)]";
-        const iconSVG =
-            result.itemType === "folder"
-                ? `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 0 1 4.5 9.75h15A2.25 2.25 0 0 1 21.75 12v.75m-8.69-6.44-2.12-2.12a1.5 1.5 0 0 0-1.061-.44H4.5A2.25 2.25 0 0 0 2.25 6v12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9a2.25 2.25 0 0 0-2.25-2.25h-5.379a1.5 1.5 0 0 1-1.06-.44Z" /></svg>`
-                : `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>`;
+        const iconClass = result.itemType === "folder" ? "text-[var(--text-yellow-accent)]" : "text-[var(--text-blue-accent)]";
+        const iconSVG = result.itemType === "folder"
+            ? `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 0 1 4.5 9.75h15A2.25 2.25 0 0 1 21.75 12v.75m-8.69-6.44-2.12-2.12a1.5 1.5 0 0 0-1.061-.44H4.5A2.25 2.25 0 0 0 2.25 6v12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9a2.25 2.25 0 0 0-2.25-2.25h-5.379a1.5 1.5 0 0 1-1.06-.44Z" /></svg>`
+            : `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>`;
 
         let descriptionHTML = "";
         if (result.item.description && typeof result.item.description === "string" && result.item.description.trim() !== "") {
@@ -3112,38 +3198,50 @@ function showItemInfoPopover(event, itemStringified, itemType, itemId) {
         }
 
         const creatorNameSearch = escapeJSString(result.item.creator || "System");
-        const updatedAtSearch = result.item.updatedAt ? new Date(result.item.updatedAt).toLocaleDateString() : "N/A";
+        let updatedAtSearchDisplay = "N/A";
+        if (result.itemType === 'folder') {
+            const folderNodeForCalc = findNodeInTree(result.item.id, fullTreeData);
+            const derivedTs = folderNodeForCalc ? getFolderEffectiveUpdatedAt(folderNodeForCalc) : null;
+            updatedAtSearchDisplay = derivedTs ? new Date(derivedTs).toLocaleDateString() : (result.item.createdAt ? new Date(result.item.createdAt).toLocaleDateString() : "N/A");
+        } else { // artifact
+            updatedAtSearchDisplay = result.item.updatedAt ? new Date(result.item.updatedAt).toLocaleDateString() : "N/A";
+        }
 
-        // Info button for search results, styled to fit via .search-result-card .item-card-actions in CSS
-        const infoButtonSearchHTML = `<button title="Show info" class="action-icon-btn info" onclick="event.stopPropagation(); showItemInfoPopover(event, ${itemDataForPopover}, '${result.itemType}', '${String(result.item.id)}')"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" /></svg></button>`;
+
+        const infoButtonSearchHTML = `<button title="Show info" class="action-icon-btn info" onclick="showItemInfoPopover(event, '${String(result.item.id)}', '${result.itemType}')"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" /></svg></button>`;
 
         card.innerHTML = `
-            <div> <div class="item-card-icon-wrapper"><span class="search-result-icon ${iconClass}">${iconSVG}</span></div>
+            <div>
+                <div class="item-card-icon-wrapper"><span class="search-result-icon ${iconClass}">${iconSVG}</span></div>
                 <h3 class="item-card-name search-result-name">${highlightText(itemName,searchTerm)}</h3>
                 <div class="text-xs text-[var(--text-tertiary)] mt-1">
                     <span>${itemTypeDisplay}</span>
                     <span class="mx-1">&bull;</span>
                     <span>By: ${creatorNameSearch}</span>
                     <br/>
-                    <span>Updated: ${updatedAtSearch}</span>
+                    <span>Updated: ${updatedAtSearchDisplay}</span>
                 </div>
                 ${descriptionHTML}
                 <p class="search-result-path text-xs mt-1">In: ${escapeJSString(displayPathString)}</p>
             </div>
-            <div class="item-card-actions"> ${infoButtonSearchHTML}
+            <div class="item-card-actions">
+                ${infoButtonSearchHTML}
             </div>
         `;
-
-        card.onclick = () => {
-            isSearchViewActive = false; // Exit search view on click
-            if (searchInputElement) searchInputElement.value = ""; // Clear search input
+        
+        // Main click for search result card
+        card.onclick = (e) => {
+             // Prevent main navigation if an action button inside was clicked
+            if (e.target.closest('.action-icon-btn')) {
+                return;
+            }
+            isSearchViewActive = false;
+            if (searchInputElement) searchInputElement.value = "";
             if (result.itemType === "folder") {
-                navigateToFolder(result.item.id); // Navigate to the folder
-            } else { // Artifact
-                // Navigate to the artifact's parent folder first
+                navigateToFolder(result.item.id);
+            } else {
                 const parentFolderId = result.path.length > 1 ? result.path[result.path.length - 1].id : null;
                 navigateToFolder(parentFolderId);
-                // Then show artifact details modal (with a slight delay for folder to render)
                 setTimeout(() => {
                     showArtifactDetailsModal(
                         result.item.title,
