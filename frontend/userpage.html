@@ -999,6 +999,18 @@
           class="mt-8 pt-6 border-t border-[var(--border-primary)]"
           style="display: none"
         >
+        <div id="node-graph-controls" class="flex items-center justify-end gap-2 mb-2" style="display: none;">
+        <button id="zoom-in-btn" title="Zoom In" class="submit-button secondary text-sm py-1 px-3">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+          </svg>
+        </button>
+        <button id="zoom-out-btn" title="Zoom Out" class="submit-button secondary text-sm py-1 px-3">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM13 10H7" />
+          </svg>
+        </button>
+      </div>
           <h3
             class="text-xl md:text-2xl font-bold text-[var(--text-card-header)] mb-4"
           >
@@ -1992,253 +2004,222 @@
       }
       // --- End Navigation and Rendering ---
 
-      // --- Node Graph Visualization ---
-      async function displayNodeGraph(nodeId) {
+ // --- Node Graph Visualization ---
+    async function displayNodeGraph(nodeId) {
         const graphSection = document.getElementById("node-graph-section");
-        const graphContainer = document.getElementById(
-          "node-graph-visualization"
-        );
-        const graphLoadingPlaceholder =
-          document.getElementById("node-graph-loading");
-        const graphErrorPlaceholder =
-          document.getElementById("node-graph-error");
+        const graphContainer = document.getElementById("node-graph-visualization");
+        const graphLoadingPlaceholder = document.getElementById("node-graph-loading");
+        const graphErrorPlaceholder = document.getElementById("node-graph-error");
+        const graphControls = document.getElementById("node-graph-controls"); // Get controls div
 
-        if (
-          !graphSection ||
-          !graphContainer ||
-          !graphLoadingPlaceholder ||
-          !graphErrorPlaceholder
-        ) {
-          console.error("Graph display elements not found.");
-          return;
+        if (!graphSection || !graphContainer || !graphLoadingPlaceholder || !graphErrorPlaceholder || !graphControls) {
+            console.error("Graph display or control elements not found.");
+            return;
         }
 
-        graphErrorPlaceholder.style.display = "none"; // Clear previous errors
-        graphContainer.innerHTML = ""; // Clear previous graph
-        graphLoadingPlaceholder.style.display = "flex"; // Show loading
-        graphSection.style.display = "block"; // Show graph section
+        graphErrorPlaceholder.style.display = "none";
+        graphContainer.innerHTML = "";
+        graphLoadingPlaceholder.style.display = "flex";
+        graphSection.style.display = "block";
+        graphControls.style.display = "flex"; // Show graph controls
 
         try {
-          const response = await secureFetch(
-            `${BASE_API_URL}/api/nodes/${nodeId}/graph`
-          );
-          if (!response.ok) {
-            const errorData = await response.json().catch(() => ({
-              detail: `Failed to load graph (Status: ${response.status})`,
-            }));
-            throw new Error(errorData.detail);
-          }
-          const rawApiGraphData = await response.json();
+            const response = await secureFetch(
+                `${BASE_API_URL}/api/nodes/${nodeId}/graph`
+            );
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({
+                    detail: `Failed to load graph (Status: ${response.status})`,
+                }));
+                throw new Error(errorData.detail);
+            }
+            const rawApiGraphData = await response.json();
 
-          // Check if the central node data is actually returned
-          if (!rawApiGraphData || typeof rawApiGraphData.id === "undefined") {
-            graphErrorPlaceholder.textContent =
-              "No graph data available for this node or the folder is empty.";
+            if (!rawApiGraphData || typeof rawApiGraphData.id === "undefined") {
+                graphErrorPlaceholder.textContent = "No graph data available for this node or the folder is empty.";
+                graphErrorPlaceholder.style.display = "block";
+                graphLoadingPlaceholder.style.display = "none";
+                graphContainer.innerHTML = "";
+                // Keep controls visible even if there's no graph data, or hide them:
+                // graphControls.style.display = "none";
+                return;
+            }
+            renderD3TreeGraph(rawApiGraphData, graphContainer, String(nodeId));
+            graphLoadingPlaceholder.style.display = "none";
+        } catch (error) {
+            console.error("Error fetching or rendering node graph:", error);
+            graphErrorPlaceholder.textContent = `Error loading graph: ${error.message}`;
             graphErrorPlaceholder.style.display = "block";
             graphLoadingPlaceholder.style.display = "none";
-            graphContainer.innerHTML = ""; // Ensure container is empty
-            return;
-          }
-          renderD3TreeGraph(rawApiGraphData, graphContainer, String(nodeId));
-          graphLoadingPlaceholder.style.display = "none"; // Hide loading
-        } catch (error) {
-          console.error("Error fetching or rendering node graph:", error);
-          graphErrorPlaceholder.textContent = `Error loading graph: ${error.message}`;
-          graphErrorPlaceholder.style.display = "block";
-          graphLoadingPlaceholder.style.display = "none";
-          graphContainer.innerHTML = ""; // Ensure container is empty on error
+            graphContainer.innerHTML = "";
+            // graphControls.style.display = "none"; // Optionally hide controls on error
         }
-      }
+    }
 
-      function hideNodeGraph() {
+    function hideNodeGraph() {
         const graphSection = document.getElementById("node-graph-section");
         if (graphSection) graphSection.style.display = "none";
-        const graphContainer = document.getElementById(
-          "node-graph-visualization"
-        );
-        if (graphContainer) graphContainer.innerHTML = ""; // Clear SVG content
-      }
+        const graphContainer = document.getElementById("node-graph-visualization");
+        if (graphContainer) graphContainer.innerHTML = "";
+        const graphControls = document.getElementById("node-graph-controls"); // Get controls div
+        if (graphControls) graphControls.style.display = "none"; // Hide graph controls
+    }
 
-      function renderD3TreeGraph(
+    function renderD3TreeGraph(
         apiNodeData,
         containerElement,
         centerNodeOriginalIdStr
-      ) {
-        containerElement.innerHTML = ""; // Clear previous graph
+    ) {
+        containerElement.innerHTML = ""; 
         const centerNodeOriginalId = parseInt(centerNodeOriginalIdStr);
 
         const containerRect = containerElement.getBoundingClientRect();
-        const width = containerRect.width || 800; // Fallback width
-        const height = containerRect.height || 500; // Fallback height
+        const width = containerRect.width || 800;
+        const height = containerRect.height || 500;
 
         const svg = d3
-          .select(containerElement)
-          .append("svg")
-          .attr("width", "100%")
-          .attr("height", "100%")
-          .attr("viewBox", `0 0 ${width} ${height}`) // Use viewBox for responsiveness
-          .attr("preserveAspectRatio", "xMidYMid meet");
+            .select(containerElement)
+            .append("svg")
+            .attr("width", "100%")
+            .attr("height", "100%")
+            .attr("viewBox", `0 0 ${width} ${height}`)
+            .attr("preserveAspectRatio", "xMidYMid meet");
 
-        const mainGroup = svg.append("g"); // Group for zoom/pan
+        const mainGroup = svg.append("g");
 
-        // Helper to get children, combining sub-folders and artifacts
         const getChildren = (d) => {
-          let combinedChildren = [];
-          if (d.children && Array.isArray(d.children)) {
-            // Map to ensure new objects for hierarchy, preventing modification of original data
-            combinedChildren = combinedChildren.concat(
-              d.children.map((child) => ({ ...child }))
-            );
-          }
-          if (d.artifacts && Array.isArray(d.artifacts)) {
-            const mappedArtifacts = d.artifacts.map((artifact) => ({
-              ...artifact,
-              name: artifact.title, // Use title as name for artifacts in graph
-              type: artifact.type || "FILE", // Ensure type for artifacts
-              children: [], // Artifacts are leaf nodes
-            }));
-            combinedChildren = combinedChildren.concat(mappedArtifacts);
-          }
-          return combinedChildren.length ? combinedChildren : null; // d3.hierarchy expects null for no children
+            // ... (existing getChildren logic remains the same)
+            let combinedChildren = [];
+            if (d.children && Array.isArray(d.children)) {
+                combinedChildren = combinedChildren.concat(
+                    d.children.map((child) => ({ ...child }))
+                );
+            }
+            if (d.artifacts && Array.isArray(d.artifacts)) {
+                const mappedArtifacts = d.artifacts.map((artifact) => ({
+                    ...artifact,
+                    name: artifact.title, 
+                    type: artifact.type || "FILE", 
+                    children: [], 
+                }));
+                combinedChildren = combinedChildren.concat(mappedArtifacts);
+            }
+            return combinedChildren.length ? combinedChildren : null;
         };
 
         const root = d3.hierarchy(apiNodeData, getChildren);
 
-        // Assign displayType for styling if not already present
         root.each((d) => {
-          const type = d.data.type || "UNKNOWN"; // Fallback type
-          d.data.displayType =
-            type === "FILE" || type === "ARTIFACT" ? "ARTIFACT" : "FOLDER";
+            const type = d.data.type || "UNKNOWN";
+            d.data.displayType = type === "FILE" || type === "ARTIFACT" ? "ARTIFACT" : "FOLDER";
         });
 
         const nodeHeight = 35;
         const nodeWidth = 200;
-        const treeLayout = d3.tree().nodeSize([nodeHeight, nodeWidth]); // Vertical and horizontal spacing
+        const treeLayout = d3.tree().nodeSize([nodeHeight, nodeWidth]);
         treeLayout(root);
 
-        // Calculate initial translation to center the root node, considering tree's natural layout
         let x0 = Infinity;
         let x1 = -Infinity;
         root.each((d) => {
-          // Find extent of x coordinates (which become y in horizontal tree)
-          if (d.x < x0) x0 = d.x;
-          if (d.x > x1) x1 = d.x;
+            if (d.x < x0) x0 = d.x;
+            if (d.x > x1) x1 = d.x;
         });
 
-        const initialX = 50; // Margin from the left
-        const initialY = height / 2 - root.x; // Center vertically; root.x is its y-position in horizontal
+        const initialX = 50;
+        const initialY = height / 2 - root.x;
 
-        // Set initial transform for zoom
         const initialTransform = d3.zoomIdentity
-          .translate(initialX, initialY)
-          .scale(0.9);
+            .translate(initialX, initialY)
+            .scale(0.9);
 
-        // Draw links
         mainGroup
-          .append("g")
-          .attr("class", "graph-links")
-          .selectAll("path")
-          .data(root.links())
-          .join("path")
-          .attr("class", "graph-link")
-          .attr(
-            "d",
-            d3
-              .linkHorizontal() // Use horizontal link generator
-              .x((d) => d.y) // Source and target y become x
-              .y((d) => d.x)
-          ); // Source and target x become y
+            .append("g")
+            .attr("class", "graph-links")
+            // ... (existing link drawing logic remains the same)
+            .selectAll("path")
+            .data(root.links())
+            .join("path")
+            .attr("class", "graph-link")
+            .attr(
+                "d",
+                d3.linkHorizontal().x((d) => d.y).y((d) => d.x)
+            );
 
-        // Draw nodes
         const node = mainGroup
-          .append("g")
-          .attr("class", "graph-nodes")
-          .selectAll("g")
-          .data(root.descendants())
-          .join("g")
-          .attr(
-            "class",
-            (d) =>
-              `graph-node ${
-                d.data.id === centerNodeOriginalId &&
-                d.data.displayType === "FOLDER"
-                  ? "is-center"
-                  : ""
-              }`
-          )
-          .attr("transform", (d) => `translate(${d.y},${d.x})`); // y becomes x, x becomes y
-
-        node
-          .append("circle")
-          .attr("r", (d) =>
-            d.data.id === centerNodeOriginalId &&
-            d.data.displayType === "FOLDER"
-              ? 10
-              : d.data.displayType === "FOLDER"
-              ? 8
-              : 6
-          )
-          .attr("fill", (d) => {
-            if (
-              d.data.id === centerNodeOriginalId &&
-              d.data.displayType === "FOLDER"
+            .append("g")
+            .attr("class", "graph-nodes")
+            // ... (existing node drawing logic remains the same)
+            .selectAll("g")
+            .data(root.descendants())
+            .join("g")
+            .attr(
+                "class",
+                (d) => `graph-node ${ d.data.id === centerNodeOriginalId && d.data.displayType === "FOLDER" ? "is-center" : "" }`
             )
-              return "var(--text-link-hover)";
-            if (d.data.displayType === "FOLDER")
-              return "var(--text-yellow-accent)";
-            if (d.data.displayType === "ARTIFACT")
-              return "var(--text-green-accent)";
-            return "var(--text-secondary)"; // Fallback
-          })
-          .attr("stroke", (d) =>
-            d.data.id === centerNodeOriginalId &&
-            d.data.displayType === "FOLDER"
-              ? "var(--text-link)"
-              : "var(--border-card)"
-          );
+            .attr("transform", (d) => `translate(${d.y},${d.x})`);
 
-        node
-          .append("text")
-          .attr("dy", "0.31em") // Vertical alignment
-          .attr("x", (d) => {
-            // Position text left or right of node based on children
-            const effectiveChildren = getChildren(d.data);
-            return effectiveChildren && effectiveChildren.length > 0 ? -12 : 12; // -12 for parent, +12 for leaf
-          })
-          .attr("text-anchor", (d) => {
-            const effectiveChildren = getChildren(d.data);
-            return effectiveChildren && effectiveChildren.length > 0
-              ? "end"
-              : "start";
-          })
-          .text((d) => d.data.name)
-          .clone(true)
-          .lower() // Create a "halo" for text readability
-          .attr("stroke-linejoin", "round")
-          .attr("stroke-width", 3)
-          .attr("stroke", "var(--bg-primary)"); // Halo color matching background
+        node.append("circle")
+            // ... (existing circle attributes remain the same)
+             .attr("r", (d) => d.data.id === centerNodeOriginalId && d.data.displayType === "FOLDER" ? 10 : d.data.displayType === "FOLDER" ? 8 : 6)
+            .attr("fill", (d) => {
+                if (d.data.id === centerNodeOriginalId && d.data.displayType === "FOLDER") return "var(--text-link-hover)";
+                if (d.data.displayType === "FOLDER") return "var(--text-yellow-accent)";
+                if (d.data.displayType === "ARTIFACT") return "var(--text-green-accent)";
+                return "var(--text-secondary)";
+            })
+            .attr("stroke", (d) => d.data.id === centerNodeOriginalId && d.data.displayType === "FOLDER" ? "var(--text-link)" : "var(--border-card)");
 
-        node
-          .append("title") // Tooltip on hover
-          .text(
-            (d) =>
-              `${d.data.displayType}: ${d.data.name}\nID: ${
-                d.data.id
-              }\nDescription: ${d.data.description || "N/A"}`
-          );
 
-        // Setup zoom and pan
-        const zoom = d3
-          .zoom()
-          .scaleExtent([0.1, 5]) // Min/max zoom scale
-          .on("zoom", (event) => {
-            mainGroup.attr("transform", event.transform);
-          });
+        node.append("text")
+            // ... (existing text attributes remain the same)
+            .attr("dy", "0.31em")
+            .attr("x", (d) => {
+                const effectiveChildren = getChildren(d.data);
+                return effectiveChildren && effectiveChildren.length > 0 ? -12 : 12;
+            })
+            .attr("text-anchor", (d) => {
+                const effectiveChildren = getChildren(d.data);
+                return effectiveChildren && effectiveChildren.length > 0 ? "end" : "start";
+            })
+            .text((d) => d.data.name)
+            .clone(true)
+            .lower()
+            .attr("stroke-linejoin", "round")
+            .attr("stroke-width", 3)
+            .attr("stroke", "var(--bg-primary)");
 
-        svg.call(zoom).call(zoom.transform, initialTransform); // Apply initial transform
-      }
+        node.append("title")
+            .text( (d) => `${d.data.displayType}: ${d.data.name}\nID: ${d.data.id}\nDescription: ${d.data.description || "N/A"}`);
 
-      // --- End Node Graph Visualization ---
+        // Setup zoom and pan behavior
+        const zoomBehavior = d3 // Renamed for clarity to zoomBehavior
+            .zoom()
+            .scaleExtent([0.1, 5])
+            .on("zoom", (event) => {
+                mainGroup.attr("transform", event.transform);
+            });
+
+        svg.call(zoomBehavior).call(zoomBehavior.transform, initialTransform);
+
+        // --- NEW: Add event listeners for zoom buttons ---
+        const zoomInButton = document.getElementById('zoom-in-btn');
+        const zoomOutButton = document.getElementById('zoom-out-btn');
+        const zoomFactor = 1.2;
+
+        if (zoomInButton) {
+            zoomInButton.onclick = () => {
+                svg.transition().duration(250).call(zoomBehavior.scaleBy, zoomFactor);
+            };
+        }
+        if (zoomOutButton) {
+            zoomOutButton.onclick = () => {
+                svg.transition().duration(250).call(zoomBehavior.scaleBy, 1 / zoomFactor);
+            };
+        }
+        // --- End NEW ---
+    }
+    // --- End Node Graph Visualization ---
 
       // --- Current Folder Overview Display ---
        function displayCurrentFolderOverview(folderObject) {
