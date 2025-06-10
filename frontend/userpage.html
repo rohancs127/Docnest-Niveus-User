@@ -1280,9 +1280,6 @@
         try {
           firebaseApp = firebase.initializeApp(firebaseConfig);
           firebaseAuth = firebase.auth();
-          console.log(
-            "User Page: Firebase initialized with placeholder config."
-          );
         } catch (e) {
           console.error(
             "User Page: Error initializing Firebase with placeholder:",
@@ -1298,7 +1295,6 @@
         try {
           firebaseApp = firebase.initializeApp(firebaseConfig);
           firebaseAuth = firebase.auth();
-          console.log("User Page: Firebase initialized with actual config.");
         } catch (e) {
           console.error("User Page: Error initializing Firebase:", e);
           window.showNotification(
@@ -1367,10 +1363,8 @@
         window.location.hostname === "127.0.0.1"
       ) {
         BASE_API_URL = localBaseUrl;
-        console.log("USER PAGE: Using LOCAL backend API base:", BASE_API_URL);
       } else {
         BASE_API_URL = cloudRunBaseUrl;
-        console.log("USER PAGE: Using CLOUD backend API base:", BASE_API_URL);
 
         if (
           cloudRunBaseUrl.includes("your-userpage-backend-url") || // Common placeholder
@@ -1396,7 +1390,6 @@
       if (firebaseAuth) {
         firebaseAuth.onAuthStateChanged(async (user) => {
           if (user) {
-            console.log("User Page: User is signed in.", user.email);
             if (userDisplayNameSpan)
               userDisplayNameSpan.textContent =
                 user.displayName || user.email.split("@")[0];
@@ -1427,9 +1420,6 @@
                   );
             }
           } else {
-            console.log(
-              "User Page: No user signed in. Redirecting to user_login.html."
-            );
             sessionStorage.removeItem("userToken");
             currentUserRoles = [];
             fullTreeData = [];
@@ -1579,11 +1569,7 @@
                 );
             throw new Error("Insufficient privileges determined by backend.");
           }
-          currentUserRoles = userData.roles || []; // Store roles if provided
-          console.log(
-            "User Page: User roles fetched/verified:",
-            currentUserRoles
-          );
+          currentUserRoles = userData.roles || []; 
           return userData; // Return full user data if needed elsewhere
         } catch (error) {
           console.error("User Page: Error in fetchRoles:", error.message);
@@ -1625,7 +1611,6 @@
             throw new Error("Received invalid tree structure from server.");
           }
           fullTreeData = data;
-          console.log("User Page: Full tree data fetched:", fullTreeData);
         } catch (error) {
           console.error("User Page: Failed to fetch full tree:", error);
           fullTreeData = []; // Reset tree data on error

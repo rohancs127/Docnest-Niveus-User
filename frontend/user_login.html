@@ -298,7 +298,6 @@
           app = initializeApp(firebaseConfig);
           auth = getAuth(app);
           googleProvider = new GoogleAuthProvider();
-          console.log("User Login Page: Firebase Initialized.");
         } catch (e) {
           console.error("Error initializing Firebase:", e);
           showLoginError(
@@ -319,9 +318,6 @@
       // --- Centralized Authentication Handler for User Login ---
       async function handleUserAuthentication(user) {
         if (!user) {
-          console.log(
-            "User Login: handleUserAuthentication called with no user."
-          );
           setButtonLoadingState(false);
           isProcessingLogin = false;
           return;
@@ -332,14 +328,9 @@
         // If triggered by button click, setButtonLoadingState(true) is already handled in triggerGoogleSignIn.
         if (!isProcessingLogin) setButtonLoadingState(true); // Only set if not already processing from button click
         clearLoginError();
-        console.log("User Login: Processing user", user.email);
 
         try {
-          const token = await getIdToken(user, true); // Force refresh for backend check
-          // sessionStorage.setItem("token", token); // This line might be redundant if userpage.html fetches its own token
-          console.log(
-            "User Login: Token obtained, calling backend /api/auth..."
-          );
+          const token = await getIdToken(user, true);
 
           const backendResponse = await fetch(
             "https://docnest-780614596615.asia-south1.run.app/api/auth",
@@ -352,10 +343,6 @@
             }
           );
 
-          console.log(
-            "User Login: Backend response status:",
-            backendResponse.status
-          );
 
           if (!backendResponse.ok) {
             const errorText = await backendResponse.text();
@@ -377,20 +364,13 @@
           }
 
           const userData = await backendResponse.json();
-          console.log("User Login: Backend auth success. User data:", userData);
 
           if (
             userData &&
             (userData.isUser === true || userData.isAdmin === true)
           ) {
-            console.log(
-              "User Login: User verified. Redirecting to userpage.html"
-            );
             window.location.href = "userpage.html";
           } else {
-            console.log(
-              "User Login: User does not have sufficient privileges."
-            );
             showLoginError(
               "Access Denied: You do not have authorized user privileges for this portal."
             );
@@ -426,22 +406,11 @@
       let initialUserAuthCheckProcessed = false;
       if (auth) {
         onAuthStateChanged(auth, (user) => {
-          console.log(
-            `User Login Page: onAuthStateChanged. User: ${
-              user ? user.email : "null"
-            }. Initial Check Processed: ${initialUserAuthCheckProcessed}. IsProcessing: ${isProcessingLogin}`
-          );
 
           if (user && !isProcessingLogin && !initialUserAuthCheckProcessed) {
             initialUserAuthCheckProcessed = true;
-            console.log(
-              "User Login Page: Initial onAuthStateChanged detected user. Handling authentication..."
-            );
             handleUserAuthentication(user); // This will set isProcessingLogin
           } else if (!user) {
-            console.log(
-              "User Login Page: No user session detected by onAuthStateChanged or user signed out."
-            );
             sessionStorage.removeItem("token");
             setButtonLoadingState(false);
             isProcessingLogin = false; // Reset if user is null
@@ -457,7 +426,6 @@
           return;
         }
         if (isProcessingLogin) {
-          console.log("Sign-in already in progress.");
           return;
         }
 
@@ -469,15 +437,9 @@
         try {
           // ******** SET PERSISTENCE HERE ********
           await setPersistence(auth, browserLocalPersistence);
-          console.log("User Login Page: Firebase persistence set to LOCAL.");
           // *************************************
 
-          console.log("Triggering signInWithPopup for User Login...");
           const result = await signInWithPopup(auth, googleProvider);
-          console.log(
-            "User Login: signInWithPopup successful, user:",
-            result.user.email
-          );
           // After successful signInWithPopup, onAuthStateChanged will fire.
           // handleUserAuthentication will be called by onAuthStateChanged.
           // However, to ensure immediate processing and UI feedback, call it here too.
