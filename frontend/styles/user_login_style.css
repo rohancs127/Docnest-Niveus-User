@@ -1,0 +1,123 @@
+:root {
+        /* Dark Theme (Default) */
+        --bg-primary-login: #0a0a0a;
+        --bg-card-login: #1a1a1a;
+        --text-primary-login: #e0e0e0;
+        --text-secondary-login: #bbb;
+        --text-tertiary-login: #999;
+        --border-card-login: #333;
+        --shadow-card-login: 0 8px 20px rgba(0, 0, 0, 0.3);
+        --button-google-bg: #ffffff;
+        --button-google-text: #1f2937;
+        --button-google-border: #d1d5db;
+        --button-google-bg-hover: #f3f4f6;
+        --error-text-login: #f87171;
+        --error-bg-login: rgba(248, 113, 113, 0.1);
+        --error-border-login: #f87171;
+        --theme-toggle-bg: var(--bg-card-login);
+        --theme-toggle-text: var(--text-secondary-login);
+        --theme-toggle-border: var(--border-card-login);
+        --theme-toggle-bg-hover: var(--bg-card-hover);
+        --theme-toggle-text-hover: var(--text-primary-login);
+        --theme-toggle-ring: #007acc; /* Matches admin panel focus */
+      }
+
+      .light-theme {
+        --bg-primary-login: #f4f4f5; /* zinc-100 */
+        --bg-card-login: #ffffff;
+        --text-primary-login: #18181b; /* zinc-900 */
+        --text-secondary-login: #52525b; /* zinc-600 */
+        --text-tertiary-login: #71717a; /* zinc-500 */
+        --border-card-login: #d1d5db; /* gray-300 */
+        --shadow-card-login: 0 4px 15px rgba(0, 0, 0, 0.07);
+        --button-google-bg: #27272a; /* zinc-800 */
+        --button-google-text: #ffffff;
+        --button-google-border: #27272a;
+        --button-google-bg-hover: #18181b; /* zinc-900 */
+        --error-text-login: #dc2626; /* red-600 */
+        --error-bg-login: rgba(220, 38, 38, 0.1);
+        --error-border-login: #dc2626;
+        --theme-toggle-bg: var(--bg-card-login);
+        --theme-toggle-text: var(--text-secondary-login);
+        --theme-toggle-border: var(--border-card-login);
+        --theme-toggle-bg-hover: #f9fafb; /* gray-50 */
+        --theme-toggle-text-hover: var(--text-primary-login);
+        --theme-toggle-ring: #2563eb; /* Matches admin panel focus */
+      }
+
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: var(--bg-primary-login);
+        color: var(--text-primary-login);
+        transition: background-color 0.3s ease, color 0.3s ease;
+      }
+      .login-container {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+        position: relative;
+      }
+      .login-card {
+        background-color: var(--bg-card-login);
+        border: 1px solid var(--border-card-login);
+        box-shadow: var(--shadow-card-login);
+        color: var(--text-primary-login);
+      }
+      .google-btn {
+        background-color: var(--button-google-bg);
+        color: var(--button-google-text);
+        border: 1px solid var(--button-google-border);
+        transition: background-color 0.2s ease-in-out,
+          transform 0.1s ease-in-out;
+      }
+      .google-btn:hover {
+        background-color: var(--button-google-bg-hover);
+        transform: translateY(-1px);
+      }
+      .google-btn:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+      }
+      .spinner {
+        animation: spin 1s linear infinite;
+        border: 2px solid currentColor;
+        border-top-color: transparent;
+        border-radius: 50%;
+        width: 1em;
+        height: 1em;
+        margin-right: 0.5em;
+      }
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+      #error-message {
+        color: var(--error-text-login);
+        background-color: var(--error-bg-login);
+        border: 1px solid var(--error-border-login);
+      }
+      #theme-toggle-button-login {
+        position: absolute;
+        top: 1.5rem;
+        right: 1.5rem;
+        background-color: var(--theme-toggle-bg);
+        color: var(--theme-toggle-text);
+        border: 1px solid var(--theme-toggle-border);
+        padding: 0.5rem;
+        border-radius: 0.375rem;
+      }
+      #theme-toggle-button-login:hover {
+        background-color: var(--theme-toggle-bg-hover);
+        color: var(--theme-toggle-text-hover);
+      }
+      #theme-toggle-button-login:focus {
+        outline: none;
+        box-shadow: 0 0 0 2px var(--theme-toggle-ring);
+      }
