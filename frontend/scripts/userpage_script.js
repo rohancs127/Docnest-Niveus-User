@@ -1283,6 +1283,8 @@ const firebaseConfig = {
           fileMethodOptionsDiv.style.display = "none";
         }
       }
+      window.toggleAddItemFileOptions = toggleAddItemFileOptions;
+
       function toggleAddItemLinkOrUpload() {
         const fileSourceSelect = document.getElementById("addItemFileSource");
         const linkContainer = document.getElementById(
@@ -1306,6 +1308,7 @@ const firebaseConfig = {
         if (fileSource === "upload" && document.getElementById("addItemLink"))
           document.getElementById("addItemLink").value = "";
       }
+      window.toggleAddItemLinkOrUpload = toggleAddItemLinkOrUpload;
 
       async function submitAddItemForm(buttonElement) {
         const parentIdValue = document.getElementById("addItemParentId").value;
