@@ -1418,6 +1418,8 @@ const firebaseConfig = {
           window.setButtonLoading(buttonElement, false, originalButtonText);
         }
       }
+
+      window.submitAddItemForm = submitAddItemForm;
       // --- End Inline Add Item Form Logic ---
 
       // --- CRUD Operations (Delete) ---
