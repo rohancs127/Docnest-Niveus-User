@@ -1227,6 +1227,8 @@ const firebaseConfig = {
           if (addItemFormContainer) addItemFormContainer.style.display = "none";
         }
       }
+      window.toggleAddItemForm = toggleAddItemForm;
+      
       function populateAddItemForm() {
         const parentId = currentViewNodeId;
         // Prevent adding to the absolute root if 'null' represents it and it's disallowed
